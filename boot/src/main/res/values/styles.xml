@@ -1,0 +1,10 @@
+<resources>
+    <style name="OKAndroid"
+        parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/okandroid_color_grey_50</item>
+    </style>
+    <style name="OKAndroid.DayNight"
+        parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/okandroid_color_grey_50</item>
+    </style>
+</resources>
