@@ -2,6 +2,5 @@
     package="com.okandroid.boot">
     <application android:allowBackup="true"
         android:label="@string/okandroid_app_name"
-        android:supportsRtl="true"
-        android:theme="@style/OKAndroid"></application>
+        android:supportsRtl="true"></application>
 </manifest>
