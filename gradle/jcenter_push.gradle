@@ -1,0 +1,74 @@
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def siteUrl = 'https://github.com/idonans/okandroid-boot'
+def gitUrl = 'https://github.com/idonans/okandroid-boot.git'
+group = 'com.okandroid.boot'
+version = rootProject.ext.versionName
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'android common lib'
+                url siteUrl
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'idonans'
+                        name 'idonans'
+                        email 'idonans@126.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+task androidJavadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charset', 'UTF-8');
+    failOnError false
+}
+task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+    classifier = 'javadoc'
+    from androidJavadoc.destinationDir
+}
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+artifacts {
+    archives androidJavadocJar
+    archives androidSourcesJar
+}
+
+bintray {
+    Properties localProperties = new Properties()
+    DataInputStream localDataInputStream = rootProject.file('local.properties').newDataInputStream();
+    localProperties.load(localDataInputStream)
+    localDataInputStream.close()
+
+    user = localProperties.getProperty('jcenter.user')
+    key = localProperties.getProperty('jcenter.apikey')
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'okandroid-boot'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ['Apache-2.0']
+        publish = true
+    }
+}
