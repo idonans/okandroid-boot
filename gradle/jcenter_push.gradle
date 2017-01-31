@@ -56,9 +56,9 @@ artifacts {
 
 bintray {
     Properties localProperties = new Properties()
-    DataInputStream localDataInputStream = rootProject.file('local.properties').newDataInputStream();
-    localProperties.load(localDataInputStream)
-    localDataInputStream.close()
+    rootProject.file('local.properties').withInputStream {
+        localProperties.load(it)
+    }
 
     user = localProperties.getProperty('jcenter.user')
     key = localProperties.getProperty('jcenter.apikey')
