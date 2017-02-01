@@ -1,4 +1,3 @@
 <resources>
-    <style name="ApplicationTheme"
-        parent="OKAndroid"></style>
+    <style name="SampleTheme" parent="OKAndroid"></style>
 </resources>

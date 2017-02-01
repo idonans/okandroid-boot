@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.sample.boot">
-    <application android:allowBackup="true"
+
+    <application android:name="com.sample.boot.app.SampleApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/okandroid_app_name"
         android:supportsRtl="true"
-        android:theme="@style/ApplicationTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/SampleTheme"
+        tools:replace="android:theme">
+        <activity android:name="com.sample.boot.splash.SplashActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
