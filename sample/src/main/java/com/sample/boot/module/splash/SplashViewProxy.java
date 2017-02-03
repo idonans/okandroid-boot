@@ -1,5 +1,6 @@
 package com.sample.boot.module.splash;
 
+import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.viewproxy.ViewProxy;
 
 /**
@@ -13,11 +14,26 @@ public class SplashViewProxy extends ViewProxy<SplashView> {
     }
 
     @Override
+    protected void onInitBackground() {
+        super.onInitBackground();
+
+        Threads.sleepQuietly(2000);
+    }
+
+    @Override
     protected void onLoading() {
     }
 
     @Override
     protected void onStart() {
+        SplashView view = getView();
+        if (view == null) {
+            return;
+        }
+
+        if (view.isViewResumed()) {
+            view.directToSignIn();
+        }
     }
 
 }

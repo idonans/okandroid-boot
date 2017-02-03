@@ -1,10 +1,15 @@
 package com.sample.boot;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.okandroid.boot.App;
-import com.sample.boot.BuildConfig;
+import com.okandroid.boot.data.AppIDManager;
+import com.okandroid.boot.data.FrescoManager;
+import com.okandroid.boot.data.ProcessManager;
+import com.okandroid.boot.data.StorageManager;
+import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.thread.Threads;
+import com.sample.boot.data.SessionManager;
 
 /**
  * Created by idonans on 2017/2/1.
@@ -12,6 +17,7 @@ import com.sample.boot.BuildConfig;
 
 public class AppInit {
 
+    private static final String TAG = "AppInit";
     private static boolean sInit;
 
     private AppInit() {
@@ -27,7 +33,30 @@ public class AppInit {
                 .setBuildConfigAdapter(new BuildConfigAdapterImpl())
                 .build()
                 .init();
+
+        initOnMainProcess();
         sInit = true;
+    }
+
+    private static void initOnMainProcess() {
+        if (!ProcessManager.getInstance().isMainProcess()) {
+            return;
+        }
+
+        Threads.postBackground(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG + " init in background on main process");
+                    StorageManager.getInstance();
+                    FrescoManager.getInstance();
+                    AppIDManager.getInstance();
+                    SessionManager.getInstance();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static class BuildConfigAdapterImpl implements App.BuildConfigAdapter {
@@ -59,7 +88,7 @@ public class AppInit {
 
         @Override
         public int getLogLevel() {
-            return Log.DEBUG;
+            return android.util.Log.DEBUG;
         }
 
         @Override

@@ -13,7 +13,7 @@ import com.sample.boot.app.BaseFragment;
  * Created by idonans on 2017/2/3.
  */
 
-public abstract class BaseViewProxyFragment extends BaseFragment implements BaseViewProxy {
+public abstract class BaseViewFragment extends BaseFragment implements BaseView {
 
     @Override
     public boolean isViewAvailable() {
