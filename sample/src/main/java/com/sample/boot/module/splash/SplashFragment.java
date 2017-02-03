@@ -58,6 +58,7 @@ public class SplashFragment extends BaseViewFragment implements SplashView {
 
         startActivity(SignInActivity.startIntent(activity));
         activity.finish();
+        activity.overridePendingTransition(0, 0);
         return true;
     }
 
