@@ -17,6 +17,7 @@ public class ContentView extends FrameLayout {
 
     public ContentView(Context context) {
         super(context);
+        init();
     }
 
     public ContentView(Context context, AttributeSet attrs) {
