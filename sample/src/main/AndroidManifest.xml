@@ -9,8 +9,9 @@
         android:supportsRtl="true"
         android:theme="@style/SampleTheme"
         tools:replace="android:theme">
-        <activity android:name="com.sample.boot.splash.SplashActivity"
-            android:theme="@style/SampleTheme.Splash">
+        <activity android:name="com.sample.boot.module.splash.SplashActivity"
+            android:theme="@style/SampleTheme.Splash"
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
