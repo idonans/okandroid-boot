@@ -3,10 +3,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <FrameLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/okandroid_status_bar_height">
-        <TextView android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"/>
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 </com.okandroid.boot.widget.ContentView>

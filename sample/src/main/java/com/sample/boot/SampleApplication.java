@@ -1,4 +1,4 @@
-package com.sample.boot.app;
+package com.sample.boot;
 
 import android.app.Application;
 

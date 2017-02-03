@@ -12,4 +12,5 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_splash_activity);
     }
+
 }
