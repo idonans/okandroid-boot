@@ -101,7 +101,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     @Override
     protected void onRestart() {
         if (isDebug()) {
-            Log.d(DEBUG_TAG + " onStart");
+            Log.d(DEBUG_TAG + " onRestart");
         }
 
         super.onRestart();
