@@ -38,6 +38,7 @@ public class ImageUtil {
             @Override
             protected void onNewResultImpl(DataSource<Void> dataSource) {
                 try {
+                    dataSource.getResult();
                     CacheKey cacheKey = Fresco.getImagePipeline().getCacheKeyFactory().getEncodedCacheKey(imageRequest, null);
                     BinaryResource binaryResource = Fresco.getImagePipelineFactory().getMainFileCache().getResource(cacheKey);
                     File file = ((FileBinaryResource) binaryResource).getFile();
