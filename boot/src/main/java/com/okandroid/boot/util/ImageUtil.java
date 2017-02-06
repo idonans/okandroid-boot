@@ -11,6 +11,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.okandroid.boot.data.FrescoManager;
 import com.okandroid.boot.thread.ThreadPool;
+import com.okandroid.boot.thread.Threads;
 
 import java.io.File;
 import java.util.concurrent.Executor;
@@ -37,17 +38,18 @@ public class ImageUtil {
         dataSource.subscribe(new BaseDataSubscriber<Void>() {
             @Override
             protected void onNewResultImpl(DataSource<Void> dataSource) {
-                try {
-                    dataSource.getResult();
-                    CacheKey cacheKey = Fresco.getImagePipeline().getCacheKeyFactory().getEncodedCacheKey(imageRequest, null);
-                    BinaryResource binaryResource = Fresco.getImagePipelineFactory().getMainFileCache().getResource(cacheKey);
-                    File file = ((FileBinaryResource) binaryResource).getFile();
-                    listener.onFileFetched(file);
-                    return;
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-                listener.onFileFetched(null);
+                // try find local cache file on next looper. wait libimagepipeline.so load
+                Threads.postUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        Threads.postBackground(new Runnable() {
+                            @Override
+                            public void run() {
+                                tryFindLocalCacheFile(imageRequest, listener);
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
@@ -60,6 +62,19 @@ public class ImageUtil {
                 ThreadPool.getInstance().post(command);
             }
         });
+    }
+
+    private static void tryFindLocalCacheFile(final ImageRequest imageRequest, final ImageFileFetchListener listener) {
+        try {
+            CacheKey cacheKey = Fresco.getImagePipeline().getCacheKeyFactory().getEncodedCacheKey(imageRequest, null);
+            BinaryResource binaryResource = Fresco.getImagePipelineFactory().getMainFileCache().getResource(cacheKey);
+            File file = ((FileBinaryResource) binaryResource).getFile();
+            listener.onFileFetched(file);
+            return;
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        listener.onFileFetched(null);
     }
 
 }
