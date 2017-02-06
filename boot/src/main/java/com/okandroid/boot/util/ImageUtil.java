@@ -10,6 +10,7 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.okandroid.boot.data.FrescoManager;
+import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.ThreadPool;
 import com.okandroid.boot.thread.Threads;
 
@@ -21,6 +22,8 @@ import java.util.concurrent.Executor;
  */
 
 public class ImageUtil {
+
+    private static final String TAG = "ImageUtil";
 
     private ImageUtil() {
     }
@@ -38,18 +41,7 @@ public class ImageUtil {
         dataSource.subscribe(new BaseDataSubscriber<Void>() {
             @Override
             protected void onNewResultImpl(DataSource<Void> dataSource) {
-                // try find local cache file on next looper. wait libimagepipeline.so load
-                Threads.postUi(new Runnable() {
-                    @Override
-                    public void run() {
-                        Threads.postBackground(new Runnable() {
-                            @Override
-                            public void run() {
-                                tryFindLocalCacheFile(imageRequest, listener);
-                            }
-                        });
-                    }
-                });
+                tryFindLocalCacheFile(imageRequest, listener, true);
             }
 
             @Override
@@ -64,13 +56,26 @@ public class ImageUtil {
         });
     }
 
-    private static void tryFindLocalCacheFile(final ImageRequest imageRequest, final ImageFileFetchListener listener) {
+    private static void tryFindLocalCacheFile(final ImageRequest imageRequest, final ImageFileFetchListener listener, final boolean first) {
         try {
             CacheKey cacheKey = Fresco.getImagePipeline().getCacheKeyFactory().getEncodedCacheKey(imageRequest, null);
             BinaryResource binaryResource = Fresco.getImagePipelineFactory().getMainFileCache().getResource(cacheKey);
-            File file = ((FileBinaryResource) binaryResource).getFile();
-            listener.onFileFetched(file);
-            return;
+            if (binaryResource == null && first) {
+                // 第一次加载本地缓存文件失败，可能是因为 libimagepipeline.so 未加载, 此处做一个稍微的延时后重试一次
+                Log.d(TAG + " tryFindLocalCacheFile BinaryResource is null, will try again with small delay.");
+                Threads.postBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        Threads.sleepQuietly(100);
+                        tryFindLocalCacheFile(imageRequest, listener, false);
+                    }
+                });
+                return;
+            } else {
+                File file = ((FileBinaryResource) binaryResource).getFile();
+                listener.onFileFetched(file);
+                return;
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
