@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.viewproxy.ViewProxy;
 import com.sample.boot.R;
 import com.sample.boot.app.viewproxy.BaseViewFragment;
@@ -31,6 +32,23 @@ public class SignInFragment extends BaseViewFragment implements SignInView {
         }
 
         return inflater.inflate(R.layout.sample_sign_in_view, container, false);
+    }
+
+    private View mPrefetchImage;
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        mPrefetchImage = ViewUtil.findViewByID(view, R.id.prefetch_image);
+        mPrefetchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getDefaultViewProxy() != null) {
+                    getDefaultViewProxy().prefetchImage();
+                }
+            }
+        });
+
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
