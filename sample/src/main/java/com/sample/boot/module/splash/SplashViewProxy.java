@@ -1,31 +1,27 @@
 package com.sample.boot.module.splash;
 
 import com.okandroid.boot.thread.Threads;
-import com.okandroid.boot.viewproxy.ViewProxy;
+import com.sample.boot.app.BaseViewProxy;
 
 /**
  * Created by idonans on 2017/2/3.
  */
 
-public class SplashViewProxy extends ViewProxy<SplashView> {
+public class SplashViewProxy extends BaseViewProxy<SplashView> {
 
     public SplashViewProxy(SplashView splashView) {
         super(splashView);
     }
 
     @Override
-    protected void onInitBackground() {
-        super.onInitBackground();
-
+    protected void onPreDataLoadBackground() {
         Threads.sleepQuietly(2000);
     }
 
     @Override
-    protected void onLoading() {
-    }
+    public void onPrepared() {
+        super.onPrepared();
 
-    @Override
-    protected void onStart() {
         SplashView view = getView();
         if (view == null) {
             return;

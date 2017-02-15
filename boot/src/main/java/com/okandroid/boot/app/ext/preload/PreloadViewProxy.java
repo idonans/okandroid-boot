@@ -1,5 +1,7 @@
 package com.okandroid.boot.app.ext.preload;
 
+import android.support.annotation.CallSuper;
+
 import com.okandroid.boot.rx.SubscriptionHolder;
 import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.viewproxy.ViewProxy;
@@ -14,49 +16,69 @@ import rx.Subscription;
 
 public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<T> {
 
-    private boolean mPrepared;
+    // 前置数据是否已经准备好
+    private boolean mPreDataPrepared;
 
     public PreloadViewProxy(T view) {
         super(view);
     }
 
-    public boolean isPrepared() {
-        return mPrepared;
+    /**
+     * 前置数据是否已经准备好
+     *
+     * @return
+     */
+    public final boolean isPreDataPrepared() {
+        return mPreDataPrepared;
     }
 
-    public void setPrepared(boolean prepared) {
-        mPrepared = prepared;
+    public final void setPreDataPrepared(boolean preDataPrepared) {
+        mPreDataPrepared = preDataPrepared;
     }
 
-    public void startPrepare() {
+    public final void startLoadPreData() {
         Threads.postBackground(new Runnable() {
             @Override
             public void run() {
-                prepareBackground();
+                onPreDataLoadBackground();
+                setPreDataPrepared(true);
                 Threads.postUi(new Runnable() {
                     @Override
                     public void run() {
-                        if (!isPrepared()) {
-                            throw new IllegalStateException("not prepared, need setPrepared(true) on prepareBackground()");
-                        }
-
                         T view = getView();
                         if (view == null) {
                             return;
                         }
-                        view.notifyViewProxyPrepared();
+                        view.notifyPreDataPrepared();
                     }
                 });
             }
         });
     }
 
-    protected abstract void prepareBackground();
+    /**
+     * 后台处理需要异步加载的前置数据
+     */
+    protected abstract void onPreDataLoadBackground();
 
+    private boolean mPrepared;
+
+    public final boolean isPrepared() {
+        return mPrepared;
+    }
+
+    /**
+     * 实际内容 view 已经显示，需要的前置数据也已经加载
+     */
+    @CallSuper
     public void onPrepared() {
-        if (!isPrepared()) {
-            throw new IllegalStateException("not prepared");
+        if (!isPreDataPrepared()) {
+            throw new IllegalAccessError("pre data not prepared");
         }
+        if (isPrepared()) {
+            new IllegalAccessError("already prepared").printStackTrace();
+        }
+        mPrepared = true;
     }
 
     public T getResumedView() {

@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.okandroid.boot.R;
+import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Created by idonans on 2017/2/15.
@@ -50,16 +54,16 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
             return;
         }
 
-        if (viewProxy.isPrepared()) {
-            notifyViewProxyPrepared();
+        if (viewProxy.isPreDataPrepared()) {
+            notifyPreDataPrepared();
         } else {
             showPreloadLoadingView(activity, inflater, mContentView);
-            viewProxy.startPrepare();
+            viewProxy.startLoadPreData();
         }
     }
 
     @Override
-    public void notifyViewProxyPrepared() {
+    public void notifyPreDataPrepared() {
         View view = getView();
         if (view == null) {
             new IllegalAccessError("view is null").printStackTrace();
@@ -87,8 +91,16 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
             return;
         }
 
+        PreloadViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            Log.e(TAG + " view proxy is null");
+            return;
+        }
+
         hidePreloadLoadingView(activity, inflater, mContentView);
         showPreloadContentView(activity, inflater, mContentView);
+
+        viewProxy.onPrepared();
     }
 
     protected abstract void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
@@ -96,5 +108,40 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
     protected abstract void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
 
     protected abstract void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
+
+    protected class PreloadSubViewHelper implements Closeable, Available {
+
+        public final Activity mActivity;
+        public final LayoutInflater mInflater;
+        public final ViewGroup mParentView;
+        public final View mRootView;
+
+        public PreloadSubViewHelper(Activity activity, LayoutInflater inflater, ViewGroup parentView, View rootView) {
+            mActivity = activity;
+            mInflater = inflater;
+            mParentView = parentView;
+            mRootView = rootView;
+            mParentView.addView(mRootView);
+        }
+
+        public PreloadSubViewHelper(Activity activity, LayoutInflater inflater, ViewGroup parentView, int layout) {
+            mActivity = activity;
+            mInflater = inflater;
+            mParentView = parentView;
+            mRootView = inflater.inflate(layout, parentView, false);
+            mParentView.addView(mRootView);
+        }
+
+        @Override
+        public void close() throws IOException {
+            mParentView.removeView(mRootView);
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return PreloadFragment.this.isAvailable() && mRootView.getParent() != null;
+        }
+
+    }
 
 }

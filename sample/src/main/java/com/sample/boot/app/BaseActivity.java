@@ -1,10 +1,10 @@
 package com.sample.boot.app;
 
-import com.okandroid.boot.app.OKAndroidActivity;
+import com.okandroid.boot.app.ext.preload.PreloadActivity;
 
 /**
  * Created by idonans on 2017/2/1.
  */
 
-public class BaseActivity extends OKAndroidActivity {
+public abstract class BaseActivity extends PreloadActivity {
 }

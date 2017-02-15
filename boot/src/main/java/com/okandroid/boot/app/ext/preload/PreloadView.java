@@ -18,6 +18,6 @@ public interface PreloadView {
 
     void hideLoadingView();
 
-    void notifyViewProxyPrepared();
+    void notifyPreDataPrepared();
 
 }

@@ -1,22 +1,23 @@
 package com.sample.boot.module.splash;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import com.okandroid.boot.viewproxy.ViewProxy;
+import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.sample.boot.R;
-import com.sample.boot.app.viewproxy.BaseViewFragment;
+import com.sample.boot.app.BaseFragment;
 import com.sample.boot.module.signin.SignInActivity;
 
 /**
  * Created by idonans on 2017/2/3.
  */
 
-public class SplashFragment extends BaseViewFragment implements SplashView {
+public class SplashFragment extends BaseFragment implements SplashView {
 
     public static SplashFragment newInstance() {
         Bundle args = new Bundle();
@@ -27,22 +28,13 @@ public class SplashFragment extends BaseViewFragment implements SplashView {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (container == null) {
-            throw new IllegalStateException("container is null");
-        }
-        return inflater.inflate(R.layout.sample_splash_view, container, false);
-    }
-
-    @Override
-    protected ViewProxy newDefaultViewProxy() {
-        return new SplashViewProxy(this);
-    }
-
-    @Nullable
-    @Override
     public SplashViewProxy getDefaultViewProxy() {
         return (SplashViewProxy) super.getDefaultViewProxy();
+    }
+
+    @Override
+    protected PreloadViewProxy newDefaultViewProxy() {
+        return new SplashViewProxy(this);
     }
 
     @Override
@@ -60,6 +52,29 @@ public class SplashFragment extends BaseViewFragment implements SplashView {
         activity.finish();
         activity.overridePendingTransition(0, 0);
         return true;
+    }
+
+    @Override
+    protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+
+    }
+
+    @Override
+    protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+
+    }
+
+    @Override
+    protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+
+    }
+
+    private class Content extends PreloadSubViewHelper {
+
+        private Content(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+            super(activity, inflater, contentView, R.layout.sample_splash_view);
+        }
+
     }
 
 }

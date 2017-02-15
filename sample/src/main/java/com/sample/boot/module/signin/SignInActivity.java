@@ -2,11 +2,8 @@ package com.sample.boot.module.signin;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 
-import com.okandroid.boot.widget.ContentView;
-import com.sample.boot.R;
+import com.okandroid.boot.app.ext.preload.PreloadFragment;
 import com.sample.boot.app.BaseActivity;
 
 /**
@@ -22,21 +19,8 @@ public class SignInActivity extends BaseActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(new ContentView(this));
-
-        showSignInView();
-    }
-
-    private void showSignInView() {
-        final String tag = "sign_in_view";
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        SignInFragment fragment = (SignInFragment) fragmentManager.findFragmentByTag(tag);
-        if (fragment == null) {
-            fragment = SignInFragment.newInstance();
-            fragmentManager.beginTransaction().add(R.id.okandroid_content, fragment, tag).commitNowAllowingStateLoss();
-        }
+    protected PreloadFragment createPreloadFragment() {
+        return SignInFragment.newInstance();
     }
 
 }

@@ -1,9 +1,7 @@
 package com.sample.boot.data;
 
-import com.okandroid.boot.data.StorageManager;
-
 /**
- * Created by idonans on 2017/2/3.
+ * Created by idonans on 2017/2/15.
  */
 public class SessionManager {
 
@@ -11,15 +9,19 @@ public class SessionManager {
         private static final SessionManager sInstance = new SessionManager();
     }
 
+    private static boolean sInit;
+
     public static SessionManager getInstance() {
-        return InstanceHolder.sInstance;
+        SessionManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
     }
 
-    private static final String TAG = "SessionManager";
-    private final StorageManager mStorageManager;
+    public static boolean hasInit() {
+        return sInit;
+    }
 
     private SessionManager() {
-        mStorageManager = StorageManager.getInstance();
     }
 
 }

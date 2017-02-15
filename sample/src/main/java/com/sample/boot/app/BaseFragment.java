@@ -1,10 +1,10 @@
 package com.sample.boot.app;
 
-import com.okandroid.boot.app.OKAndroidFragment;
+import com.okandroid.boot.app.ext.preload.PreloadFragment;
 
 /**
  * Created by idonans on 2017/2/1.
  */
 
-public class BaseFragment extends OKAndroidFragment {
+public abstract class BaseFragment extends PreloadFragment implements BaseView {
 }
