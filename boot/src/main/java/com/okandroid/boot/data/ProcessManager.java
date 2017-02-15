@@ -21,8 +21,16 @@ public class ProcessManager {
 
     }
 
+    private static boolean sInit;
+
     public static ProcessManager getInstance() {
-        return InstanceHolder.sInstance;
+        ProcessManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
+    }
+
+    public static boolean hasInit() {
+        return sInit;
     }
 
     private int mProcessId;

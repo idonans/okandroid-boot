@@ -46,7 +46,7 @@ public class ContentView extends FrameLayout {
 
     @SuppressWarnings("deprecation")
     @Override
-    protected final boolean fitSystemWindows(Rect insets) {
+    protected boolean fitSystemWindows(Rect insets) {
         insets.top = 0;
         return super.fitSystemWindows(insets);
     }

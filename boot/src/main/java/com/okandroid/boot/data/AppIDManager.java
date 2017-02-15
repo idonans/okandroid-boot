@@ -20,8 +20,16 @@ public class AppIDManager {
 
     }
 
+    private static boolean sInit;
+
     public static AppIDManager getInstance() {
-        return InstanceHolder.sInstance;
+        AppIDManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
+    }
+
+    public static boolean hasInit() {
+        return sInit;
     }
 
     private static final String TAG = "AppIDManager";

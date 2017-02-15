@@ -25,8 +25,16 @@ public class OkHttpManager {
 
     }
 
+    private static boolean sInit;
+
     public static OkHttpManager getInstance() {
-        return InstanceHolder.sInstance;
+        OkHttpManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
+    }
+
+    public static boolean hasInit() {
+        return sInit;
     }
 
     private static final String TAG = "OkHttpManager";

@@ -26,8 +26,16 @@ public class FrescoManager {
 
     }
 
+    private static boolean sInit;
+
     public static FrescoManager getInstance() {
-        return InstanceHolder.sInstance;
+        FrescoManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
+    }
+
+    public static boolean hasInit() {
+        return sInit;
     }
 
     private FrescoManager() {

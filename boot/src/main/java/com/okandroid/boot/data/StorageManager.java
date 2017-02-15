@@ -25,8 +25,16 @@ public class StorageManager {
 
     }
 
+    private static boolean sInit;
+
     public static StorageManager getInstance() {
-        return InstanceHolder.sInstance;
+        StorageManager instance = InstanceHolder.sInstance;
+        sInit = true;
+        return instance;
+    }
+
+    public static boolean hasInit() {
+        return sInit;
     }
 
     private static final String TAG = "StorageManager";
