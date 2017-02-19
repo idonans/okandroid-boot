@@ -17,7 +17,7 @@ public class SessionManager {
         return instance;
     }
 
-    public static boolean hasInit() {
+    public static boolean isInit() {
         return sInit;
     }
 

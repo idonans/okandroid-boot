@@ -28,7 +28,7 @@ public class AppIDManager {
         return instance;
     }
 
-    public static boolean hasInit() {
+    public static boolean isInit() {
         return sInit;
     }
 

@@ -33,7 +33,7 @@ public class OkHttpManager {
         return instance;
     }
 
-    public static boolean hasInit() {
+    public static boolean isInit() {
         return sInit;
     }
 
