@@ -5,10 +5,13 @@ import android.support.annotation.Nullable;
 
 import com.okandroid.boot.lang.Charsets;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
 /**
- * MD5 辅助类
+ * MD5 辅助类(小写32位)
  * Created by idonans on 16-4-14.
  */
 public class MD5Util {
@@ -16,27 +19,61 @@ public class MD5Util {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-    /**
-     * 得到一个由数字和小写字母构成的32位的字符串。
-     */
+    private static final String DEFAULT_MD5 = "";
+
+    @NonNull
+    public static String md5(@Nullable File file) {
+        FileInputStream fis = null;
+        DigestInputStream dis = null;
+        try {
+            if (file == null || !file.exists()) {
+                return DEFAULT_MD5;
+            }
+
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            fis = new FileInputStream(file);
+            dis = new DigestInputStream(fis, messageDigest);
+
+            byte[] step = new byte[8 * 1024];
+            int read;
+            do {
+                read = dis.read(step);
+            } while (read != -1);
+
+            byte[] data = messageDigest.digest();
+            return toHexString(data);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return DEFAULT_MD5;
+        } finally {
+            IOUtil.closeQuietly(dis);
+            IOUtil.closeQuietly(fis);
+        }
+    }
+
     @NonNull
     public static String md5(@Nullable String str) {
         try {
             if (str == null) {
-                str = "";
+                return DEFAULT_MD5;
             }
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             byte[] data = messageDigest.digest(str.getBytes(Charsets.UTF8));
-            char[] result = new char[data.length * 2];
-            int c = 0;
-            for (byte b : data) {
-                result[c++] = HEX_DIGITS[(b >> 4) & 0xf];
-                result[c++] = HEX_DIGITS[b & 0xf];
-            }
-            return new String(result);
+            return toHexString(data);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return DEFAULT_MD5;
         }
+    }
+
+    private static String toHexString(byte[] data) {
+        char[] result = new char[data.length * 2];
+        int i = 0;
+        for (byte b : data) {
+            result[i++] = HEX_DIGITS[(b >> 4) & 0xf];
+            result[i++] = HEX_DIGITS[b & 0xf];
+        }
+        return String.valueOf(result);
     }
 
 }
