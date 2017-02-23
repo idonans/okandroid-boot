@@ -2,6 +2,7 @@ package com.okandroid.boot.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.okandroid.boot.lang.Charsets;
 
@@ -20,6 +21,20 @@ public class MD5Util {
             '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     private static final String DEFAULT_MD5 = "";
+
+    @NonNull
+    public static String md5FilePath(@Nullable String filePath) {
+        try {
+            if (TextUtils.isEmpty(filePath)) {
+                return DEFAULT_MD5;
+            }
+
+            return md5(new File(filePath));
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return DEFAULT_MD5;
+        }
+    }
 
     @NonNull
     public static String md5(@Nullable File file) {
@@ -57,6 +72,7 @@ public class MD5Util {
             if (str == null) {
                 return DEFAULT_MD5;
             }
+
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             byte[] data = messageDigest.digest(str.getBytes(Charsets.UTF8));
             return toHexString(data);
