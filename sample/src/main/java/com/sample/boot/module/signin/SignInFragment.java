@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
+import com.okandroid.boot.widget.ContentLoadingView;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 
@@ -38,12 +39,23 @@ public class SignInFragment extends BaseFragment implements SignInView {
         return new SignInViewProxy(this);
     }
 
+    private ContentLoadingView mContentLoadingView;
+
     @Override
     protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+        if (mContentLoadingView != null) {
+            mContentLoadingView.hideLoading(true);
+            mContentLoadingView = null;
+        }
     }
 
     @Override
     protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+        if (mContentLoadingView == null) {
+            mContentLoadingView = new ContentLoadingView(activity);
+            contentView.addView(mContentLoadingView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mContentLoadingView.showLoading();
+        }
     }
 
     private Content mContent;

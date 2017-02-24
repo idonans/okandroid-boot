@@ -3,6 +3,7 @@ package com.sample.boot.module.signin;
 import android.support.annotation.Nullable;
 
 import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.util.HumanUtil;
 import com.okandroid.boot.util.ImageUtil;
 import com.sample.boot.app.BaseViewProxy;
@@ -23,6 +24,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
     @Override
     protected void onPreDataLoadBackground() {
+        Threads.sleepQuietly(5000);
     }
 
     public void prefetchImage() {
