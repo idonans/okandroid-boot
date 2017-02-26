@@ -24,5 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="prefetch image"/>
+        <Button android:id="@+id/test_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test loading"/>
     </LinearLayout>
 </FrameLayout>

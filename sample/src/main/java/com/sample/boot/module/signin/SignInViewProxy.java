@@ -9,6 +9,12 @@ import com.okandroid.boot.util.ImageUtil;
 import com.sample.boot.app.BaseViewProxy;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by idonans on 2017/2/3.
@@ -55,6 +61,48 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                 Log.d(builder);
             }
         });
+    }
+
+    public void testLoading() {
+        if (!isPrepared()) {
+            return;
+        }
+
+        SignInView view = getView();
+        if (view == null) {
+            return;
+        }
+
+        view.showLoadingView();
+
+        replaceDefaultSubscription(Observable.just("1")
+                .delay(3000L, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        SignInView view = getView();
+                        if (view == null) {
+                            return;
+                        }
+                        view.hideLoadingView();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        SignInView view = getView();
+                        if (view == null) {
+                            return;
+                        }
+                        e.printStackTrace();
+                        view.hideLoadingView();
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                    }
+                }));
     }
 
 }

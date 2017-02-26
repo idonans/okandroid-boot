@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import com.okandroid.boot.app.ext.backpressed.BackPressedFragment;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
+import com.okandroid.boot.widget.ContentLoadingWindow;
 
 /**
  * Created by idonans on 2017/2/15.
@@ -129,47 +129,35 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         return super.onBackPressed();
     }
 
-    private AlertDialog mLoadingDialog;
-
-    private boolean isLoadingDialogShown() {
-        return mLoadingDialog != null;
-    }
-
-    private void showLoadingDialog() {
-        hideLoadingDialog();
-
-        Activity activity = getActivity();
-
-        if (!AvailableUtil.isAvailable(activity)) {
-            return;
-        }
-
-        mLoadingDialog = new AlertDialog.Builder(activity)
-                .setCancelable(true)
-                .setMessage("加载中...")
-                .show();
-    }
-
-    private void hideLoadingDialog() {
-        if (mLoadingDialog != null) {
-            mLoadingDialog.dismiss();
-            mLoadingDialog = null;
-        }
-    }
+    private ContentLoadingWindow mContentLoadingWindow;
 
     @Override
     public boolean isLoadingViewShown() {
-        return isLoadingDialogShown();
+        return mContentLoadingWindow != null;
     }
 
     @Override
     public void showLoadingView() {
-        showLoadingDialog();
+        if (!isAvailable()) {
+            return;
+        }
+        Activity activity = SystemUtil.getActivityFromFragment(this);
+        if (!AvailableUtil.isAvailable(activity)) {
+            return;
+        }
+
+        hideLoadingView();
+
+        mContentLoadingWindow = new ContentLoadingWindow((ViewGroup) activity.getWindow().getDecorView());
+        mContentLoadingWindow.show();
     }
 
     @Override
     public void hideLoadingView() {
-        hideLoadingDialog();
+        if (mContentLoadingWindow != null) {
+            mContentLoadingWindow.dismiss();
+            mContentLoadingWindow = null;
+        }
     }
 
 }

@@ -10,8 +10,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -46,9 +44,7 @@ public class ContentLoadingView extends FrameLayout {
         init();
     }
 
-    private static final int MIN_DELAY = 1500; // ms
-
-    private long mAlphaAnimatorStartTime = -1;
+    private static final int MIN_DELAY = 1000; // ms
 
     private ProgressBar mProgressBar;
 
@@ -82,8 +78,8 @@ public class ContentLoadingView extends FrameLayout {
      * hidden until it has been shown for at least a minimum show time. If the
      * progress view was not yet visible, cancels showing the progress view.
      */
-    public void hideLoading(boolean removeFromParentAfterHide) {
-        hideLoadingWithAnimator(removeFromParentAfterHide);
+    public void hideLoading() {
+        hideLoadingImmediately();
     }
 
     /**
@@ -100,7 +96,6 @@ public class ContentLoadingView extends FrameLayout {
         if (mAlphaAnimator != null) {
             mAlphaAnimator.cancel();
             mAlphaAnimator = null;
-            mAlphaAnimatorStartTime = -1;
         }
     }
 
@@ -116,7 +111,6 @@ public class ContentLoadingView extends FrameLayout {
         mAlphaAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mAlphaAnimatorStartTime = System.currentTimeMillis();
             }
 
             @Override
@@ -129,38 +123,11 @@ public class ContentLoadingView extends FrameLayout {
         mAlphaAnimator.start();
     }
 
-    private void hideLoadingWithAnimator(final boolean removeFromParentAfterHide) {
-        if (mAlphaAnimatorStartTime == -1) {
-            hideLoadingImmediately(removeFromParentAfterHide);
-        } else {
-            clearAlphaAnimator();
-            mProgressBar.setVisibility(View.GONE);
-            mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", getAlpha(), 0f);
-            mAlphaAnimator.setDuration(220L);
-            mAlphaAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    if (mAlphaAnimator == animator) {
-                        hideLoadingImmediately(removeFromParentAfterHide);
-                    }
-                }
-            });
-            mAlphaAnimator.start();
-        }
-    }
-
-    private void hideLoadingImmediately(boolean removeFromParentAfterHide) {
+    private void hideLoadingImmediately() {
         clearAlphaAnimator();
 
         setAlpha(0);
         mProgressBar.setVisibility(View.GONE);
-
-        if (removeFromParentAfterHide) {
-            ViewParent parent = getParent();
-            if (parent instanceof ViewGroup) {
-                ((ViewGroup) parent).removeView(this);
-            }
-        }
     }
 
     @Override

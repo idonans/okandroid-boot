@@ -44,7 +44,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
     @Override
     protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         if (mContentLoadingView != null) {
-            mContentLoadingView.hideLoading(true);
+            mContentLoadingView.hideLoading();
+            contentView.removeView(mContentLoadingView);
             mContentLoadingView = null;
         }
     }
@@ -80,7 +81,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
     private class Content extends PreloadSubViewHelper {
 
-        private View mPrefetchImage;
+        private final View mPrefetchImage;
+        private final View mTestLoading;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -93,6 +95,18 @@ public class SignInFragment extends BaseFragment implements SignInView {
                         return;
                     }
                     viewProxy.prefetchImage();
+                }
+            });
+
+            mTestLoading = ViewUtil.findViewByID(mRootView, R.id.test_loading);
+            mTestLoading.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SignInViewProxy viewProxy = getDefaultViewProxy();
+                    if (viewProxy == null) {
+                        return;
+                    }
+                    viewProxy.testLoading();
                 }
             });
         }
