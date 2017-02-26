@@ -148,7 +148,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
 
         hideLoadingView();
 
-        mContentLoadingWindow = new ContentLoadingWindow((ViewGroup) activity.getWindow().getDecorView());
+        mContentLoadingWindow = new ContentLoadingWindow(activity);
         mContentLoadingWindow.show();
     }
 
