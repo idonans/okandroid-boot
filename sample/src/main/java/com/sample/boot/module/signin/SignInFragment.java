@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
-import com.okandroid.boot.widget.ContentLoadingView;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 
@@ -45,18 +44,6 @@ public class SignInFragment extends BaseFragment implements SignInView {
     protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        IOUtil.closeQuietly(mContent);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        IOUtil.closeQuietly(mContent);
     }
 
     private class Content extends PreloadSubViewHelper {

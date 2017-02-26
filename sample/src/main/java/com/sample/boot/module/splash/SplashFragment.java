@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
+import com.okandroid.boot.util.IOUtil;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 import com.sample.boot.module.signin.SignInActivity;
@@ -54,19 +55,12 @@ public class SplashFragment extends BaseFragment implements SplashView {
         return true;
     }
 
-    @Override
-    protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-
-    }
-
-    @Override
-    protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-
-    }
+    private Content mContent;
 
     @Override
     protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-
+        IOUtil.closeQuietly(mContent);
+        mContent = new Content(activity, inflater, contentView);
     }
 
     private class Content extends PreloadSubViewHelper {
