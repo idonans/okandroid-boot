@@ -39,26 +39,6 @@ public class SignInFragment extends BaseFragment implements SignInView {
         return new SignInViewProxy(this);
     }
 
-    private ContentLoadingView mContentLoadingView;
-
-    @Override
-    protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        if (mContentLoadingView != null) {
-            mContentLoadingView.hideLoading();
-            contentView.removeView(mContentLoadingView);
-            mContentLoadingView = null;
-        }
-    }
-
-    @Override
-    protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        if (mContentLoadingView == null) {
-            mContentLoadingView = new ContentLoadingView(activity);
-            contentView.addView(mContentLoadingView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mContentLoadingView.showLoading();
-        }
-    }
-
     private Content mContent;
 
     @Override
