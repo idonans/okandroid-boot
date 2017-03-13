@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.util.IOUtil;
+import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
@@ -50,6 +51,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
         private final View mPrefetchImage;
         private final View mTestLoading;
+        private final View mTestOpenUrl;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -74,6 +76,21 @@ public class SignInFragment extends BaseFragment implements SignInView {
                         return;
                     }
                     viewProxy.testLoading();
+                }
+            });
+
+            mTestOpenUrl = ViewUtil.findViewByID(mRootView, R.id.test_open_url);
+            mTestOpenUrl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SignInViewProxy viewProxy = getDefaultViewProxy();
+                    if (viewProxy == null) {
+                        return;
+                    }
+
+                    String url = "https://www.baidu.com";
+                    url = "market://details?id=com.zcool.community";
+                    SystemUtil.openView(url);
                 }
             });
         }

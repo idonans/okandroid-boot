@@ -14,6 +14,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -55,18 +56,26 @@ public class SystemUtil {
         return openView(url);
     }
 
-    /**
-     * 使用系统默认方式打开指定 url, 处理成功返回true，否则返回false. 例如可以用来唤起系统浏览器浏览指定 url 的网页。
-     */
     public static boolean openView(String url) {
+        return openView(url, null);
+    }
+
+    /**
+     * 使用 chooser 方式打开指定 url, 处理成功返回true, 否则返回false.
+     */
+    public static boolean openView(String url, CharSequence chooserTitle) {
         try {
             Uri uri = Uri.parse(url);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
-            if (infos != null && infos.size() > 0) {
-                AppContext.getContext().startActivity(intent);
+            if (intent.resolveActivity(AppContext.getContext().getPackageManager()) != null) {
+                if (TextUtils.isEmpty(chooserTitle)) {
+                    chooserTitle = " ";
+                }
+                Intent chooser = Intent.createChooser(intent, chooserTitle);
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                AppContext.getContext().startActivity(chooser);
                 return true;
             } else {
                 return false;
@@ -78,9 +87,9 @@ public class SystemUtil {
     }
 
     /**
-     * 获取当前进程允许的最大 heap size(字节数). 仅 Java 部分的内容受此系统设置限制， native 层的内容消耗受手机内存容量限制。
-     * 容量超过此值会出现 OOM 错误。
-     * 如 手机 CHM-UL00 的 heap size 是 268435456 byte (256M), 该手机的配置是 2G 内存，16G 存储空间， 1280x720 分辨率, Android 4.4.2 系统
+     * 获取当前进程允许的最大 heap size(字节数). 仅 Java 部分的内容受此系统设置限制， native 层的内容消耗受手机内存容量限制.
+     * 容量超过此值会出现 OOM 错误.
+     * 如 手机 CHM-UL00 的 heap size 是 268435456 byte (256M), 该手机的配置是 2G 内存，16G 存储空间, 1280x720 分辨率, Android 4.4.2 系统
      */
     public static long getMaxHeapSize() {
         ActivityManager am = (ActivityManager) AppContext.getContext().getSystemService(Context.ACTIVITY_SERVICE);
