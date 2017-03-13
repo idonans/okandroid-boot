@@ -306,7 +306,7 @@ public class SystemUtil {
             Uri uri = Uri.fromFile(file);
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
             AppContext.getContext().sendBroadcast(intent);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
