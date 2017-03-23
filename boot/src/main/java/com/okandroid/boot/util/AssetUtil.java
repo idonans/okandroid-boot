@@ -18,7 +18,7 @@ public class AssetUtil {
 
     public static String readAllAsString(String path,
                                          Available available,
-                                         Progress progress) throws Exception {
+                                         Progress progress) throws Throwable {
         Context context = AppContext.getContext();
         AssetManager assetManager = context.getAssets();
         InputStream is = null;
@@ -32,7 +32,7 @@ public class AssetUtil {
 
     public static byte[] readAll(String path,
                                  Available available,
-                                 Progress progress) throws Exception {
+                                 Progress progress) throws Throwable {
         Context context = AppContext.getContext();
         AssetManager assetManager = context.getAssets();
         InputStream is = null;
@@ -46,7 +46,7 @@ public class AssetUtil {
 
     public static List<String> readAllLines(String path,
                                             Available available,
-                                            Progress progress) throws Exception {
+                                            Progress progress) throws Throwable {
         Context context = AppContext.getContext();
         AssetManager assetManager = context.getAssets();
         InputStream is = null;
