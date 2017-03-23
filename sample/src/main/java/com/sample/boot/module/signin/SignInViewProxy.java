@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
-import com.okandroid.boot.util.FileUtil;
 import com.okandroid.boot.util.HumanUtil;
 import com.okandroid.boot.util.ImageUtil;
 import com.sample.boot.app.BaseViewProxy;
@@ -41,12 +40,6 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
         SignInView view = getView();
         if (view == null) {
-            return;
-        }
-
-        File localFile = FileUtil.createNewTmpFileQuietly("share", ".tmp", FileUtil.getExternalCacheDir());
-        if (localFile == null) {
-            Log.d(TAG + " fail to create tmp file for share");
             return;
         }
 
