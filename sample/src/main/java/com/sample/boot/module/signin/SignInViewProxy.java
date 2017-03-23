@@ -52,8 +52,8 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
         ImageUtil.cacheImageWithFresco(
                 "http://img.zcool.cn/community/016c5258d0d7e8a801219c77d69fa1.jpg",
-                300,
-                300,
+                200,
+                200,
                 new ImageUtil.ImageFileFetchListener() {
                     @Override
                     public void onFileFetched(@Nullable File file) {
