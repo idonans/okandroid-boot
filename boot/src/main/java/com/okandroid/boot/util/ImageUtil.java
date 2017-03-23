@@ -33,7 +33,7 @@ public class ImageUtil {
     }
 
     public static void cacheImageWithFresco(String imageUrl, final ImageFileFetchListener listener) {
-        // init fresco is need.
+        // init fresco if need.
         FrescoManager.getInstance();
 
         final ImageRequest imageRequest = ImageRequest.fromUri(imageUrl);

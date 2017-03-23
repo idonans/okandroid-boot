@@ -59,6 +59,7 @@ public class FrescoManager {
                         .setBaseDirectoryName("fresco_small_disk_" + ProcessManager.getInstance().getProcessTag())
                         .build())
                 .setNetworkFetcher(new OkHttpNetworkFetcher(OkHttpManager.getInstance().getOkHttpClient()))
+                .setDownsampleEnabled(true)
                 .setBitmapsConfig(config)
                 .build();
 
