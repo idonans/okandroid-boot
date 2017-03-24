@@ -22,47 +22,4 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task gitVersionCodeInit {
-    println 'gitVersionCodeInit'
-
-    // 使用 git commit 总数作为 version code
-    def cmd = 'git rev-list HEAD --count'
-    def gitVersionCode = cmd.execute().text.trim().toInteger()
-    println 'gitVersionCode -> ' + gitVersionCode
-    rootProject.ext.versionCode = gitVersionCode
-}
-
-task gitVersionNameInit {
-    println 'gitVersionNameInit'
-
-    // 使用距离最近的标签名 + '.' + 距离该标签的 commit 数量 作为版本名称, 通常标签使用如 1.0 命名方式
-    // 如果没有标签, 则使用 '0.0' 作为默认值
-    def cmd = 'git describe --tags'
-    def tagDesc = cmd.execute().text.trim()
-    if (''.equals(tagDesc)) {
-        tagDesc = '0.0'
-    }
-
-    def pattern = '-(\\d+)-g'
-    def matcher = tagDesc =~ pattern
-
-    def tagName
-    def commitCount
-
-    if (matcher) {
-        tagName = tagDesc.substring(0, matcher.start())
-        commitCount = matcher[0][1]
-    } else {
-        tagName = tagDesc;
-        commitCount = '0';
-    }
-
-    def gitVersionName = tagName + '.' + commitCount
-    println 'gitVersionName -> ' + gitVersionName
-    rootProject.ext.versionName = gitVersionName
-}
-
-ext {
-    println 'rootProject.ext.versionCode -> ' + rootProject.ext.versionCode
-    println 'rootProject.ext.versionName -> ' + rootProject.ext.versionName
-}
+apply from: rootProject.file('gradle/build_config.gradle')
