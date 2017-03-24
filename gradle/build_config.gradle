@@ -44,19 +44,20 @@ task gitVersionNameInit {
 
 ext {
     androidBuild = [
-            compileSdkVersion: 25,
-            buildToolsVersion: "25.0.2",
-            minSdkVersion    : 16,
-            targetSdkVersion : 25,
-            versionCode      : rootProject.ext.versionCode,
-            versionName      : rootProject.ext.versionName
+            compileSdkVersion           : 25,
+            buildToolsVersion           : '25.0.2',
+            minSdkVersion               : 16,
+            targetSdkVersion            : 25,
+            androidSupportLibraryVersion: '25.1.1',
+            versionCode                 : rootProject.ext.versionCode,
+            versionName                 : rootProject.ext.versionName,
     ]
-
 
     println 'rootProject.ext.androidBuild.compileSdkVersion -> ' + rootProject.ext.androidBuild.compileSdkVersion
     println 'rootProject.ext.androidBuild.buildToolsVersion -> ' + rootProject.ext.androidBuild.buildToolsVersion
     println 'rootProject.ext.androidBuild.minSdkVersion -> ' + rootProject.ext.androidBuild.minSdkVersion
     println 'rootProject.ext.androidBuild.targetSdkVersion -> ' + rootProject.ext.androidBuild.targetSdkVersion
+    println 'rootProject.ext.androidBuild.androidSupportLibraryVersion -> ' + rootProject.ext.androidBuild.androidSupportLibraryVersion
     println 'rootProject.ext.androidBuild.versionCode -> ' + rootProject.ext.androidBuild.versionCode
     println 'rootProject.ext.androidBuild.versionName -> ' + rootProject.ext.androidBuild.versionName
 }
