@@ -6,5 +6,13 @@
     <application android:allowBackup="true"
         android:label="@string/okandroid_app_name"
         android:supportsRtl="true"
-        android:theme="@style/OKAndroid"></application>
+        android:theme="@style/OKAndroid">
+        <provider android:name="com.okandroid.boot.lang.BootFileProvider"
+            android:authorities="${applicationId}.bootfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/okandroid_boot_fileprovider_paths"/>
+        </provider>
+    </application>
 </manifest>

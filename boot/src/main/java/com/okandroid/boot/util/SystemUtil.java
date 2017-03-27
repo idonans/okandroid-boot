@@ -25,6 +25,7 @@ import com.okandroid.boot.App;
 import com.okandroid.boot.AppContext;
 import com.okandroid.boot.R;
 import com.okandroid.boot.data.AppIDManager;
+import com.okandroid.boot.lang.BootFileProvider;
 import com.okandroid.boot.lang.Log;
 
 import java.io.File;
@@ -259,7 +260,14 @@ public class SystemUtil {
         FileUtil.deleteFileQuietly(file);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        Uri targetUri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            targetUri = BootFileProvider.getUriForFile(file);
+        } else {
+            targetUri = Uri.fromFile(file);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
 
         List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
         if (infos != null && infos.size() > 0) {
