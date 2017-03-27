@@ -8,7 +8,7 @@
         android:supportsRtl="true"
         android:theme="@style/OKAndroid">
         <provider android:name="com.okandroid.boot.lang.BootFileProvider"
-            android:authorities="${applicationId}.bootfileprovider"
+            android:authorities="${applicationId}.okandroid.boot.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS"

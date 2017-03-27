@@ -16,7 +16,7 @@ public class BootFileProvider extends FileProvider {
 
     public static Uri getUriForFile(File file) {
         Context context = AppContext.getContext();
-        final String authority = context.getPackageName() + ".bootfileprovider";
+        final String authority = context.getPackageName() + ".okandroid.boot.fileprovider";
         return FileProvider.getUriForFile(context, authority, file);
     }
 
