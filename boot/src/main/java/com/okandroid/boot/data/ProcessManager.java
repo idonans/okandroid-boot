@@ -1,13 +1,9 @@
 package com.okandroid.boot.data;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.okandroid.boot.AppContext;
 import com.okandroid.boot.lang.Log;
-
-import java.util.List;
 
 /**
  * 记录进程信息，在 app 中可能存在多个进程，在处理如缓存路径时进程之间的应当不同，否则可能出现读写冲突。
@@ -40,14 +36,7 @@ public class ProcessManager {
 
     private ProcessManager() {
         mProcessId = android.os.Process.myPid();
-        ActivityManager activityManager = (ActivityManager) AppContext.getContext().getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> processes = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
-            if (processInfo.pid == mProcessId) {
-                mProcessName = processInfo.processName;
-                break;
-            }
-        }
+        mProcessName = AppContext.getContext().getApplicationInfo().processName;
 
         String processName = mProcessName;
         int index = processName.lastIndexOf(':');
