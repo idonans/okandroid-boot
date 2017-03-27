@@ -1,25 +1,34 @@
 package com.sample.boot.module.signin;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
+import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.util.GrantResultUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 
+import java.io.File;
+
 /**
  * Created by idonans on 2017/2/3.
  */
 
 public class SignInFragment extends BaseFragment implements SignInView {
+
+    private static final String TAG = "SignInFragment";
 
     public static SignInFragment newInstance() {
         Bundle args = new Bundle();
@@ -52,6 +61,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mPrefetchImage;
         private final View mTestLoading;
         private final View mTestOpenUrl;
+        private final View mTestTakePhoto;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -93,8 +103,51 @@ public class SignInFragment extends BaseFragment implements SignInView {
                     SystemUtil.openView(url);
                 }
             });
+
+            mTestTakePhoto = ViewUtil.findViewByID(mRootView, R.id.test_take_photo);
+            mTestTakePhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkPermissionAndContinueTakePhoto();
+                }
+            });
         }
 
+    }
+
+    private static final int REQUEST_PERMISSION_CODE_TAKE_PHOTO = 1;
+    private static final int REQUEST_CODE_TAKE_PHOTO = 1;
+    private final File[] mTakePhotoFiles = new File[1];
+
+    private void checkPermissionAndContinueTakePhoto() {
+        SignInViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            return;
+        }
+
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_CODE_TAKE_PHOTO);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION_CODE_TAKE_PHOTO) {
+            if (GrantResultUtil.isAllGranted(grantResults)) {
+                SystemUtil.takePhoto(this, REQUEST_CODE_TAKE_PHOTO, mTakePhotoFiles);
+            } else {
+                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
+            Log.d(TAG + " requestCode: " + requestCode + ", resultCode: " + resultCode + ", file: " + mTakePhotoFiles[0]);
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }
