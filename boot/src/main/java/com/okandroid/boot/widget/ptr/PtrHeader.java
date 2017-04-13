@@ -151,9 +151,11 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         if (!cancel && translationY >= mCoreHeight) {
             // 触发刷新
             mRefreshStatus = STATUS_REFRESH;
+            mTextView.setText("正在刷新");
             animateToRefresh(target);
         } else {
             mRefreshStatus = STATUS_IDLE;
+            mTextView.setText("下拉刷新");
             animateToStart(target);
         }
     }
