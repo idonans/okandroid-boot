@@ -6,7 +6,7 @@
     <com.okandroid.boot.widget.ptr.PtrHeader android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="#ff666666"/>
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/okandroid_status_bar_height">
@@ -43,6 +43,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="test take photo"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="space"/>
         </LinearLayout>
-    </FrameLayout>
+    </android.support.v4.widget.NestedScrollView>
 </com.okandroid.boot.widget.ptr.PtrLayout>
