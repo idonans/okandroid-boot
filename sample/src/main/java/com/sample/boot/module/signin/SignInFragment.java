@@ -17,6 +17,7 @@ import com.okandroid.boot.util.GrantResultUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
+import com.okandroid.boot.widget.ptr.PtrLayout;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 
@@ -58,6 +59,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
     private class Content extends PreloadSubViewHelper {
 
+        private final PtrLayout mPtrLayout;
+
         private final View mPrefetchImage;
         private final View mTestLoading;
         private final View mTestOpenUrl;
@@ -65,6 +68,24 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
+
+            mPtrLayout = ViewUtil.findViewByID(mRootView, R.id.ptr_layout);
+            mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    if (mRootView != null) {
+                        mRootView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mPtrLayout != null) {
+                                    mPtrLayout.setRefreshing(false);
+                                }
+                            }
+                        }, 2000L);
+                    }
+                }
+            });
+
             mPrefetchImage = ViewUtil.findViewByID(mRootView, R.id.prefetch_image);
             mPrefetchImage.setOnClickListener(new View.OnClickListener() {
                 @Override

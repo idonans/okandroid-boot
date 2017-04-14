@@ -314,9 +314,47 @@ public class PtrLayout extends ViewGroup {
                 }
             }
         }
+
+        if (mHeader != null) {
+            HeaderView headerView = (HeaderView) mHeader;
+            headerView.setOnRefreshListener(new OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    if (mOnRefreshListener != null) {
+                        mOnRefreshListener.onRefresh();
+                    }
+                }
+            });
+        }
+    }
+
+    public void setRefreshing(boolean refreshing) {
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            Log.e(TAG + " target or header not found");
+            return;
+        }
+
+        HeaderView headerView = (HeaderView) mHeader;
+        headerView.setRefreshing(refreshing, false, mTarget);
+    }
+
+    public interface OnRefreshListener {
+        void onRefresh();
+    }
+
+    private OnRefreshListener mOnRefreshListener;
+
+    public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
+        mOnRefreshListener = onRefreshListener;
     }
 
     public interface HeaderView {
+
+        void setOnRefreshListener(OnRefreshListener onRefreshListener);
+
+        void setRefreshing(boolean refreshing, boolean notifyRefresh, View target);
 
         /**
          * 是否处于忙状态(处于忙状态时不会触发新的下拉事件)
@@ -331,6 +369,7 @@ public class PtrLayout extends ViewGroup {
         void applyOffsetYDiff(float yDiff, View target);
 
         void finishOffsetY(boolean cancel, View target);
+
     }
 
 }

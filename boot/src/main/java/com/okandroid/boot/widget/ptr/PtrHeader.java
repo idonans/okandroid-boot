@@ -1,5 +1,6 @@
 package com.okandroid.boot.widget.ptr;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -150,13 +151,45 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         float translationY = getTranslationY();
         if (!cancel && translationY >= mCoreHeight) {
             // 触发刷新
-            mRefreshStatus = STATUS_REFRESH;
-            mTextView.setText("正在刷新");
-            animateToRefresh(target);
+            setRefreshInternal(true, true, target);
         } else {
+            setRefreshInternal(false, false, target);
+        }
+    }
+
+    @Override
+    public void setRefreshing(boolean refreshing, boolean notifyRefresh, View target) {
+        setRefreshInternal(refreshing, notifyRefresh, target);
+    }
+
+    private void setRefreshInternal(boolean refresh, boolean notifyRefresh, View target) {
+        boolean statusChanged;
+        if (!refresh) {
+            statusChanged = mRefreshStatus != STATUS_IDLE;
+
             mRefreshStatus = STATUS_IDLE;
-            mTextView.setText("下拉刷新");
             animateToStart(target);
+        } else {
+            statusChanged = mRefreshStatus != STATUS_REFRESH;
+
+            if (mRefreshStatus == STATUS_REFRESH) {
+                notifyRefresh = false;
+            }
+
+            mRefreshStatus = STATUS_REFRESH;
+            animateToRefresh(target, notifyRefresh);
+        }
+
+        if (statusChanged) {
+            onStatusChanged(mRefreshStatus);
+        }
+    }
+
+    protected void onStatusChanged(int refreshStatus) {
+        if (refreshStatus == STATUS_REFRESH) {
+            mTextView.setText("正在刷新");
+        } else {
+            mTextView.setText("下拉刷新");
         }
     }
 
@@ -173,7 +206,14 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
     private ValueAnimator mToRefreshAnimator;
 
-    private void animateToRefresh(final View target) {
+    private PtrLayout.OnRefreshListener mOnRefreshListener;
+
+    @Override
+    public void setOnRefreshListener(PtrLayout.OnRefreshListener onRefreshListener) {
+        mOnRefreshListener = onRefreshListener;
+    }
+
+    private void animateToRefresh(final View target, final boolean notifyRefresh) {
         clearAnyOldAnimation();
 
         final float startTranslationY = getTranslationY();
@@ -193,6 +233,28 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 float translationY = (float) animation.getAnimatedValue();
                 setTranslationY(translationY);
                 target.setTranslationY(translationY);
+            }
+        });
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (notifyRefresh) {
+                    if (mOnRefreshListener != null) {
+                        mOnRefreshListener.onRefresh();
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
             }
         });
         animator.start();
