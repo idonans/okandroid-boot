@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -12,7 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -58,47 +59,31 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
     private static final int STATUS_REFRESH = 1;
 
     private int mRefreshStatus = STATUS_IDLE;
-    private int mCoreHeight;
-    private int mMaxHeight;
+    private int mCoreHeight; // 触发下拉刷新的高度
+    private int mMaxHeight; // 最大展示高度
 
-    private TextView mTextView;
+    private StatusHeaderView mStatusHeaderView;
 
     private void init() {
         Context context = getContext();
 
-        mCoreHeight = getCoreHeight();
-        mMaxHeight = getMaxHeight();
+        mStatusHeaderView = createStatusHeaderView();
+
+        mCoreHeight = mStatusHeaderView.mCoreHeight;
+        mMaxHeight = mStatusHeaderView.mMaxHeight;
 
         if (mCoreHeight <= 0 || mMaxHeight < mCoreHeight) {
             throw new IllegalArgumentException(TAG + " core height or max height invalid [" + mCoreHeight + ", " + mMaxHeight + "]");
         }
 
-        TextView textView = new TextView(context);
-        textView.setText("ptr header");
-        textView.setTextColor(Color.RED);
-        textView.setTextSize(20);
-        textView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
-        addView(textView);
-
-        mTextView = textView;
+        View contentView = mStatusHeaderView.createView(LayoutInflater.from(context), this);
+        if (contentView != null) {
+            addView(contentView);
+        }
     }
 
-    /**
-     * 触发下拉刷新的高度
-     *
-     * @return
-     */
-    protected int getCoreHeight() {
-        return DimenUtil.dp2px(100);
-    }
-
-    /**
-     * 最大展示高度
-     *
-     * @return
-     */
-    public int getMaxHeight() {
-        return DimenUtil.dp2px(200);
+    public StatusHeaderView createStatusHeaderView() {
+        return new DefaultStatusHeaderView(this, DimenUtil.dp2px(100), DimenUtil.dp2px(200));
     }
 
     @Override
@@ -129,12 +114,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
         target.setTranslationY(translationY);
 
-        // TODO
-        if (translationY < mCoreHeight) {
-            mTextView.setText("下拉刷新");
-        } else {
-            mTextView.setText("松开刷新");
-        }
+        mStatusHeaderView.updateView(translationY, false);
     }
 
     protected float adjustYDiff(float yDiff) {
@@ -163,33 +143,16 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
     }
 
     private void setRefreshInternal(boolean refresh, boolean notifyRefresh, View target) {
-        boolean statusChanged;
         if (!refresh) {
-            statusChanged = mRefreshStatus != STATUS_IDLE;
-
             mRefreshStatus = STATUS_IDLE;
             animateToStart(target);
         } else {
-            statusChanged = mRefreshStatus != STATUS_REFRESH;
-
             if (mRefreshStatus == STATUS_REFRESH) {
                 notifyRefresh = false;
             }
 
             mRefreshStatus = STATUS_REFRESH;
             animateToRefresh(target, notifyRefresh);
-        }
-
-        if (statusChanged) {
-            onStatusChanged(mRefreshStatus);
-        }
-    }
-
-    protected void onStatusChanged(int refreshStatus) {
-        if (refreshStatus == STATUS_REFRESH) {
-            mTextView.setText("正在刷新");
-        } else {
-            mTextView.setText("下拉刷新");
         }
     }
 
@@ -225,6 +188,8 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
             dur = 160;
         }
 
+        mStatusHeaderView.updateView(startTranslationY, true);
+
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -233,6 +198,8 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 float translationY = (float) animation.getAnimatedValue();
                 setTranslationY(translationY);
                 target.setTranslationY(translationY);
+
+                mStatusHeaderView.updateView(translationY, true);
             }
         });
         animator.addListener(new Animator.AnimatorListener() {
@@ -276,6 +243,8 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
             dur = 160;
         }
 
+        mStatusHeaderView.updateView(startTranslationY, false);
+
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -284,6 +253,8 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 float translationY = (float) animation.getAnimatedValue();
                 setTranslationY(translationY);
                 target.setTranslationY(translationY);
+
+                mStatusHeaderView.updateView(translationY, false);
             }
         });
         animator.start();
@@ -295,6 +266,93 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxHeight, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public static abstract class StatusHeaderView {
+
+        protected final LayoutInflater mInflater;
+
+        protected final int mCoreHeight;
+        protected final int mMaxHeight;
+
+        protected StatusHeaderView(ViewGroup parent, int coreHeight, int maxHeight) {
+            mInflater = LayoutInflater.from(parent.getContext());
+            mCoreHeight = coreHeight;
+            mMaxHeight = maxHeight;
+        }
+
+        /**
+         * 创建初始内容
+         *
+         * @param inflater
+         * @param parent
+         * @return
+         */
+        protected abstract View createView(LayoutInflater inflater, ViewGroup parent);
+
+        /**
+         * 更新内容
+         *
+         * @param translationY 下拉距离
+         * @param isRefreshing 当前是否处于正在刷新的状态
+         */
+        protected abstract void updateView(float translationY, boolean isRefreshing);
+
+    }
+
+    public static class DefaultStatusHeaderView extends StatusHeaderView {
+
+        protected float mLastTranslationY;
+        protected boolean mLastRefreshing;
+
+        private TextView mTextView;
+
+        protected DefaultStatusHeaderView(ViewGroup parent, int coreHeight, int maxHeight) {
+            super(parent, coreHeight, maxHeight);
+        }
+
+        @Override
+        protected View createView(LayoutInflater inflater, ViewGroup parent) {
+            TextView textView = new TextView(parent.getContext());
+            textView.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            textView.setText("下拉刷新");
+
+            mTextView = textView;
+
+            return textView;
+        }
+
+        @Override
+        protected void updateView(float translationY, boolean isRefreshing) {
+            if (isRefreshing) {
+                // 当前正在刷新
+                if (mLastRefreshing != isRefreshing) {
+                    // 文字需要发生改变
+                    mTextView.setText("加载中...");
+                }
+            } else {
+                if (mLastRefreshing != isRefreshing) {
+                    // 文字需要发生改变
+                    if (translationY >= mCoreHeight) {
+                        mTextView.setText("松手刷新");
+                    } else {
+                        mTextView.setText("下拉刷新");
+                    }
+                } else {
+                    if (mLastTranslationY < mCoreHeight && translationY >= mCoreHeight) {
+                        // 文字需要发生改变
+                        mTextView.setText("松手刷新");
+                    } else if (mLastTranslationY >= mCoreHeight && translationY < mCoreHeight) {
+                        // 文字需要发生改变
+                        mTextView.setText("下拉刷新");
+                    }
+                }
+            }
+
+            mLastTranslationY = translationY;
+            mLastRefreshing = isRefreshing;
+        }
+
     }
 
 }
