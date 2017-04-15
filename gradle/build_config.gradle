@@ -19,7 +19,7 @@ task gitVersionNameInit {
     // 如果没有标签, 则使用 '0.0' 作为默认值
     def cmd = 'git describe --tags'
     def tagDesc = cmd.execute().text.trim()
-    if (''.equals(tagDesc)) {
+    if (!tagDesc) {
         tagDesc = '0.0'
     }
 
