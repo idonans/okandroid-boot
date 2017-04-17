@@ -360,6 +360,10 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return false;
         }
 
+        if (mHeader.getTranslationY() != 0) {
+            return false;
+        }
+
         return isEnabled()
                 && !isHeaderStatusBusy()
                 && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;

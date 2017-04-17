@@ -138,6 +138,11 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
     @Override
     public void finishOffsetY(boolean cancel, View target) {
+        if (mRefreshStatus != STATUS_IDLE) {
+            Log.d(TAG + " finishOffsetY refresh status not idle " + mRefreshStatus);
+            return;
+        }
+
         float translationY = getTranslationY();
         if (!cancel && translationY >= mCoreHeight) {
             // 触发刷新
