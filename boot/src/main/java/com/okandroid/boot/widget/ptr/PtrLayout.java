@@ -211,15 +211,15 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         return headerView.isStatusBusy();
     }
 
-    public void applyOffsetYDiff(float yDiff) {
+    public float applyOffsetYDiff(float yDiff) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
-            return;
+            return 0f;
         }
 
         HeaderView headerView = (HeaderView) mHeader;
-        headerView.applyOffsetYDiff(yDiff, mTarget);
+        return headerView.applyOffsetYDiff(yDiff, mTarget);
     }
 
     /**
@@ -354,28 +354,67 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        // TODO
-        return false;
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            return false;
+        }
+
+        return isEnabled()
+                && !isHeaderStatusBusy()
+                && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
-        // TODO
+        mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
+        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
+        mNestedScrollInProgress = true;
     }
 
     @Override
     public void onStopNestedScroll(View target) {
-        // TODO
+        mNestedScrollingParentHelper.onStopNestedScroll(target);
+        mNestedScrollInProgress = false;
+
+        finishOffsetY(false);
+
+        stopNestedScroll();
     }
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        // TODO
+        int[] parentOffsetInWindow = new int[2];
+        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
+
+        final int dy = dyUnconsumed + parentOffsetInWindow[1];
+        applyOffsetYDiff(-dy);
     }
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        // TODO
+        ensureTargetAndHeader();
+
+        if (mTarget == null || mHeader == null) {
+            dispatchNestedPreScroll(dx, dy, consumed, null);
+            return;
+        }
+
+        if (mHeader.getTranslationY() > 0) {
+            float usedDy = applyOffsetYDiff(-dy);
+            usedDy = -usedDy;
+            dy -= usedDy;
+
+            final int[] parentConsumed = new int[2];
+            dispatchNestedPreScroll(dx, dy, parentConsumed, null);
+
+            consumed[0] = 0;
+            consumed[1] = (int) usedDy;
+            consumed[0] += parentConsumed[0];
+            consumed[1] += parentConsumed[1];
+        } else {
+            dispatchNestedPreScroll(dx, dy, consumed, null);
+        }
     }
 
     @Override
@@ -466,9 +505,9 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         boolean isStatusBusy();
 
         /**
-         * 处理下拉距离变更值
+         * 处理下拉距离变更值, 返回实际消耗的变更值
          */
-        void applyOffsetYDiff(float yDiff, View target);
+        float applyOffsetYDiff(float yDiff, View target);
 
         void finishOffsetY(boolean cancel, View target);
 

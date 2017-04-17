@@ -92,17 +92,21 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
     }
 
     @Override
-    public void applyOffsetYDiff(float yDiff, View target) {
+    public float applyOffsetYDiff(float yDiff, View target) {
         if (mRefreshStatus != STATUS_IDLE) {
             Log.d(TAG + " applyOffsetYDiff refresh status not idle " + mRefreshStatus);
-            return;
+            return 0f;
         }
+
+        float oldYDiff = yDiff;
 
         clearAnyOldAnimation();
 
         yDiff = adjustYDiff(yDiff);
 
         float translationY = getTranslationY();
+        float oldTranslationY = translationY;
+
         translationY += yDiff;
         if (translationY < 0) {
             translationY = 0;
@@ -115,6 +119,12 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         target.setTranslationY(translationY);
 
         mStatusHeaderView.updateView(translationY, false);
+
+        if (oldTranslationY == translationY) {
+            // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 yDiff
+            return 0f;
+        }
+        return oldYDiff;
     }
 
     protected float adjustYDiff(float yDiff) {
