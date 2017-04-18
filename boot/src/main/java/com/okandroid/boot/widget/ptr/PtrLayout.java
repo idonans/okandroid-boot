@@ -392,7 +392,10 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
 
         final int dy = dyUnconsumed + parentOffsetInWindow[1];
-        applyOffsetYDiff(-dy);
+
+        if (dy < 0 && !canChildScrollUp()) {
+            applyOffsetYDiff(-dy);
+        }
     }
 
     @Override
@@ -404,7 +407,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return;
         }
 
-        if (mHeader.getTranslationY() > 0) {
+        if (dy > 0 && mHeader.getTranslationY() > 0) {
             float usedDy = applyOffsetYDiff(-dy);
             usedDy = -usedDy;
             dy -= usedDy;
@@ -477,12 +480,14 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+        return false;
+        // return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+        return false;
+        // return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
     public interface OnRefreshListener {
