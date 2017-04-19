@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.facebook.drawee.drawable.ProgressBarDrawable;
 import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
@@ -334,6 +335,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         protected View createView(LayoutInflater inflater, ViewGroup parent) {
             View content = inflater.inflate(R.layout.okandroid_ptr_header_default_view, parent, false);
             mProgressBar = ViewUtil.findViewByID(content, R.id.progress_bar);
+            mProgressBar.setProgressDrawable(new ProgressBarDrawable());
 
             mProgressBar.setIndeterminate(false);
             mProgressBar.setProgress(0);
