@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
-import com.facebook.drawee.drawable.ProgressBarDrawable;
 import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
@@ -120,7 +119,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
         target.setTranslationY(translationY);
 
-        mStatusHeaderView.updateView(translationY, false);
+        mStatusHeaderView.updateView(translationY, false, false);
 
         if (oldTranslationY == translationY) {
             // 如果应用滑动之后没有产生实际位置偏移，则认为此次没有消耗 yDiff
@@ -205,7 +204,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
             dur = 160;
         }
 
-        mStatusHeaderView.updateView(startTranslationY, true);
+        mStatusHeaderView.updateView(startTranslationY, true, true);
 
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
@@ -216,7 +215,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 setTranslationY(translationY);
                 target.setTranslationY(translationY);
 
-                mStatusHeaderView.updateView(translationY, true);
+                mStatusHeaderView.updateView(translationY, true, true);
             }
         });
         animator.addListener(new Animator.AnimatorListener() {
@@ -260,7 +259,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
             dur = 160;
         }
 
-        mStatusHeaderView.updateView(startTranslationY, false);
+        mStatusHeaderView.updateView(startTranslationY, false, true);
 
         ValueAnimator animator = ValueAnimator.ofFloat(startTranslationY, targetTranslationY);
         animator.setDuration(dur);
@@ -271,7 +270,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 setTranslationY(translationY);
                 target.setTranslationY(translationY);
 
-                mStatusHeaderView.updateView(translationY, false);
+                mStatusHeaderView.updateView(translationY, false, true);
             }
         });
         animator.start();
@@ -318,8 +317,9 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
          *
          * @param translationY 下拉距离
          * @param isRefreshing 当前是否处于正在刷新的状态
+         * @param inAnimation  是否处于动画中
          */
-        protected abstract void updateView(float translationY, boolean isRefreshing);
+        protected abstract void updateView(float translationY, boolean isRefreshing, boolean inAnimation);
 
     }
 
@@ -335,7 +335,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         protected View createView(LayoutInflater inflater, ViewGroup parent) {
             View content = inflater.inflate(R.layout.okandroid_ptr_header_default_view, parent, false);
             mProgressBar = ViewUtil.findViewByID(content, R.id.progress_bar);
-            mProgressBar.setProgressDrawable(new ProgressBarDrawable());
+            mProgressBar.setProgressDrawable(new ArrowDrawable());
 
             mProgressBar.setIndeterminate(false);
             mProgressBar.setProgress(0);
@@ -344,9 +344,13 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         }
 
         @Override
-        protected void updateView(float translationY, boolean isRefreshing) {
+        protected void updateView(float translationY, boolean isRefreshing, boolean inAnimation) {
             if (isRefreshing) {
                 mProgressBar.setIndeterminate(true);
+                return;
+            }
+
+            if (inAnimation) {
                 return;
             }
 
@@ -356,11 +360,12 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
             if (translationY <= 0) {
                 progress = 0;
             } else if (translationY < mCoreHeight) {
-                progress = (int) (translationY / mCoreHeight) * 100;
+                progress = (int) (translationY / mCoreHeight * 100);
             } else {
                 progress = 100;
             }
 
+            Log.d("progress changed to -> " + progress);
             mProgressBar.setProgress(progress);
         }
 

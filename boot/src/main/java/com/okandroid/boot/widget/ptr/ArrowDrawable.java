@@ -1,0 +1,119 @@
+package com.okandroid.boot.widget.ptr;
+
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.shapes.PathShape;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.util.DimenUtil;
+
+/**
+ * Created by idonans on 2017/4/19.
+ */
+
+public class ArrowDrawable extends Drawable {
+
+    private int mColor = 0xff616161;
+
+    private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private final PathShape mPathShape;
+
+    public ArrowDrawable() {
+        final float size = DimenUtil.dp2px(60);
+        final float cellSize = size / 6f;
+
+        Path path = new Path();
+        path.moveTo(3 * cellSize, 0);
+        path.lineTo(2 * cellSize, 4 * cellSize);
+        path.lineTo(cellSize, 4 * cellSize);
+        path.lineTo(3 * cellSize, size);
+        path.lineTo(5 * cellSize, 4 * cellSize);
+        path.lineTo(4 * cellSize, 4 * cellSize);
+        path.lineTo(3 * cellSize, 0);
+
+        mPathShape = new PathShape(path, size, size);
+    }
+
+    public void setColor(int color) {
+        if (mColor != color) {
+            mColor = color;
+            invalidateSelf();
+        }
+    }
+
+    public int getColor() {
+        return mColor;
+    }
+
+    @Override
+    protected boolean onLevelChange(int level) {
+        invalidateSelf();
+        return true;
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        mPathShape.resize(bounds.width(), bounds.height());
+    }
+
+    @Override
+    public void draw(@NonNull Canvas canvas) {
+        int level = getLevel(); // [0, 10000]
+
+        Log.d(" draw level : " + level);
+
+        Rect bounds = getBounds();
+        float degrees;
+        if (level < 5000) {
+            degrees = 0;
+        } else if (level < 10000) {
+            degrees = (level - 5000) / 5000f * 180;
+        } else {
+            degrees = 180;
+        }
+
+        int saveCount = canvas.save();
+
+        canvas.rotate(degrees, bounds.exactCenterX(), bounds.exactCenterY());
+        mPaint.setColor(mColor);
+        mPathShape.draw(canvas, mPaint);
+
+        canvas.restoreToCount(saveCount);
+    }
+
+    @Override
+    public void setAlpha(@IntRange(from = 0, to = 255) int alpha) {
+        mPaint.setAlpha(alpha);
+    }
+
+    @Override
+    public void setColorFilter(@Nullable ColorFilter colorFilter) {
+        mPaint.setColorFilter(colorFilter);
+    }
+
+    @Override
+    public int getOpacity() {
+        return getOpacityFromColor(mColor);
+    }
+
+    private static int getOpacityFromColor(int color) {
+        int colorAlpha = color >>> 24;
+        if (colorAlpha == 255) {
+            return PixelFormat.OPAQUE;
+        } else if (colorAlpha == 0) {
+            return PixelFormat.TRANSPARENT;
+        } else {
+            return PixelFormat.TRANSLUCENT;
+        }
+    }
+
+}
