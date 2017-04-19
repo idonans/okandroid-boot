@@ -10,15 +10,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
+import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
+import com.okandroid.boot.util.ViewUtil;
 
 /**
  * Created by idonans on 2017/4/12.
@@ -283,6 +284,12 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        clearAnyOldAnimation();
+    }
+
     public static abstract class StatusHeaderView {
 
         protected final LayoutInflater mInflater;
@@ -317,10 +324,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
     public static class DefaultStatusHeaderView extends StatusHeaderView {
 
-        protected float mLastTranslationY;
-        protected boolean mLastRefreshing;
-
-        private TextView mTextView;
+        private ProgressBar mProgressBar;
 
         protected DefaultStatusHeaderView(ViewGroup parent, int coreHeight, int maxHeight) {
             super(parent, coreHeight, maxHeight);
@@ -328,44 +332,34 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
 
         @Override
         protected View createView(LayoutInflater inflater, ViewGroup parent) {
-            TextView textView = new TextView(parent.getContext());
-            textView.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-            textView.setText("下拉刷新");
+            View content = inflater.inflate(R.layout.okandroid_ptr_header_default_view, parent, false);
+            mProgressBar = ViewUtil.findViewByID(content, R.id.progress_bar);
 
-            mTextView = textView;
+            mProgressBar.setIndeterminate(false);
+            mProgressBar.setProgress(0);
 
-            return textView;
+            return content;
         }
 
         @Override
         protected void updateView(float translationY, boolean isRefreshing) {
             if (isRefreshing) {
-                // 当前正在刷新
-                if (mLastRefreshing != isRefreshing) {
-                    // 文字需要发生改变
-                    mTextView.setText("加载中...");
-                }
-            } else {
-                if (mLastRefreshing != isRefreshing) {
-                    // 文字需要发生改变
-                    if (translationY >= mCoreHeight) {
-                        mTextView.setText("松手刷新");
-                    } else {
-                        mTextView.setText("下拉刷新");
-                    }
-                } else {
-                    if (mLastTranslationY < mCoreHeight && translationY >= mCoreHeight) {
-                        // 文字需要发生改变
-                        mTextView.setText("松手刷新");
-                    } else if (mLastTranslationY >= mCoreHeight && translationY < mCoreHeight) {
-                        // 文字需要发生改变
-                        mTextView.setText("下拉刷新");
-                    }
-                }
+                mProgressBar.setIndeterminate(true);
+                return;
             }
 
-            mLastTranslationY = translationY;
-            mLastRefreshing = isRefreshing;
+            mProgressBar.setIndeterminate(false);
+
+            int progress;
+            if (translationY <= 0) {
+                progress = 0;
+            } else if (translationY < mCoreHeight) {
+                progress = (int) (translationY / mCoreHeight) * 100;
+            } else {
+                progress = 100;
+            }
+
+            mProgressBar.setProgress(progress);
         }
 
     }
