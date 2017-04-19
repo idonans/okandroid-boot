@@ -73,16 +73,12 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    if (mRootView != null) {
-                        mRootView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mPtrLayout != null) {
-                                    mPtrLayout.setRefreshing(false);
-                                }
-                            }
-                        }, 2000L);
-                    }
+                    mRootView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPtrLayout.setRefreshing(false);
+                        }
+                    }, 2000L);
                 }
             });
 
@@ -106,6 +102,9 @@ public class SignInFragment extends BaseFragment implements SignInView {
                     if (viewProxy == null) {
                         return;
                     }
+
+                    invokeAutoRefresh();
+
                     viewProxy.testLoading();
                 }
             });
@@ -132,6 +131,18 @@ public class SignInFragment extends BaseFragment implements SignInView {
                     checkPermissionAndContinueTakePhoto();
                 }
             });
+
+            invokeAutoRefresh();
+        }
+
+        private void invokeAutoRefresh() {
+            mPtrLayout.setRefreshing(true);
+            mRootView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mPtrLayout.setRefreshing(false);
+                }
+            }, 2000L);
         }
 
     }
