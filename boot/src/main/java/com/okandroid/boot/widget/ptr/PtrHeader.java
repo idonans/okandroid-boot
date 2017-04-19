@@ -365,7 +365,6 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
                 progress = 100;
             }
 
-            Log.d("progress changed to -> " + progress);
             mProgressBar.setProgress(progress);
         }
 

@@ -12,7 +12,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
 
 /**
@@ -68,8 +67,6 @@ public class ArrowDrawable extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         int level = getLevel(); // [0, 10000]
-
-        Log.d(" draw level : " + level);
 
         Rect bounds = getBounds();
         float degrees;
