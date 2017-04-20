@@ -40,7 +40,11 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
         Threads.postBackground(new Runnable() {
             @Override
             public void run() {
-                onPreDataLoadBackground();
+                try {
+                    onPreDataLoadBackground();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
                 setPreDataPrepared(true);
                 Threads.postUi(new Runnable() {
                     @Override
