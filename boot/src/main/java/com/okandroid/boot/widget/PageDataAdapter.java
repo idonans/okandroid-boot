@@ -2,6 +2,7 @@ package com.okandroid.boot.widget;
 
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 
 import java.util.Arrays;
 
@@ -28,12 +29,48 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
      */
     public static final int GROUP_MORE = 1000;
 
+    /**
+     * 小样式的加载中, 加载错误.
+     */
+    public static final int VIEW_HOLDER_TYPE_LOADING_SMALL = 1;
+    /**
+     * 大样式的加载中, 加载错误.
+     */
+    public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = 2;
+    /**
+     * 默认分页内容的类型
+     */
+    public static final int VIEW_HOLDER_TYPE_PAGE_CONTENT_DEFAULT = 100;
+
     public PageDataAdapter(RecyclerView recyclerView) {
         super(recyclerView);
     }
 
     public PageDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
         super(data, recyclerView);
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return super.onCreateViewHolder(parent, viewType);
+    }
+
+    @Override
+    public int getGroupItemViewType(int position, int group, int positionInGroup) {
+        switch (group) {
+            case GROUP_INIT:
+            case GROUP_MORE:
+                PageLoadingStatus pageLoadingStatus = (PageLoadingStatus) getGroupItem(group, positionInGroup);
+                if (pageLoadingStatus.smallStyle) {
+                    return VIEW_HOLDER_TYPE_LOADING_SMALL;
+                } else {
+                    return VIEW_HOLDER_TYPE_LOADING_LARGE;
+                }
+            case GROUP_PAGE_CONTENT_DEFAULT:
+                return VIEW_HOLDER_TYPE_PAGE_CONTENT_DEFAULT;
+        }
+
+        return super.getGroupItemViewType(position, group, positionInGroup);
     }
 
     public void showPageLoadingStatus(PageLoadingStatus pageLoadingStatus, ExtraPageLoadingStatusCallback callback) {
