@@ -107,16 +107,6 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
 
     protected abstract void onViewCreatedSafety(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull View view);
 
-    @Override
-    public boolean isViewAvailable() {
-        return isAvailable() && getView() != null;
-    }
-
-    @Override
-    public boolean isViewResumed() {
-        return isViewAvailable() && isAppCompatResumed();
-    }
-
     private PreloadViewProxy mDefaultViewProxy;
 
     @Override

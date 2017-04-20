@@ -6,10 +6,6 @@ package com.okandroid.boot.app.ext.preload;
 
 public interface PreloadView {
 
-    boolean isViewAvailable();
-
-    boolean isViewResumed();
-
     boolean callActivityBackPressed();
 
     boolean isLoadingViewShown();

@@ -85,25 +85,14 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
         mPrepared = true;
     }
 
-    public T getResumedView() {
-        T view = getView();
-        if (view == null) {
-            return null;
-        }
-        if (view.isViewResumed()) {
-            return view;
-        }
-        return null;
-    }
-
     private final SubscriptionHolder mDefaultSubscriptionHolder = new SubscriptionHolder();
 
     public void replaceDefaultSubscription(Subscription subscription) {
         mDefaultSubscriptionHolder.setSubscription(subscription);
     }
 
-    public boolean onBackClick() {
-        T view = getResumedView();
+    public boolean callActivityBackPressed() {
+        T view = getView();
         if (view != null) {
             return view.callActivityBackPressed();
         }
