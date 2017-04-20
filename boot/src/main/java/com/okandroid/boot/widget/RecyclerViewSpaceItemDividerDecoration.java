@@ -9,7 +9,7 @@ import android.view.View;
 import com.okandroid.boot.util.DimenUtil;
 
 /**
- * 适用于纵向线性布局的 divider, 可指定上下的空白区域, divider 的 size. 每个 ViewHolder需要有不透明背景
+ * 适用于纵向线性布局的 divider, 可指定上下的空白区域, divider 的 size. 每个 ViewHolder 需要有不透明背景
  * Created by idonans on 16-5-4.
  */
 public class RecyclerViewSpaceItemDividerDecoration extends RecyclerView.ItemDecoration {
