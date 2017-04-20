@@ -27,9 +27,7 @@ public class SplashViewProxy extends BaseViewProxy<SplashView> {
             return;
         }
 
-        if (view.isViewResumed()) {
-            view.directToSignIn();
-        }
+        view.directToSignIn();
     }
 
 }
