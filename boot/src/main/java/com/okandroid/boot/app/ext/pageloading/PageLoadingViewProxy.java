@@ -52,7 +52,12 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
 
     protected void tryLoadPage(int pageNo) {
         if (pageNo < mFirstPageNo) {
-            Log.e(TAG + " tryLoadPage with invalid page no " + pageNo);
+            Log.e(TAG + " tryLoadPage with invalid page [" + pageNo + "/" + mTotalPage + "]");
+            return;
+        }
+
+        if (mTotalPage >= 0 && pageNo >= mTotalPage) {
+            Log.e(TAG + " tryLoadPage with no more page [" + pageNo + "/" + mTotalPage + "]");
             return;
         }
 
