@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * 同一时间至多只有一页数据处于加载中。例如：当前正在加载第二页数据，又触发了下拉刷新开始加载第一页，那么正在加载的第二页的请求会被终止。
@@ -17,30 +18,26 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
     /**
      * 显示初始加载内容的分组区域, 如：全屏的加载中，网络错误，加载失败等. 该组中通常只有一个 item 项
      */
-    public static final int GROUP_INIT = 1;
+    public static final int GROUP_INIT = 100;
 
     /**
      * 显示分页数据内容
      */
-    public static final int GROUP_PAGE_CONTENT_DEFAULT = 100;
+    public static final int GROUP_PAGE_CONTENT_DEFAULT = 1000;
 
     /**
      * 当存在分页数据内容时，在数据底部显示加载中，网络错误或加载失败的样式. 该组中通常只有一个 item 项
      */
-    public static final int GROUP_MORE = 1000;
+    public static final int GROUP_MORE = 2000;
 
     /**
      * 小样式的加载中, 加载错误.
      */
-    public static final int VIEW_HOLDER_TYPE_LOADING_SMALL = 1;
+    public static final int VIEW_HOLDER_TYPE_LOADING_SMALL = 2000;
     /**
      * 大样式的加载中, 加载错误.
      */
-    public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = 2;
-    /**
-     * 默认分页内容的类型
-     */
-    public static final int VIEW_HOLDER_TYPE_PAGE_CONTENT_DEFAULT = 100;
+    public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = 2001;
 
     public PageDataAdapter(RecyclerView recyclerView) {
         super(recyclerView);
@@ -66,12 +63,99 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 } else {
                     return VIEW_HOLDER_TYPE_LOADING_LARGE;
                 }
-            case GROUP_PAGE_CONTENT_DEFAULT:
-                return VIEW_HOLDER_TYPE_PAGE_CONTENT_DEFAULT;
         }
 
         return super.getGroupItemViewType(position, group, positionInGroup);
     }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+
+        checkAndNotifyLoadMore(holder, position);
+    }
+
+    public void checkAndNotifyLoadMore(RecyclerView.ViewHolder holder, int position) {
+        int[] groupAndPosition = getGroupAndPosition(position);
+        if (groupAndPosition != null) {
+            if (groupAndPosition[0] == GROUP_PAGE_CONTENT_DEFAULT) {
+                int count = getGroupItemCount(GROUP_PAGE_CONTENT_DEFAULT);
+                if (groupAndPosition[1] + 2 >= count) {
+                    notifyLoadMore();
+                }
+            }
+        }
+    }
+
+    public interface OnMoreLoadListener {
+        void onLoadMore();
+    }
+
+    private OnMoreLoadListener mOnMoreLoadListener;
+
+    public void setOnMoreLoadListener(OnMoreLoadListener onMoreLoadListener) {
+        mOnMoreLoadListener = onMoreLoadListener;
+    }
+
+    public void notifyLoadMore() {
+        if (mOnMoreLoadListener != null) {
+            mOnMoreLoadListener.onLoadMore();
+        }
+    }
+
+    public void showPageData(boolean firstPage, Collection data) {
+        if (firstPage) {
+            replaceAndNotifyPageContent(data);
+        } else {
+            appendAndNotifyPageContent(data);
+        }
+    }
+
+    public void replaceAndNotifyPageContent(Collection data) {
+        if (data == null || data.isEmpty()) {
+            int[] positionAndSize = clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
+            if (positionAndSize != null) {
+                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
+            }
+            return;
+        }
+
+        int newSize = data.size();
+        int oldSize = getGroupItemCount(GROUP_PAGE_CONTENT_DEFAULT);
+
+        if (oldSize == 0) {
+            // append
+            int[] positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
+            if (positionAndSize != null) {
+                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
+            }
+        } else if (newSize == oldSize) {
+            // replace
+            clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
+            int[] positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
+            if (positionAndSize != null) {
+                notifyItemRangeChanged(positionAndSize[0], positionAndSize[1]);
+            }
+        } else {
+            // remove and add
+            int[] positionAndSize = clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
+            if (positionAndSize != null) {
+                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
+            }
+            positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
+            if (positionAndSize != null) {
+                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
+            }
+        }
+    }
+
+    public void appendAndNotifyPageContent(Collection data) {
+        int[] positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
+        if (positionAndSize != null) {
+            notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
+        }
+    }
+
 
     public void showPageLoadingStatus(PageLoadingStatus pageLoadingStatus, ExtraPageLoadingStatusCallback callback) {
         boolean hasAnyPageContent = hasAnyPageContent();
@@ -108,8 +192,10 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     if (callback != null) {
                         callback.hideSwipeRefreshing();
                     }
-                    // 使用 init 方式显示加载错误的内容, 此时是小样式(高度较小)
-                    replaceAndNotifyInit(pageLoadingStatus.withStyle(true));
+                    // 使用 init 方式显示加载错误和加载成功的内容, 此时是小样式，并且一段时间后要自动清除
+                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true).setAutoDismiss(true).build();
+                    replaceAndNotifyInit(pageLoadingStatus);
+                    autoDismissInitDelayIfMatch(pageLoadingStatus);
                 }
             } else {
                 // 正在加载第一页，但当前页面是空的
@@ -119,7 +205,10 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 }
 
                 // 使用 init 方式显示加载状态, 此时是全屏样式(高度较大)
-                replaceAndNotifyInit(pageLoadingStatus.withStyle(false));
+                replaceAndNotifyInit(pageLoadingStatus.newBuilder()
+                        .setSmallStyle(false)
+                        .setAutoDismiss(false)
+                        .build());
             }
         } else {
             // 正在加载其它页
@@ -133,8 +222,26 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
             removeAndNotifyInit();
 
             // 使用 more 方式显示加载状态，如果有分页内容，使用小样式
-            replaceAndNotifyMore(pageLoadingStatus.withStyle(hasAnyPageContent));
+            replaceAndNotifyMore(pageLoadingStatus.newBuilder()
+                    .setSmallStyle(hasAnyPageContent)
+                    .setAutoDismiss(false)
+                    .build());
         }
+    }
+
+    public void autoDismissInitDelayIfMatch(final PageLoadingStatus pageLoadingStatus) {
+        getRecyclerView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Object item = getGroupItem(GROUP_INIT, 0);
+                if (item == pageLoadingStatus) {
+                    int[] positionAndSize = removeGroupItem(GROUP_INIT, 0);
+                    if (positionAndSize != null) {
+                        notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
+                    }
+                }
+            }
+        }, 2000);
     }
 
     /**
@@ -224,57 +331,116 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
     }
 
     public static class PageLoadingStatus {
+
         /**
          * 是否是第一页
          */
         public final boolean firstPage;
+
         /**
-         * 是否处于加载中
+         * 是否加载中
          */
         public final boolean loading;
+
         /**
-         * 是否网络错误
+         * 是否加载失败
          */
-        public final boolean networkError;
+        public final boolean loadFail;
+
         /**
-         * 是否服务器错误
+         * 是否加载成功
          */
-        public final boolean serverError;
+        public final boolean loadSuccess;
+
         /**
-         * 是否数据错误
+         * 额外的辅助信息
          */
-        public final boolean dataError;
-        /**
-         * 其他未知错误
-         */
-        public final boolean unknownError;
+        public final Object extraMessage;
 
         /**
          * 是否使用小样式显示信息
          */
         public final boolean smallStyle;
 
-        public PageLoadingStatus(boolean firstPage, boolean loading, boolean networkError,
-                                 boolean serverError, boolean dataError, boolean unknownError) {
-            this(firstPage, loading, networkError, serverError, dataError, unknownError, false);
-        }
+        /**
+         * 是否自动关闭(一段时间之后隐藏该显示状态)
+         */
+        public final boolean autoDismiss;
 
-        private PageLoadingStatus(boolean firstPage, boolean loading, boolean networkError,
-                                  boolean serverError, boolean dataError, boolean unknownError,
-                                  boolean smallStyle) {
+        private PageLoadingStatus(boolean firstPage, boolean loading, boolean loadFail,
+                                  boolean loadSuccess, Object extraMessage,
+                                  boolean smallStyle, boolean autoDismiss) {
             this.firstPage = firstPage;
             this.loading = loading;
-            this.networkError = networkError;
-            this.serverError = serverError;
-            this.dataError = dataError;
-            this.unknownError = unknownError;
+            this.loadFail = loadFail;
+            this.loadSuccess = loadSuccess;
+            this.extraMessage = extraMessage;
             this.smallStyle = smallStyle;
+            this.autoDismiss = autoDismiss;
         }
 
-        public PageLoadingStatus withStyle(boolean smallStyle) {
-            return new PageLoadingStatus(this.firstPage, this.loading, this.networkError,
-                    this.serverError, this.dataError, this.unknownError,
-                    smallStyle);
+        public Builder newBuilder() {
+            return new Builder(this);
+        }
+
+        public static class Builder {
+
+            private boolean mFirstPage, mLoading, mLoadFail, mLoadSuccess, mSmallStyle, mAutoDismiss;
+            private Object mExtraMessage;
+
+            public Builder() {
+            }
+
+            public Builder(PageLoadingStatus pageLoadingStatus) {
+                this.mFirstPage = pageLoadingStatus.firstPage;
+                this.mLoading = pageLoadingStatus.loading;
+                this.mLoadFail = pageLoadingStatus.loadFail;
+                this.mLoadSuccess = pageLoadingStatus.loadSuccess;
+                this.mSmallStyle = pageLoadingStatus.smallStyle;
+                this.mAutoDismiss = pageLoadingStatus.autoDismiss;
+                this.mExtraMessage = pageLoadingStatus.extraMessage;
+            }
+
+            public PageLoadingStatus build() {
+                return new PageLoadingStatus(this.mFirstPage, this.mLoading, this.mLoadFail,
+                        this.mLoadSuccess, this.mExtraMessage, this.mSmallStyle, this.mAutoDismiss);
+            }
+
+            public Builder setFirstPage(boolean firstPage) {
+                mFirstPage = firstPage;
+                return this;
+            }
+
+            public Builder setLoading(boolean loading) {
+                mLoading = loading;
+                return this;
+            }
+
+            public Builder setLoadFail(boolean loadFail) {
+                mLoadFail = loadFail;
+                return this;
+            }
+
+            public Builder setLoadSuccess(boolean loadSuccess) {
+                mLoadSuccess = loadSuccess;
+                return this;
+            }
+
+            public Builder setSmallStyle(boolean smallStyle) {
+                mSmallStyle = smallStyle;
+                return this;
+            }
+
+            public Builder setAutoDismiss(boolean autoDismiss) {
+                mAutoDismiss = autoDismiss;
+                return this;
+            }
+
+            public Builder setExtraMessage(Object extraMessage) {
+                mExtraMessage = extraMessage;
+                return this;
+            }
+
         }
 
     }
