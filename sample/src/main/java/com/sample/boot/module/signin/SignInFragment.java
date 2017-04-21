@@ -20,6 +20,7 @@ import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ptr.PtrLayout;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
+import com.sample.boot.module.datalist.DataListActivity;
 
 import java.io.File;
 
@@ -65,6 +66,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestLoading;
         private final View mTestOpenUrl;
         private final View mTestTakePhoto;
+        private final View mTestDataList;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -129,6 +131,20 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 @Override
                 public void onClick(View v) {
                     checkPermissionAndContinueTakePhoto();
+                }
+            });
+
+            mTestDataList = ViewUtil.findViewByID(mRootView, R.id.test_data_list);
+            mTestDataList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SignInViewProxy viewProxy = getDefaultViewProxy();
+                    if (viewProxy == null) {
+                        return;
+                    }
+
+                    Intent intent = new Intent(mActivity, DataListActivity.class);
+                    startActivity(intent);
                 }
             });
 

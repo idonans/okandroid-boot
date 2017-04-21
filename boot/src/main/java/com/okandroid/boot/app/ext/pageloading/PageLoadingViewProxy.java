@@ -129,6 +129,12 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
      * @param message
      */
     public void notifyPageLoadingEnd(int pageNo, Collection data, ExtraPageMessage message) {
+        if (mCurrentLoadingPageNo != pageNo) {
+            return;
+        }
+
+        mCurrentLoadingPageNo = -1;
+
         if (!isPrepared()) {
             return;
         }
@@ -138,17 +144,12 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return;
         }
 
-        if (mCurrentLoadingPageNo != pageNo) {
-            return;
-        }
-
         // 如果在本次分页请求中有明确指定总页数，则更新全局总页数的值
         if (message != null && message.totalPage >= 0) {
             mTotalPage = message.totalPage;
         }
 
         boolean success = data != null;
-        mCurrentLoadingPageNo = -1;
         if (success) {
             mLastLoadSuccessPageNo = pageNo;
         }
