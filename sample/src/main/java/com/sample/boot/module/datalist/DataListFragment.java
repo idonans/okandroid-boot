@@ -59,7 +59,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
 
         @Override
         public void checkAndNotifyLoadMore(RecyclerView.ViewHolder holder, int position) {
-            Log.d(TAG + " checkAndNotifyLoadMore position:" + position);
+            Log.d(TAG + " checkAndNotifyLoadMore position:" + position + ", adapter position:" + holder.getAdapterPosition() + ", layout position:" + holder.getLayoutPosition());
             super.checkAndNotifyLoadMore(holder, position);
         }
     }

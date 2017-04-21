@@ -125,40 +125,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
     }
 
     public void replaceAndNotifyPageContent(Collection data) {
-        if (data == null || data.isEmpty()) {
-            int[] positionAndSize = clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
-            if (positionAndSize != null) {
-                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
-            }
-            return;
+        // remove and add
+        int[] positionAndSize = clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
+        if (positionAndSize != null) {
+            notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
         }
-
-        int newSize = data.size();
-        int oldSize = getGroupItemCount(GROUP_PAGE_CONTENT_DEFAULT);
-
-        if (oldSize == 0) {
-            // append
-            int[] positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
-        } else if (newSize == oldSize) {
-            // replace
-            clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
-            int[] positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
-            if (positionAndSize != null) {
-                notifyItemRangeChanged(positionAndSize[0], positionAndSize[1]);
-            }
-        } else {
-            // remove and add
-            int[] positionAndSize = clearGroupItems(GROUP_PAGE_CONTENT_DEFAULT);
-            if (positionAndSize != null) {
-                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
-            }
-            positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
+        positionAndSize = appendGroupItems(GROUP_PAGE_CONTENT_DEFAULT, data);
+        if (positionAndSize != null) {
+            notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
         }
     }
 
@@ -368,30 +342,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
      * 动态替换 GROUP_INIT 中的数据
      */
     public void replaceAndNotifyInit(PageLoadingStatus pageLoadingStatus) {
-        int count = getGroupItemCount(GROUP_INIT);
-        if (count == 0) {
-            // append
-            int[] positionAndSize = appendGroupItems(GROUP_INIT, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
-        } else if (count == 1) {
-            // replace
-            clearGroupItems(GROUP_INIT);
-            int[] positionAndSize = appendGroupItems(GROUP_INIT, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeChanged(positionAndSize[0], positionAndSize[1]);
-            }
-        } else {
-            // remove and add
-            int[] positionAndSize = clearGroupItems(GROUP_INIT);
-            if (positionAndSize != null) {
-                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
-            }
-            positionAndSize = appendGroupItems(GROUP_INIT, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
+        // remove and add
+        int[] positionAndSize = clearGroupItems(GROUP_INIT);
+        if (positionAndSize != null) {
+            notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
+        }
+        positionAndSize = appendGroupItems(GROUP_INIT, Arrays.asList(pageLoadingStatus));
+        if (positionAndSize != null) {
+            notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
         }
     }
 
@@ -409,30 +367,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
      * 动态替换 GROUP_MORE 中的数据
      */
     public void replaceAndNotifyMore(PageLoadingStatus pageLoadingStatus) {
-        int count = getGroupItemCount(GROUP_MORE);
-        if (count == 0) {
-            // append
-            int[] positionAndSize = appendGroupItems(GROUP_MORE, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
-        } else if (count == 1) {
-            // replace
-            clearGroupItems(GROUP_MORE);
-            int[] positionAndSize = appendGroupItems(GROUP_MORE, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeChanged(positionAndSize[0], positionAndSize[1]);
-            }
-        } else {
-            // remove and add
-            int[] positionAndSize = clearGroupItems(GROUP_MORE);
-            if (positionAndSize != null) {
-                notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
-            }
-            positionAndSize = appendGroupItems(GROUP_MORE, Arrays.asList(pageLoadingStatus));
-            if (positionAndSize != null) {
-                notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
-            }
+        // remove and add
+        int[] positionAndSize = clearGroupItems(GROUP_MORE);
+        if (positionAndSize != null) {
+            notifyItemRangeRemoved(positionAndSize[0], positionAndSize[1]);
+        }
+        positionAndSize = appendGroupItems(GROUP_MORE, Arrays.asList(pageLoadingStatus));
+        if (positionAndSize != null) {
+            notifyItemRangeInserted(positionAndSize[0], positionAndSize[1]);
         }
     }
 
