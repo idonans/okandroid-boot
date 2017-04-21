@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.okandroid.boot.app.ext.pageloading.PageLoadingFragment;
 import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
+import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.PageDataAdapter;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
 import com.sample.boot.R;
@@ -18,6 +19,8 @@ import com.sample.boot.R;
  */
 
 public class DataListFragment extends PageLoadingFragment implements DataListView {
+
+    private static final String TAG = "DataListFragment";
 
     @Override
     protected PageLoadingViewProxy newDefaultViewProxy() {
@@ -54,6 +57,11 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
             return super.onCreateViewHolder(parent, viewType);
         }
 
+        @Override
+        public void checkAndNotifyLoadMore(RecyclerView.ViewHolder holder, int position) {
+            Log.d(TAG + " checkAndNotifyLoadMore position:" + position);
+            super.checkAndNotifyLoadMore(holder, position);
+        }
     }
 
     private class ViewHolderLoading extends RecyclerViewGroupAdapter.RecyclerViewGroupHolder {
