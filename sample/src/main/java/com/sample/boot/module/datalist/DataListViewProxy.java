@@ -33,7 +33,7 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                         for (int i = 0; i < 10; i++) {
                             items.add(pageNo + "#" + i);
                         }
-                        Threads.sleepQuietly(3000);
+                        Threads.sleepQuietly(1000);
                         return items;
                     }
                 })
@@ -52,7 +52,7 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                     @Override
                     public void onNext(Collection collection) {
                         ExtraPageMessage extraPageMessage = new ExtraPageMessage();
-                        extraPageMessage.totalPage = 20;
+                        extraPageMessage.totalPage = 5;
                         notifyPageLoadingEnd(pageNo, collection, extraPageMessage);
                     }
                 });

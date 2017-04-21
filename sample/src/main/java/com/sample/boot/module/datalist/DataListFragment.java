@@ -87,7 +87,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
             } else if (pageLoadingStatus.loadSuccess) {
                 boolean lastPage = false;
                 if (extraPageMessage != null) {
-                    lastPage = extraPageMessage.pageNo >= 0 && extraPageMessage.pageNo == extraPageMessage.totalPage - 1;
+                    lastPage = extraPageMessage.isLastPage();
                 }
                 if (lastPage) {
                     mTextView.setText("就这么多了");

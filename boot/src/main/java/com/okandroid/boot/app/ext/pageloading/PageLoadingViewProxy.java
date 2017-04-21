@@ -125,6 +125,18 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
          * 其他辅助消息，如发生错误时的详细提示(用户名或密码错误), 或者成功时的消息(成功加载 10 条数据)
          */
         public CharSequence detailMessage;
+
+        /**
+         * 是否是最后一页
+         *
+         * @return
+         */
+        public boolean isLastPage() {
+            return this.pageNo >= 0
+                    && this.totalPage >= 0
+                    && this.pageNo >= this.totalPage - 1;
+        }
+
     }
 
     protected abstract Subscription createPageLoadingSubscription(final int pageNo);
