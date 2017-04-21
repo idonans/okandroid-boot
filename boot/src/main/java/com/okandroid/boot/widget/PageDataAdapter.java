@@ -107,7 +107,16 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         }
     }
 
-    public void showPageData(boolean firstPage, Collection data) {
+    public void showPageData(final boolean firstPage, final Collection data) {
+        getRecyclerView().postOnAnimation(new Runnable() {
+            @Override
+            public void run() {
+                showPageDataInternal(firstPage, data);
+            }
+        });
+    }
+
+    private void showPageDataInternal(boolean firstPage, Collection data) {
         if (firstPage) {
             replaceAndNotifyPageContent(data);
         } else {
@@ -160,8 +169,16 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         }
     }
 
+    public void showPageLoadingStatus(final PageLoadingStatus pageLoadingStatus, final ExtraPageLoadingStatusCallback callback) {
+        getRecyclerView().postOnAnimation(new Runnable() {
+            @Override
+            public void run() {
+                showPageLoadingStatusInternal(pageLoadingStatus, callback);
+            }
+        });
+    }
 
-    public void showPageLoadingStatus(PageLoadingStatus pageLoadingStatus, ExtraPageLoadingStatusCallback callback) {
+    private void showPageLoadingStatusInternal(PageLoadingStatus pageLoadingStatus, ExtraPageLoadingStatusCallback callback) {
         boolean hasAnyPageContent = hasAnyPageContent();
 
         if (pageLoadingStatus.firstPage
