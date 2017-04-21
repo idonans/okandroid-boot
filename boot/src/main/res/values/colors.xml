@@ -273,7 +273,7 @@
     <color name="okandroid_color_md_blue_grey_800">#37474F</color>
     <color name="okandroid_color_md_blue_grey_900">#263238</color>
     <!-- 黑色 -->
-    <color name="okandroid_color_md_blue_black">#000000</color>
+    <color name="okandroid_color_md_black">#000000</color>
     <!-- 白色 -->
-    <color name="okandroid_color_md_blue_white">#FFFFFF</color>
+    <color name="okandroid_color_md_white">#FFFFFF</color>
 </resources>
