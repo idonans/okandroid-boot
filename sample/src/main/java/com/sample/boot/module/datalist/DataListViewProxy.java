@@ -2,6 +2,7 @@ package com.sample.boot.module.datalist;
 
 import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
 import com.okandroid.boot.thread.Threads;
+import com.okandroid.boot.util.NetUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +35,11 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                             items.add(pageNo + "#" + i);
                         }
                         Threads.sleepQuietly(1000);
+
+                        if (Math.random() > 0.5) {
+                            throw new RuntimeException("random error");
+                        }
+
                         return items;
                     }
                 })
@@ -46,7 +52,19 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
 
                     @Override
                     public void onError(Throwable e) {
-                        notifyPageLoadingEnd(pageNo, null, null);
+                        ExtraPageMessage extraPageMessage = new ExtraPageMessage();
+
+                        if (!NetUtil.hasActiveNetwork()) {
+                            // 模拟网络错误
+                            extraPageMessage.networkError = true;
+                            extraPageMessage.detailMessage = "模拟测试网络错误";
+                        } else {
+                            // 模拟服务器错误
+                            extraPageMessage.serverError = true;
+                            extraPageMessage.detailMessage = "模拟测试服务器错误";
+                        }
+
+                        notifyPageLoadingEnd(pageNo, null, extraPageMessage);
                     }
 
                     @Override
