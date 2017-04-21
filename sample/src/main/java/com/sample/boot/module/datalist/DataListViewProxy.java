@@ -1,6 +1,7 @@
 package com.sample.boot.module.datalist;
 
 import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
+import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.util.NetUtil;
 
@@ -20,12 +21,16 @@ import rx.schedulers.Schedulers;
 
 public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
 
+    private static final String TAG = "DataListViewProxy";
+
     public DataListViewProxy(DataListView view) {
         super(view);
     }
 
     @Override
     protected Subscription createPageLoadingSubscription(final int pageNo) {
+        Log.d(TAG + " createPageLoadingSubscription pageNo:" + pageNo);
+
         return Observable.just("1")
                 .map(new Func1<String, Collection>() {
                     @Override
