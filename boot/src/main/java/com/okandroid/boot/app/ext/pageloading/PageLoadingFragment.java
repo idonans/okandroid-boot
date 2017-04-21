@@ -87,7 +87,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             });
         }
 
-        private void showPageLoadingStatus(PageDataAdapter.PageLoadingStatus pageLoadingStatus) {
+        protected void showPageLoadingStatus(PageDataAdapter.PageLoadingStatus pageLoadingStatus) {
             mPageDataAdapter.showPageLoadingStatus(pageLoadingStatus, new PageDataAdapter.ExtraPageLoadingStatusCallback() {
                 @Override
                 public void showSwipeRefreshing() {
@@ -111,7 +111,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             });
         }
 
-        private void showPageContent(boolean firstPage, Collection data) {
+        protected void showPageContent(boolean firstPage, Collection data) {
             mPageDataAdapter.showPageData(firstPage, data);
         }
     }
