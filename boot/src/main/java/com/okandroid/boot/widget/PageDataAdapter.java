@@ -312,12 +312,11 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                             .build();
                     replaceAndNotifyMore(pageLoadingStatus);
                 } else {
-                    // 当前有显示分页数据内容，使用小样式展示加载失败，并且稍后清除
+                    // 当前有显示分页数据内容，使用小样式展示加载失败
                     pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true)
                             .setAutoDismiss(true)
                             .build();
                     replaceAndNotifyMore(pageLoadingStatus);
-                    autoDismissMoreDelayIfMatch(pageLoadingStatus);
                 }
             }
         } else {
