@@ -182,9 +182,9 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         boolean hasAnyPageContent = hasAnyPageContent();
 
         if (pageLoadingStatus.firstPage
-                && pageLoadingStatus.loading
+                && (pageLoadingStatus.loading || pageLoadingStatus.loadFail)
                 && !hasAnyPageContent) {
-            // 正在加载第一页，并且当前页面是空的, 此时需要禁用下拉刷新
+            // 正在加载第一页或者第一页加载失败，并且当前页面是空的, 此时需要禁用下拉刷新
             if (callback != null) {
                 callback.disableSwipeRefreshing();
             }
