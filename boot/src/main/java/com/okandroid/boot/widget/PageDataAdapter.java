@@ -174,6 +174,9 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
             @Override
             public void run() {
                 showPageLoadingStatusInternal(pageLoadingStatus, callback);
+                if (pageLoadingStatus.firstPage) {
+                    getRecyclerView().scrollToPosition(0);
+                }
             }
         });
     }
