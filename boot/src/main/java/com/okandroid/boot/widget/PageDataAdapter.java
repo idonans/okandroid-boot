@@ -526,8 +526,23 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 @NonNull PageDataAdapter pageDataAdapter,
                 @NonNull PageLoadingStatus pageLoadingStatus,
                 @NonNull ExtraPageLoadingStatusCallback callback) {
-            // 小样式的非加载中状态，稍后自动关闭
-            return pageLoadingStatus.smallStyle && !pageLoadingStatus.loading;
+            if (!pageLoadingStatus.smallStyle) {
+                // 全屏样式不自动关闭
+                return false;
+            }
+
+            if (pageLoadingStatus.loading) {
+                // 加载中状态不自动关闭
+                return false;
+            }
+
+            if (pageLoadingStatus.firstPage) {
+                // 第一页的加载失败和加载完成可以自动关闭
+                return true;
+            }
+
+            // 其它页的加载成功可以自动关闭
+            return pageLoadingStatus.loadSuccess;
         }
 
         public void showPageLoadingStatus(@NonNull PageDataAdapter pageDataAdapter,
