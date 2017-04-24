@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -75,6 +76,9 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
 
         @Override
         protected void update(@NonNull Object object, int position) {
+            // clear old click ref
+            itemView.setOnClickListener(null);
+
             if (!(object instanceof PageDataAdapter.PageLoadingStatus)) {
                 mTextView.setText(null);
                 return;
@@ -97,7 +101,18 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                 if (extraPageMessage != null) {
                     lastPage = extraPageMessage.isLastPage();
                 }
-                if (lastPage) {
+
+                if (!pageLoadingStatus.smallStyle
+                        && pageLoadingStatus.firstPage
+                        && pageLoadingStatus.isPageLoadingContentEmpty()) {
+                    mTextView.setText("暂无数据，点击重试");
+                    itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadFirstPage();
+                        }
+                    });
+                } else if (lastPage) {
                     mTextView.setText("就这么多了");
                 } else {
                     mTextView.setText("加载完成");
@@ -107,7 +122,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                     mTextView.append(" " + extraPageMessage.detailMessage);
                 }
             } else if (pageLoadingStatus.loadFail) {
-                mTextView.setText("加载失败");
+                mTextView.setText("加载失败, 点击重试");
 
                 if (extraPageMessage != null) {
                     if (extraPageMessage.serverError) {
@@ -119,6 +134,22 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
 
                 if (extraPageMessage != null && extraPageMessage.detailMessage != null) {
                     mTextView.append(" " + extraPageMessage.detailMessage);
+                }
+
+                if (pageLoadingStatus.firstPage) {
+                    itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadFirstPage();
+                        }
+                    });
+                } else {
+                    itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadNextPage();
+                        }
+                    });
                 }
             } else {
                 mTextView.setText(null);

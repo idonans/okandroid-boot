@@ -7,6 +7,7 @@ import com.okandroid.boot.util.NetUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -41,7 +42,9 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                         }
                         Threads.sleepQuietly(1000);
 
-                        if (Math.random() > 0.5) {
+                        if (Math.random() > 0.5 && pageNo == 0) {
+                            return Collections.EMPTY_LIST;
+                        } else if (Math.random() > 0.8) {
                             throw new RuntimeException("random error");
                         }
 
