@@ -186,8 +186,8 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     if (callback != null) {
                         callback.hideSwipeRefreshing();
                     }
-                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(false)
-                            .setAutoDismiss(false)
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(false)
                             .build();
                     replaceAndNotifyInit(pageLoadingStatus);
                 } else {
@@ -207,8 +207,8 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 // 清除加载第一页的状态
                 removeAndNotifyInit();
 
-                pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(hasAnyPageContent)
-                        .setAutoDismiss(false)
+                pageLoadingStatus = pageLoadingStatus.newBuilder()
+                        .setSmallStyle(hasAnyPageContent)
                         .build();
                 replaceAndNotifyMore(pageLoadingStatus);
             }
@@ -227,8 +227,8 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 removeAndNotifyMore();
 
                 // 小样式，并且稍后清除
-                pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true)
-                        .setAutoDismiss(true)
+                pageLoadingStatus = pageLoadingStatus.newBuilder()
+                        .setSmallStyle(true)
                         .build();
                 replaceAndNotifyInit(pageLoadingStatus);
                 autoDismissInitDelayIfMatch(pageLoadingStatus);
@@ -239,8 +239,8 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 removeAndNotifyInit();
 
                 // 小样式，并且稍后清除
-                pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true)
-                        .setAutoDismiss(true)
+                pageLoadingStatus = pageLoadingStatus.newBuilder()
+                        .setSmallStyle(true)
                         .build();
                 replaceAndNotifyMore(pageLoadingStatus);
                 autoDismissMoreDelayIfMatch(pageLoadingStatus);
@@ -261,14 +261,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
                 if (!hasAnyPageContent) {
                     // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
-                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(false)
-                            .setAutoDismiss(false)
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(false)
                             .build();
                     replaceAndNotifyInit(pageLoadingStatus);
                 } else {
                     // 当前有显示分页数据内容，使用小样式展示加载失败，并且稍后清除
-                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true)
-                            .setAutoDismiss(true)
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(true)
                             .build();
                     replaceAndNotifyInit(pageLoadingStatus);
                     autoDismissInitDelayIfMatch(pageLoadingStatus);
@@ -281,14 +281,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
                 if (!hasAnyPageContent) {
                     // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
-                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(false)
-                            .setAutoDismiss(false)
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(false)
                             .build();
                     replaceAndNotifyMore(pageLoadingStatus);
                 } else {
                     // 当前有显示分页数据内容，使用小样式展示加载失败
-                    pageLoadingStatus = pageLoadingStatus.newBuilder().setSmallStyle(true)
-                            .setAutoDismiss(true)
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(true)
                             .build();
                     replaceAndNotifyMore(pageLoadingStatus);
                 }
@@ -414,21 +414,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
          */
         public final boolean smallStyle;
 
-        /**
-         * 是否自动关闭(一段时间之后隐藏该显示状态)
-         */
-        public final boolean autoDismiss;
-
         private PageLoadingStatus(boolean firstPage, boolean loading, boolean loadFail,
-                                  boolean loadSuccess, Object extraMessage, boolean smallStyle,
-                                  boolean autoDismiss) {
+                                  boolean loadSuccess, Object extraMessage, boolean smallStyle) {
             this.firstPage = firstPage;
             this.loading = loading;
             this.loadFail = loadFail;
             this.loadSuccess = loadSuccess;
             this.extraMessage = extraMessage;
             this.smallStyle = smallStyle;
-            this.autoDismiss = autoDismiss;
         }
 
         public Builder newBuilder() {
@@ -438,7 +431,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         public static class Builder {
 
             private boolean mFirstPage, mLoading, mLoadFail,
-                    mLoadSuccess, mSmallStyle, mAutoDismiss;
+                    mLoadSuccess, mSmallStyle;
             private Object mExtraMessage;
 
             public Builder() {
@@ -450,14 +443,12 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 this.mLoadFail = pageLoadingStatus.loadFail;
                 this.mLoadSuccess = pageLoadingStatus.loadSuccess;
                 this.mSmallStyle = pageLoadingStatus.smallStyle;
-                this.mAutoDismiss = pageLoadingStatus.autoDismiss;
                 this.mExtraMessage = pageLoadingStatus.extraMessage;
             }
 
             public PageLoadingStatus build() {
                 return new PageLoadingStatus(this.mFirstPage, this.mLoading, this.mLoadFail,
-                        this.mLoadSuccess, this.mExtraMessage, this.mSmallStyle,
-                        this.mAutoDismiss);
+                        this.mLoadSuccess, this.mExtraMessage, this.mSmallStyle);
             }
 
             public Builder setFirstPage(boolean firstPage) {
@@ -482,11 +473,6 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
             public Builder setSmallStyle(boolean smallStyle) {
                 mSmallStyle = smallStyle;
-                return this;
-            }
-
-            public Builder setAutoDismiss(boolean autoDismiss) {
-                mAutoDismiss = autoDismiss;
                 return this;
             }
 
