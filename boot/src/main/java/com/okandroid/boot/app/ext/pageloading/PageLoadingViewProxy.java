@@ -98,8 +98,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     }
 
     /**
-     * 显示时，可以根据当前页和总页数确定是否加载到了最后一页，注意：仅当 pageNo >= 0 时有效. 否则总是认为还有下一页.
-     * 由于总页数是动态更新的，因此不能确定 pageNo 总是小于 totalPage
+     * 当前页加载时的额外的信息
      */
     public static class ExtraPageMessage {
         /**
