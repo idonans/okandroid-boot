@@ -42,6 +42,10 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                         }
                         Threads.sleepQuietly(1000);
 
+                        if (!NetUtil.hasActiveNetwork()) {
+                            throw new RuntimeException("network error");
+                        }
+
                         if (Math.random() > 0.5 && pageNo == 0) {
                             return Collections.EMPTY_LIST;
                         } else if (Math.random() > 0.8) {
