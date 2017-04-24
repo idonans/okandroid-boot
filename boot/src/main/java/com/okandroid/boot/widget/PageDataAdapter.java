@@ -162,30 +162,10 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
             public void run() {
                 ExtraPageLoadingStatusCallback safetyCallback = callback;
                 if (safetyCallback == null) {
-                    safetyCallback = new ExtraPageLoadingStatusCallback() {
-                        @Override
-                        public void showSwipeRefreshing() {
-                            // ignore
-                        }
-
-                        @Override
-                        public void hideSwipeRefreshing() {
-                            // ignore
-                        }
-
-                        @Override
-                        public void enableSwipeRefreshing() {
-                            // ignore
-                        }
-
-                        @Override
-                        public void disableSwipeRefreshing() {
-                            // ignore
-                        }
-                    };
+                    safetyCallback = new SimpleExtraPageLoadingStatusCallback();
+                    ensurePageLoadingStatusHandler();
+                    mPageLoadingStatusHandler.showPageLoadingStatus(PageDataAdapter.this, pageLoadingStatus, safetyCallback);
                 }
-                ensurePageLoadingStatusHandler();
-                mPageLoadingStatusHandler.showPageLoadingStatus(PageDataAdapter.this, pageLoadingStatus, safetyCallback);
             }
         });
     }
@@ -523,6 +503,29 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         void enableSwipeRefreshing();
 
         void disableSwipeRefreshing();
+    }
+
+    public static class SimpleExtraPageLoadingStatusCallback implements ExtraPageLoadingStatusCallback {
+
+        @Override
+        public void showSwipeRefreshing() {
+            // ignore
+        }
+
+        @Override
+        public void hideSwipeRefreshing() {
+            // ignore
+        }
+
+        @Override
+        public void enableSwipeRefreshing() {
+            // ignore
+        }
+
+        @Override
+        public void disableSwipeRefreshing() {
+            // ignore
+        }
     }
 
 }
