@@ -50,13 +50,24 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
         tryLoadPage(mLastLoadSuccessPageNo + 1);
     }
 
+    /**
+     * 第一页的数据是否总是可以发起请求，即使当前总页数是 0.
+     */
+    protected boolean alwaysAllowLoadFirstPage() {
+        return true;
+    }
+
     protected void tryLoadPage(int pageNo) {
         if (pageNo < mFirstPageNo) {
             Log.d(TAG + " tryLoadPage with invalid page [" + pageNo + "/" + mTotalPage + "]");
             return;
         }
 
-        if (mTotalPage >= 0 && pageNo >= mTotalPage) {
+        if (alwaysAllowLoadFirstPage()
+                && mFirstPageNo == pageNo) {
+            // 总是允许加载第一页
+        } else if (mTotalPage >= 0
+                && pageNo >= mTotalPage) {
             Log.d(TAG + " tryLoadPage with no more page [" + pageNo + "/" + mTotalPage + "]");
             return;
         }
@@ -105,10 +116,16 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
          * 当前页, 当不小于 0 时有效
          */
         public int pageNo = -1;
+
         /**
          * 总页数, 当不小于 0 时有效
          */
         public int totalPage = -1;
+
+        /**
+         * 当前页加载的数据是否是空. 某些情况下, 如果第一页是空, 可能需要使用特殊的样式显示.
+         */
+        public boolean emptyContent;
 
         /**
          * 当发生分页数据加载失败时，标识当前是否发生了网络错误
@@ -165,15 +182,17 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             mTotalPage = message.totalPage;
         }
 
-        boolean success = data != null;
+        final boolean success = data != null;
         if (success) {
             mLastLoadSuccessPageNo = pageNo;
         }
 
+        final boolean emptyContent = data == null || data.isEmpty();
+
         if (mTotalPage < 0) {
-            // 如果没有指定总页数，根据 data 的内容猜测一下总页数(认为到某一个 size 为 0 的 data 时, 是最后一页)
-            if (success && data.isEmpty()) {
-                mTotalPage = pageNo + 1;
+            // 如果没有指定总页数，根据 data 的内容猜测一下总页数(认为加载到空数据时, 是最后一页)
+            if (success && emptyContent) {
+                mTotalPage = pageNo;
             }
         }
 
@@ -184,6 +203,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
         // 使用更新后的分页信息填充 message
         message.pageNo = pageNo;
         message.totalPage = mTotalPage;
+        message.emptyContent = emptyContent;
 
         boolean firstPage = pageNo == mFirstPageNo;
 
