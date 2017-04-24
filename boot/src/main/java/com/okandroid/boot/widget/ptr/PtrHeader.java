@@ -4,6 +4,10 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.RotateDrawable;
 import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -19,7 +23,12 @@ import android.widget.ProgressBar;
 import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
+import com.okandroid.boot.util.FileUtil;
+import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by idonans on 2017/4/12.
@@ -84,7 +93,7 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
     }
 
     public StatusHeaderView createStatusHeaderView() {
-        return new DefaultStatusHeaderView(this, DimenUtil.dp2px(100), DimenUtil.dp2px(200));
+        return new DefaultStatusHeaderView(this, DimenUtil.dp2px(48), DimenUtil.dp2px(200));
     }
 
     @Override
@@ -335,7 +344,10 @@ public class PtrHeader extends FrameLayout implements PtrLayout.HeaderView {
         protected View createView(LayoutInflater inflater, ViewGroup parent) {
             View content = inflater.inflate(R.layout.okandroid_ptr_header_default_view, parent, false);
             mProgressBar = ViewUtil.findViewByID(content, R.id.progress_bar);
-            mProgressBar.setProgressDrawable(new ArrowDrawable());
+
+            ArrowDrawable progressDrawable = new ArrowDrawable();
+            progressDrawable.setPadding(DimenUtil.dp2px(5));
+            mProgressBar.setProgressDrawable(progressDrawable);
 
             mProgressBar.setIndeterminate(false);
             mProgressBar.setProgress(0);

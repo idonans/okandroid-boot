@@ -20,11 +20,13 @@ import com.okandroid.boot.util.DimenUtil;
 
 public class ArrowDrawable extends Drawable {
 
-    private int mColor = 0xff616161;
+    private int mColor = 0xff000000;
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final PathShape mPathShape;
+
+    private int mPadding;
 
     public ArrowDrawable() {
         final float size = DimenUtil.dp2px(60);
@@ -47,6 +49,10 @@ public class ArrowDrawable extends Drawable {
             mColor = color;
             invalidateSelf();
         }
+    }
+
+    public void setPadding(int padding) {
+        mPadding = padding;
     }
 
     public int getColor() {
@@ -80,7 +86,15 @@ public class ArrowDrawable extends Drawable {
 
         int saveCount = canvas.save();
 
-        canvas.rotate(degrees, bounds.exactCenterX(), bounds.exactCenterY());
+        float centerX = bounds.exactCenterX();
+        float centerY = bounds.exactCenterY();
+        canvas.rotate(degrees, centerX, centerY);
+
+        if (mPadding > 0 && mPadding * 2 < bounds.width()) {
+            float scale = 1f - mPadding * 2f / bounds.width();
+            canvas.scale(scale, scale, centerX, centerY);
+        }
+
         mPaint.setColor(mColor);
         mPathShape.draw(canvas, mPaint);
 
