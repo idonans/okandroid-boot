@@ -68,10 +68,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             mPageDataAdapter.setOnMoreLoadListener(new PageDataAdapter.OnMoreLoadListener() {
                 @Override
                 public void onLoadMore() {
-                    PageLoadingViewProxy proxy = getDefaultViewProxy();
-                    if (proxy != null) {
-                        proxy.loadNextPage();
-                    }
+                    loadNextPage();
                 }
             });
             mRecyclerView.setAdapter(mPageDataAdapter);
@@ -79,10 +76,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    PageLoadingViewProxy proxy = getDefaultViewProxy();
-                    if (proxy != null) {
-                        proxy.loadFirstPage();
-                    }
+                    loadFirstPage();
                 }
             });
         }
@@ -113,6 +107,20 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
 
         protected void showPageContent(boolean firstPage, Collection data) {
             mPageDataAdapter.showPageData(firstPage, data);
+        }
+    }
+
+    protected void loadFirstPage() {
+        PageLoadingViewProxy proxy = getDefaultViewProxy();
+        if (proxy != null) {
+            proxy.loadFirstPage();
+        }
+    }
+
+    protected void loadNextPage() {
+        PageLoadingViewProxy proxy = getDefaultViewProxy();
+        if (proxy != null) {
+            proxy.loadNextPage();
         }
     }
 
