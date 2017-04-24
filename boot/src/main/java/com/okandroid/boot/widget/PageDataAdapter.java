@@ -163,9 +163,9 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 ExtraPageLoadingStatusCallback safetyCallback = callback;
                 if (safetyCallback == null) {
                     safetyCallback = new SimpleExtraPageLoadingStatusCallback();
-                    ensurePageLoadingStatusHandler();
-                    mPageLoadingStatusHandler.showPageLoadingStatus(PageDataAdapter.this, pageLoadingStatus, safetyCallback);
                 }
+                ensurePageLoadingStatusHandler();
+                mPageLoadingStatusHandler.showPageLoadingStatus(PageDataAdapter.this, pageLoadingStatus, safetyCallback);
             }
         });
     }
