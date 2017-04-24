@@ -1,5 +1,6 @@
 package com.okandroid.boot.widget;
 
+import android.support.annotation.NonNull;
 import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
@@ -43,12 +44,24 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
      */
     public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = 2001;
 
+    private PageLoadingStatusHandler mPageLoadingStatusHandler;
+
     public PageDataAdapter(RecyclerView recyclerView) {
         super(recyclerView);
     }
 
     public PageDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
         super(data, recyclerView);
+    }
+
+    public void setPageLoadingStatusHandler(PageLoadingStatusHandler pageLoadingStatusHandler) {
+        mPageLoadingStatusHandler = pageLoadingStatusHandler;
+    }
+
+    private void ensurePageLoadingStatusHandler() {
+        if (mPageLoadingStatusHandler == null) {
+            mPageLoadingStatusHandler = new PageLoadingStatusHandler();
+        }
     }
 
     @Override
@@ -147,158 +160,37 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         getRecyclerView().postOnAnimation(new Runnable() {
             @Override
             public void run() {
-                showPageLoadingStatusInternal(pageLoadingStatus, callback);
-                if (pageLoadingStatus.firstPage) {
-                    getRecyclerView().scrollToPosition(0);
+                ExtraPageLoadingStatusCallback safetyCallback = callback;
+                if (safetyCallback == null) {
+                    safetyCallback = new ExtraPageLoadingStatusCallback() {
+                        @Override
+                        public void showSwipeRefreshing() {
+                            // ignore
+                        }
+
+                        @Override
+                        public void hideSwipeRefreshing() {
+                            // ignore
+                        }
+
+                        @Override
+                        public void enableSwipeRefreshing() {
+                            // ignore
+                        }
+
+                        @Override
+                        public void disableSwipeRefreshing() {
+                            // ignore
+                        }
+                    };
                 }
+                ensurePageLoadingStatusHandler();
+                mPageLoadingStatusHandler.showPageLoadingStatus(PageDataAdapter.this, pageLoadingStatus, safetyCallback);
             }
         });
     }
 
-    private void showPageLoadingStatusInternal(PageLoadingStatus pageLoadingStatus, ExtraPageLoadingStatusCallback callback) {
-        boolean hasAnyPageContent = hasAnyPageContent();
-
-        if (pageLoadingStatus.firstPage
-                && (pageLoadingStatus.loading || pageLoadingStatus.loadFail)
-                && !hasAnyPageContent) {
-            // 正在加载第一页或者第一页加载失败，并且当前页面是空的, 此时需要禁用下拉刷新
-            if (callback != null) {
-                callback.disableSwipeRefreshing();
-            }
-        } else {
-            // 其他情况，启用下拉刷新
-            if (callback != null) {
-                callback.enableSwipeRefreshing();
-            }
-        }
-
-        if (pageLoadingStatus.loading) {
-            // 加载中
-            if (pageLoadingStatus.firstPage) {
-                // 正在加载第一页
-
-                // 清除加载其它页的状态
-                removeAndNotifyMore();
-
-                // 如果当前没有显示分页数据内容，则使用全屏加载样式，否则使用下拉加载样式
-                if (!hasAnyPageContent) {
-                    // 全屏加载中样式
-                    if (callback != null) {
-                        callback.hideSwipeRefreshing();
-                    }
-                    pageLoadingStatus = pageLoadingStatus.newBuilder()
-                            .setSmallStyle(false)
-                            .build();
-                    replaceAndNotifyInit(pageLoadingStatus);
-                } else {
-                    // 下拉加载中样式
-                    removeAndNotifyInit();
-                    if (callback != null) {
-                        callback.showSwipeRefreshing();
-                    }
-                }
-            } else {
-                // 正在加载其它页
-
-                // 清除下拉刷新
-                if (callback != null) {
-                    callback.hideSwipeRefreshing();
-                }
-                // 清除加载第一页的状态
-                removeAndNotifyInit();
-
-                pageLoadingStatus = pageLoadingStatus.newBuilder()
-                        .setSmallStyle(hasAnyPageContent)
-                        .build();
-                replaceAndNotifyMore(pageLoadingStatus);
-            }
-        } else if (pageLoadingStatus.loadSuccess) {
-            // 加载成功
-
-            // 清除下拉刷新
-            if (callback != null) {
-                callback.hideSwipeRefreshing();
-            }
-
-            if (pageLoadingStatus.firstPage) {
-                // 第一页加载成功
-
-                // 清除加载其它页的状态
-                removeAndNotifyMore();
-
-                // 小样式，并且稍后清除
-                pageLoadingStatus = pageLoadingStatus.newBuilder()
-                        .setSmallStyle(true)
-                        .build();
-                replaceAndNotifyInit(pageLoadingStatus);
-                autoDismissInitDelayIfMatch(pageLoadingStatus);
-            } else {
-                // 其它页加载成功
-
-                // 清除加载第一页的状态
-                removeAndNotifyInit();
-
-                // 小样式，并且稍后清除
-                pageLoadingStatus = pageLoadingStatus.newBuilder()
-                        .setSmallStyle(true)
-                        .build();
-                replaceAndNotifyMore(pageLoadingStatus);
-                autoDismissMoreDelayIfMatch(pageLoadingStatus);
-            }
-        } else if (pageLoadingStatus.loadFail) {
-            // 加载失败
-
-            // 清除下拉刷新
-            if (callback != null) {
-                callback.hideSwipeRefreshing();
-            }
-
-            if (pageLoadingStatus.firstPage) {
-                // 第一页加载失败
-
-                // 清除加载其它页的状态
-                removeAndNotifyMore();
-
-                if (!hasAnyPageContent) {
-                    // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
-                    pageLoadingStatus = pageLoadingStatus.newBuilder()
-                            .setSmallStyle(false)
-                            .build();
-                    replaceAndNotifyInit(pageLoadingStatus);
-                } else {
-                    // 当前有显示分页数据内容，使用小样式展示加载失败，并且稍后清除
-                    pageLoadingStatus = pageLoadingStatus.newBuilder()
-                            .setSmallStyle(true)
-                            .build();
-                    replaceAndNotifyInit(pageLoadingStatus);
-                    autoDismissInitDelayIfMatch(pageLoadingStatus);
-                }
-            } else {
-                // 其它页加载失败
-
-                // 清除加载第一页的状态
-                removeAndNotifyInit();
-
-                if (!hasAnyPageContent) {
-                    // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
-                    pageLoadingStatus = pageLoadingStatus.newBuilder()
-                            .setSmallStyle(false)
-                            .build();
-                    replaceAndNotifyMore(pageLoadingStatus);
-                } else {
-                    // 当前有显示分页数据内容，使用小样式展示加载失败
-                    pageLoadingStatus = pageLoadingStatus.newBuilder()
-                            .setSmallStyle(true)
-                            .build();
-                    replaceAndNotifyMore(pageLoadingStatus);
-                }
-            }
-        } else {
-            Log.e(TAG + " unknown page loading status");
-        }
-    }
-
-    public void autoDismissInitDelayIfMatch(final PageLoadingStatus pageLoadingStatus) {
+    public void autoDismissInitDelayIfMatch(final PageLoadingStatus pageLoadingStatus, final long delay) {
         getRecyclerView().postOnAnimationDelayed(new Runnable() {
             @Override
             public void run() {
@@ -310,10 +202,10 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     }
                 }
             }
-        }, 2000);
+        }, delay);
     }
 
-    public void autoDismissMoreDelayIfMatch(final PageLoadingStatus pageLoadingStatus) {
+    public void autoDismissMoreDelayIfMatch(final PageLoadingStatus pageLoadingStatus, final long delay) {
         getRecyclerView().postOnAnimationDelayed(new Runnable() {
             @Override
             public void run() {
@@ -325,7 +217,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     }
                 }
             }
-        }, 2000);
+        }, delay);
     }
 
     /**
@@ -483,6 +375,144 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
         }
 
+    }
+
+    public static class PageLoadingStatusHandler {
+        public void showPageLoadingStatus(@NonNull PageDataAdapter pageDataAdapter,
+                                          @NonNull PageLoadingStatus pageLoadingStatus,
+                                          @NonNull ExtraPageLoadingStatusCallback callback) {
+            final long delay = 2200L;
+            final boolean hasAnyPageContent = pageDataAdapter.hasAnyPageContent();
+
+            if (pageLoadingStatus.firstPage) {
+                pageDataAdapter.getRecyclerView().scrollToPosition(0);
+            }
+
+            if (pageLoadingStatus.firstPage
+                    && (pageLoadingStatus.loading || pageLoadingStatus.loadFail)
+                    && !hasAnyPageContent) {
+                // 正在加载第一页或者第一页加载失败，并且当前页面是空的, 此时需要禁用下拉刷新
+                callback.disableSwipeRefreshing();
+            } else {
+                // 其他情况，启用下拉刷新
+                callback.enableSwipeRefreshing();
+            }
+
+            if (pageLoadingStatus.loading) {
+                // 加载中
+                if (pageLoadingStatus.firstPage) {
+                    // 正在加载第一页
+
+                    // 清除加载其它页的状态
+                    pageDataAdapter.removeAndNotifyMore();
+
+                    // 如果当前没有显示分页数据内容，则使用全屏加载样式，否则使用下拉加载样式
+                    if (!hasAnyPageContent) {
+                        // 全屏加载中样式
+                        callback.hideSwipeRefreshing();
+                        pageLoadingStatus = pageLoadingStatus.newBuilder()
+                                .setSmallStyle(false)
+                                .build();
+                        pageDataAdapter.replaceAndNotifyInit(pageLoadingStatus);
+                    } else {
+                        // 下拉加载中样式
+                        pageDataAdapter.removeAndNotifyInit();
+                        callback.showSwipeRefreshing();
+                    }
+                } else {
+                    // 正在加载其它页
+
+                    // 清除下拉刷新
+                    callback.hideSwipeRefreshing();
+                    // 清除加载第一页的状态
+                    pageDataAdapter.removeAndNotifyInit();
+
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(hasAnyPageContent)
+                            .build();
+                    pageDataAdapter.replaceAndNotifyMore(pageLoadingStatus);
+                }
+            } else if (pageLoadingStatus.loadSuccess) {
+                // 加载成功
+
+                // 清除下拉刷新
+                callback.hideSwipeRefreshing();
+
+                if (pageLoadingStatus.firstPage) {
+                    // 第一页加载成功
+
+                    // 清除加载其它页的状态
+                    pageDataAdapter.removeAndNotifyMore();
+
+                    // 小样式，并且稍后清除
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(true)
+                            .build();
+                    pageDataAdapter.replaceAndNotifyInit(pageLoadingStatus);
+                    pageDataAdapter.autoDismissInitDelayIfMatch(pageLoadingStatus, delay);
+                } else {
+                    // 其它页加载成功
+
+                    // 清除加载第一页的状态
+                    pageDataAdapter.removeAndNotifyInit();
+
+                    // 小样式，并且稍后清除
+                    pageLoadingStatus = pageLoadingStatus.newBuilder()
+                            .setSmallStyle(true)
+                            .build();
+                    pageDataAdapter.replaceAndNotifyMore(pageLoadingStatus);
+                    pageDataAdapter.autoDismissMoreDelayIfMatch(pageLoadingStatus, delay);
+                }
+            } else if (pageLoadingStatus.loadFail) {
+                // 加载失败
+
+                // 清除下拉刷新
+                callback.hideSwipeRefreshing();
+
+                if (pageLoadingStatus.firstPage) {
+                    // 第一页加载失败
+
+                    // 清除加载其它页的状态
+                    pageDataAdapter.removeAndNotifyMore();
+
+                    if (!hasAnyPageContent) {
+                        // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
+                        pageLoadingStatus = pageLoadingStatus.newBuilder()
+                                .setSmallStyle(false)
+                                .build();
+                        pageDataAdapter.replaceAndNotifyInit(pageLoadingStatus);
+                    } else {
+                        // 当前有显示分页数据内容，使用小样式展示加载失败，并且稍后清除
+                        pageLoadingStatus = pageLoadingStatus.newBuilder()
+                                .setSmallStyle(true)
+                                .build();
+                        pageDataAdapter.replaceAndNotifyInit(pageLoadingStatus);
+                        pageDataAdapter.autoDismissInitDelayIfMatch(pageLoadingStatus, delay);
+                    }
+                } else {
+                    // 其它页加载失败
+
+                    // 清除加载第一页的状态
+                    pageDataAdapter.removeAndNotifyInit();
+
+                    if (!hasAnyPageContent) {
+                        // 当前没有显示分页数据内容，则使用全屏展示加载失败样式
+                        pageLoadingStatus = pageLoadingStatus.newBuilder()
+                                .setSmallStyle(false)
+                                .build();
+                        pageDataAdapter.replaceAndNotifyMore(pageLoadingStatus);
+                    } else {
+                        // 当前有显示分页数据内容，使用小样式展示加载失败
+                        pageLoadingStatus = pageLoadingStatus.newBuilder()
+                                .setSmallStyle(true)
+                                .build();
+                        pageDataAdapter.replaceAndNotifyMore(pageLoadingStatus);
+                    }
+                }
+            } else {
+                Log.e(TAG + " unknown page loading status");
+            }
+        }
     }
 
     public interface ExtraPageLoadingStatusCallback {
