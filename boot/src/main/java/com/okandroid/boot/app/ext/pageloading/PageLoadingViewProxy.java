@@ -111,7 +111,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     /**
      * 当前页加载时的额外的信息
      */
-    public static class ExtraPageMessage {
+    public static class ExtraPageMessage implements PageDataAdapter.PageLoadingStatus.PageLoadingContentValidator {
         /**
          * 当前页, 当不小于 0 时有效
          */
@@ -151,6 +151,11 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return this.pageNo >= 0
                     && this.totalPage >= 0
                     && this.pageNo >= this.totalPage - 1;
+        }
+
+        @Override
+        public boolean isPageLoadingContentEmpty() {
+            return emptyContent;
         }
 
     }
