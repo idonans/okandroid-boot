@@ -292,7 +292,14 @@ public class SystemUtil {
         FileUtil.deleteFileQuietly(file);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        Uri targetUri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            targetUri = BootFileProvider.getUriForFile(file);
+        } else {
+            targetUri = Uri.fromFile(file);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
 
         List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
         if (infos != null && infos.size() > 0) {
