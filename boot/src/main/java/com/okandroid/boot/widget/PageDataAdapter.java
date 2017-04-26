@@ -409,9 +409,15 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                                                 @NonNull PageDataAdapter pageDataAdapter,
                                                 @NonNull PageLoadingStatus pageLoadingStatus,
                                                 @NonNull ExtraPageLoadingStatusCallback callback) {
-            // 处理第一页请求时，将 recycler view 滚动到第一个位置
             if (pageLoadingStatus.firstPage) {
-                recyclerView.scrollToPosition(0);
+                int childCount = recyclerView.getChildCount();
+                if (childCount > 0) {
+                    int adapterPosition = recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0));
+                    if (adapterPosition == 0) {
+                        // 如果页面没有向下滚动，尽量使得第一页的加载状态可以显示出来
+                        recyclerView.scrollToPosition(0);
+                    }
+                }
             }
         }
 
