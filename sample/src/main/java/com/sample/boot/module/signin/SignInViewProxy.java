@@ -11,10 +11,11 @@ import com.sample.boot.app.BaseViewProxy;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by idonans on 2017/2/3.
@@ -100,32 +101,28 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
         view.showLoadingView();
 
-        replaceDefaultSubscription(Observable.just("1")
+        replaceDefaultRequestHolder(Flowable.just("1")
                 .delay(3000L, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Consumer<String>() {
                     @Override
-                    public void onCompleted() {
+                    public void accept(@NonNull String s) throws Exception {
                         SignInView view = getView();
                         if (view == null) {
                             return;
                         }
                         view.hideLoadingView();
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
+                    public void accept(@NonNull Throwable e) throws Exception {
                         SignInView view = getView();
                         if (view == null) {
                             return;
                         }
                         e.printStackTrace();
                         view.hideLoadingView();
-                    }
-
-                    @Override
-                    public void onNext(String s) {
                     }
                 }));
     }

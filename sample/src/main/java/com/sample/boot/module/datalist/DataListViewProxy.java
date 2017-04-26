@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Created by idonans on 2017/4/21.
@@ -29,13 +31,13 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
     }
 
     @Override
-    protected Subscription createPageLoadingSubscription(final int pageNo) {
-        Log.d(TAG + " createPageLoadingSubscription pageNo:" + pageNo);
+    protected Disposable createPageLoadingRequest(final int pageNo) {
+        Log.d(TAG + " createPageLoadingRequest pageNo:" + pageNo);
 
-        return Observable.just("1")
-                .map(new Func1<String, Collection>() {
+        return Flowable.just("1")
+                .map(new Function<String, Collection>() {
                     @Override
-                    public Collection call(String s) {
+                    public Collection apply(@NonNull String s) throws Exception {
                         ArrayList items = new ArrayList(10);
                         for (int i = 0; i < 20; i++) {
                             items.add(pageNo + "#" + i);
@@ -57,13 +59,16 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Collection>() {
+                .subscribe(new Consumer<Collection>() {
                     @Override
-                    public void onCompleted() {
+                    public void accept(@NonNull Collection collection) throws Exception {
+                        ExtraPageMessage extraPageMessage = new ExtraPageMessage();
+                        extraPageMessage.totalPage = 5;
+                        notifyPageLoadingEnd(pageNo, collection, extraPageMessage);
                     }
-
+                }, new Consumer<Throwable>() {
                     @Override
-                    public void onError(Throwable e) {
+                    public void accept(@NonNull Throwable e) throws Exception {
                         ExtraPageMessage extraPageMessage = new ExtraPageMessage();
 
                         if (!NetUtil.hasActiveNetwork()) {
@@ -77,13 +82,6 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                         }
 
                         notifyPageLoadingEnd(pageNo, null, extraPageMessage);
-                    }
-
-                    @Override
-                    public void onNext(Collection collection) {
-                        ExtraPageMessage extraPageMessage = new ExtraPageMessage();
-                        extraPageMessage.totalPage = 5;
-                        notifyPageLoadingEnd(pageNo, collection, extraPageMessage);
                     }
                 });
     }

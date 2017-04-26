@@ -2,13 +2,13 @@ package com.okandroid.boot.app.ext.preload;
 
 import android.support.annotation.CallSuper;
 
-import com.okandroid.boot.rx.SubscriptionHolder;
+import com.okandroid.boot.rx.DisposableHolder;
 import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.viewproxy.ViewProxy;
 
 import java.io.IOException;
 
-import rx.Subscription;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by idonans on 2017/2/15.
@@ -85,10 +85,10 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
         mPrepared = true;
     }
 
-    private final SubscriptionHolder mDefaultSubscriptionHolder = new SubscriptionHolder();
+    private final DisposableHolder mDefaultRequestHolder = new DisposableHolder();
 
-    public void replaceDefaultSubscription(Subscription subscription) {
-        mDefaultSubscriptionHolder.setSubscription(subscription);
+    public void replaceDefaultRequestHolder(Disposable disposable) {
+        mDefaultRequestHolder.setDisposable(disposable);
     }
 
     public boolean callActivityBackPressed() {
@@ -101,7 +101,7 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
 
     @Override
     public void close() throws IOException {
-        mDefaultSubscriptionHolder.clear();
+        mDefaultRequestHolder.clear();
         super.close();
     }
 

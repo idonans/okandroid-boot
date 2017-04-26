@@ -7,7 +7,7 @@ import com.okandroid.boot.widget.PageDataAdapter;
 import java.io.IOException;
 import java.util.Collection;
 
-import rx.Subscription;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by idonans on 2017/4/20.
@@ -88,7 +88,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
 
         mCurrentLoadingPageNo = pageNo;
 
-        replaceDefaultSubscription(null);
+        replaceDefaultRequestHolder(null);
 
         boolean firstPage = pageNo == mFirstPageNo;
         view.showPageLoadingStatus(new PageDataAdapter.PageLoadingStatus.Builder()
@@ -98,7 +98,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
                 .setLoadFail(false)
                 .build());
 
-        replaceDefaultSubscription(createPageLoadingSubscription(pageNo));
+        replaceDefaultRequestHolder(createPageLoadingRequest(pageNo));
     }
 
     @Override
@@ -160,7 +160,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
 
     }
 
-    protected abstract Subscription createPageLoadingSubscription(final int pageNo);
+    protected abstract Disposable createPageLoadingRequest(final int pageNo);
 
     /**
      * @param data    如果加载失败, 值为 null.
