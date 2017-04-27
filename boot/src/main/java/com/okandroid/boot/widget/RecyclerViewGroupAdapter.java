@@ -3,6 +3,7 @@ package com.okandroid.boot.widget;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.SparseArrayCompat;
+import android.support.v4.widget.Space;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
@@ -19,7 +20,7 @@ import java.util.Collection;
  * Created by idonans on 2015/12/28.
  * 数据分组的RecyclerView Adapter
  */
-public class RecyclerViewGroupAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
+public class RecyclerViewGroupAdapter extends RecyclerView.Adapter {
 
     private final SparseArrayCompat mData;
     private final RecyclerView mRecyclerView;
@@ -43,15 +44,15 @@ public class RecyclerViewGroupAdapter<VH extends RecyclerView.ViewHolder> extend
 
     /**
      * {@inheritDoc}
-     * 默认实现viewType与group一致
+     * 默认实现 viewType 与 group 一致
      */
     @Override
-    public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new EmptyViewHolder(this);
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HolderUpdate) {
             ((HolderUpdate) holder).onHolderUpdate(getItem(position), position);
         }
@@ -651,6 +652,27 @@ public class RecyclerViewGroupAdapter<VH extends RecyclerView.ViewHolder> extend
     public final int getItemViewType(int position) {
         int[] groupAndPosition = getGroupAndPosition(position);
         return getGroupItemViewType(position, groupAndPosition[0], groupAndPosition[1]);
+    }
+
+    public static class EmptyViewHolder extends RecyclerViewGroupHolder {
+
+        public EmptyViewHolder(RecyclerViewGroupAdapter groupAdapter) {
+            super(groupAdapter, createView(groupAdapter));
+            onHolderUpdate(null, 0);
+        }
+
+        @Override
+        public final void onHolderUpdate(@Nullable Object object, int position) {
+            super.onHolderUpdate(null, 0);
+        }
+
+        private static View createView(RecyclerViewGroupAdapter groupAdapter) {
+            Space view = new Space(groupAdapter.getRecyclerView().getContext());
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(0, 0);
+            view.setLayoutParams(layoutParams);
+            return view;
+        }
+
     }
 
     public interface HolderFlags {

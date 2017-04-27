@@ -35,13 +35,17 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
     public static final int GROUP_MORE = 2000;
 
     /**
+     * 内置扩展 view holder type 的基础值(最小值), 该值以上的部分不建议子类使用
+     */
+    public static final int VIEW_HOLDER_TYPE_EXTRA_BASE = 5000;
+    /**
      * 小样式的加载中, 加载错误.
      */
-    public static final int VIEW_HOLDER_TYPE_LOADING_SMALL = 2000;
+    public static final int VIEW_HOLDER_TYPE_LOADING_SMALL = VIEW_HOLDER_TYPE_EXTRA_BASE + 1;
     /**
      * 大样式的加载中, 加载错误.
      */
-    public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = 2001;
+    public static final int VIEW_HOLDER_TYPE_LOADING_LARGE = VIEW_HOLDER_TYPE_EXTRA_BASE + 2;
 
     private PageLoadingStatusHandler mPageLoadingStatusHandler;
 
