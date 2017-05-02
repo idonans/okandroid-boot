@@ -1,7 +1,5 @@
 package com.okandroid.boot.widget;
 
-import com.okandroid.boot.lang.Log;
-
 /**
  * Created by idonans on 2017/5/2.
  * <p>
@@ -52,7 +50,7 @@ public class MaxLineViewHelper {
 
             int currentLines = mListener.getCurrentLines();
 
-            Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
+            // Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
 
             if (mAllLines == ALL_LINES_UNKNOWN) {
                 mAllLines = currentLines;
