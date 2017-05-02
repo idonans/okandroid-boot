@@ -11,7 +11,7 @@ import com.sample.boot.app.BaseViewProxy;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
@@ -101,7 +101,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
         view.showLoadingView();
 
-        replaceDefaultRequestHolder(Flowable.just("1")
+        replaceDefaultRequestHolder(Single.just("1")
                 .delay(3000L, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

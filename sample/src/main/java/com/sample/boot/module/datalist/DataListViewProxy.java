@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -34,7 +34,7 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
     protected Disposable createPageLoadingRequest(final int pageNo) {
         Log.d(TAG + " createPageLoadingRequest pageNo:" + pageNo);
 
-        return Flowable.just("1")
+        return Single.just("1")
                 .map(new Function<String, Collection>() {
                     @Override
                     public Collection apply(@NonNull String s) throws Exception {
