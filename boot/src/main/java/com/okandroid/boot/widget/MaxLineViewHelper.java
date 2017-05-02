@@ -63,10 +63,12 @@ public class MaxLineViewHelper {
 
                 if (mAllLines == ALL_LINES_UNKNOWN) {
                     mAllLines = currentLines;
+
+                    mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
+                    return false;
                 }
 
-                mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
-                return false;
+                return true;
             } finally {
                 clearOnPreDrawListener();
             }
