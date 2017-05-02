@@ -84,6 +84,8 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
         private final MaxLineViewFrameLayout mMaxLineView;
         private final MaxLineViewHelper mMaxLineViewHelper;
 
+        private DataListViewProxy.Item mItem;
+
         public ViewHolderItemData(RecyclerViewGroupAdapter groupAdapter, LayoutInflater inflater, ViewGroup parent) {
             super(groupAdapter, inflater, parent, R.layout.sample_data_list_view_item_data);
             mMaxLineView = findViewByID(R.id.max_line_view);
@@ -102,6 +104,10 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                 @Override
                 public void onExpandUpdate(boolean expand, int allLines, int expandableLines) {
                     Log.d(TAG + " ViewHolderItemData onExpandUpdate expand: " + expand + ", allLines: " + allLines + ", expandableLines: " + expandableLines);
+                    if (mItem != null) {
+                        mItem._expand = expand;
+                    }
+
                     if (allLines <= expandableLines) {
                         // 总行数不足, 隐藏 展开/关闭 按钮
                         mTextView.setMaxLines(Integer.MAX_VALUE);
@@ -139,8 +145,10 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
         protected void update(@NonNull Object object, int position) {
             Log.d(TAG + " ViewHolderItemData update position: " + position);
 
-            mTextView.setText(String.valueOf(object));
-            mMaxLineViewHelper.reset(false);
+            mItem = (DataListViewProxy.Item) object;
+
+            mTextView.setText(mItem.content);
+            mMaxLineViewHelper.reset(mItem._expand);
         }
     }
 

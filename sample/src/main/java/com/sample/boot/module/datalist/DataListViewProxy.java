@@ -40,7 +40,7 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                     public Collection apply(@NonNull String s) throws Exception {
                         ArrayList items = new ArrayList(10);
                         for (int i = 0; i < 20; i++) {
-                            items.add(pageNo + "#" + i + "\n line text\n line text\n line text\n line text\n line text\n line text");
+                            items.add(Item.from(pageNo + "#" + i + "\n line text\n line text\n line text\n line text\n line text\n line text"));
                         }
                         Threads.sleepQuietly(1000);
 
@@ -84,6 +84,17 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                         notifyPageLoadingEnd(pageNo, null, extraPageMessage);
                     }
                 });
+    }
+
+    public static class Item {
+        public String content;
+        public boolean _expand;
+
+        public static Item from(String content) {
+            Item item = new Item();
+            item.content = content;
+            return item;
+        }
     }
 
 }
