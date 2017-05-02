@@ -1,8 +1,5 @@
 package com.okandroid.boot.widget;
 
-import android.view.View;
-import android.view.ViewTreeObserver;
-
 import com.okandroid.boot.lang.Log;
 
 /**
@@ -20,60 +17,50 @@ public class MaxLineViewHelper {
     private static final String TAG = "MaxLineViewHelper";
     private static final int ALL_LINES_UNKNOWN = -1;
 
-    private final View mItemView;
+    private final MaxLineView mMaxLineView;
 
     private int mExpandableLines;
     private int mAllLines = ALL_LINES_UNKNOWN;
     private boolean mExpand;
     private final ExpandUpdateListener mListener;
 
-    public MaxLineViewHelper(View itemView, int expandableLines, boolean expand, ExpandUpdateListener listener) {
-        mItemView = itemView;
+    public MaxLineViewHelper(MaxLineView maxLineView, int expandableLines, boolean expand, ExpandUpdateListener listener) {
+        mMaxLineView = maxLineView;
         mExpandableLines = expandableLines;
         mExpand = expand;
         mListener = listener;
 
-        mItemView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+        mMaxLineView.setOnItemViewMeasureListener(new OnItemViewMeasureListener() {
             @Override
-            public void onViewAttachedToWindow(View v) {
-                resetOnPreDrawListener();
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                clearOnPreDrawListener();
+            public void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                if (mOnItemViewMeasureListenerInternal != null) {
+                    mOnItemViewMeasureListenerInternal.onItemViewMeasure(widthMeasureSpec, heightMeasureSpec);
+                }
             }
         });
     }
 
-    private OnPreDrawImpl mOnPreDraw;
+    private OnItemViewMeasureListenerImpl mOnItemViewMeasureListenerInternal;
 
-    private class OnPreDrawImpl implements ViewTreeObserver.OnPreDrawListener {
+    private class OnItemViewMeasureListenerImpl implements OnItemViewMeasureListener {
 
         @Override
-        public boolean onPreDraw() {
-            try {
-                if (mOnPreDraw != this) {
-                    return mOnPreDraw == null;
-                }
+        public void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            if (mOnItemViewMeasureListenerInternal != this) {
+                return;
+            }
 
-                int currentLines = mListener.getCurrentLines();
+            int currentLines = mListener.getCurrentLines();
 
-                Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
+            Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
 
-                if (mAllLines == ALL_LINES_UNKNOWN) {
-                    mAllLines = currentLines;
+            if (mAllLines == ALL_LINES_UNKNOWN) {
+                mAllLines = currentLines;
 
-                    mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
-                    return false;
-                }
-
-                return true;
-            } finally {
-                clearOnPreDrawListener();
+                mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
+                mMaxLineView.callOnItemViewMeasureSuper(widthMeasureSpec, heightMeasureSpec);
             }
         }
-
     }
 
     public void toggle() {
@@ -94,7 +81,7 @@ public class MaxLineViewHelper {
     }
 
     public void reset(int expandableLines, boolean expand) {
-        clearOnPreDrawListener();
+        mOnItemViewMeasureListenerInternal = null;
 
         mAllLines = ALL_LINES_UNKNOWN;
         mExpandableLines = expandableLines;
@@ -102,22 +89,7 @@ public class MaxLineViewHelper {
 
         mListener.onReset();
 
-        resetOnPreDrawListener();
-    }
-
-    private void resetOnPreDrawListener() {
-        clearOnPreDrawListener();
-
-        mOnPreDraw = new OnPreDrawImpl();
-        mItemView.getViewTreeObserver().addOnPreDrawListener(mOnPreDraw);
-    }
-
-    private void clearOnPreDrawListener() {
-        OnPreDrawImpl old = mOnPreDraw;
-        mOnPreDraw = null;
-        if (old != null) {
-            mItemView.getViewTreeObserver().removeOnPreDrawListener(old);
-        }
+        mOnItemViewMeasureListenerInternal = new OnItemViewMeasureListenerImpl();
     }
 
     public boolean isExpand() {
@@ -134,6 +106,16 @@ public class MaxLineViewHelper {
         void onExpandUpdate(boolean expand, int allLines, int expandableLines);
 
         void onReset();
+    }
+
+    public interface MaxLineView {
+        void setOnItemViewMeasureListener(OnItemViewMeasureListener listener);
+
+        void callOnItemViewMeasureSuper(int widthMeasureSpec, int heightMeasureSpec);
+    }
+
+    public interface OnItemViewMeasureListener {
+        void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec);
     }
 
 }

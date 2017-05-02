@@ -12,6 +12,7 @@ import com.okandroid.boot.app.ext.pageloading.PageLoadingFragment;
 import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
 import com.okandroid.boot.app.ext.pageloading.adapter.PageLoadingDataAdapter;
 import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.widget.MaxLineViewFrameLayout;
 import com.okandroid.boot.widget.MaxLineViewHelper;
 import com.okandroid.boot.widget.PageDataAdapter;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
@@ -80,14 +81,16 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
 
         private final TextView mTextView;
         private final TextView mExpandControl;
+        private final MaxLineViewFrameLayout mMaxLineView;
         private final MaxLineViewHelper mMaxLineViewHelper;
 
         public ViewHolderItemData(RecyclerViewGroupAdapter groupAdapter, LayoutInflater inflater, ViewGroup parent) {
             super(groupAdapter, inflater, parent, R.layout.sample_data_list_view_item_data);
+            mMaxLineView = findViewByID(R.id.max_line_view);
             mTextView = findViewByID(R.id.text);
             mExpandControl = findViewByID(R.id.expand_control);
 
-            mMaxLineViewHelper = new MaxLineViewHelper(itemView, 5, true, new MaxLineViewHelper.ExpandUpdateListener() {
+            mMaxLineViewHelper = new MaxLineViewHelper(mMaxLineView, 5, true, new MaxLineViewHelper.ExpandUpdateListener() {
                 @Override
                 public int getCurrentLines() {
                     int lineCount = mTextView.getLineCount();
