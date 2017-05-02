@@ -3,6 +3,8 @@ package com.okandroid.boot.widget;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.okandroid.boot.lang.Log;
+
 /**
  * Created by idonans on 2017/5/2.
  * <p>
@@ -15,6 +17,7 @@ import android.view.ViewTreeObserver;
 
 public class MaxLineViewHelper {
 
+    private static final String TAG = "MaxLineViewHelper";
     private static final int ALL_LINES_UNKNOWN = -1;
 
     private final View mItemView;
@@ -29,8 +32,6 @@ public class MaxLineViewHelper {
         mExpandableLines = expandableLines;
         mExpand = expand;
         mListener = listener;
-
-        resetOnPreDrawListener();
 
         mItemView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
@@ -51,34 +52,29 @@ public class MaxLineViewHelper {
 
         @Override
         public boolean onPreDraw() {
-            if (mOnPreDraw != this) {
-                return mOnPreDraw == null;
-            }
+            try {
+                if (mOnPreDraw != this) {
+                    return mOnPreDraw == null;
+                }
 
-            int currentLines = mListener.getCurrentLines();
-            if (mAllLines == ALL_LINES_UNKNOWN) {
-                mAllLines = currentLines;
+                int currentLines = mListener.getCurrentLines();
+
+                Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
+
+                if (mAllLines == ALL_LINES_UNKNOWN) {
+                    mAllLines = currentLines;
+                }
 
                 mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
                 return false;
-            } else if (mAllLines > mExpandableLines) {
-                if (mExpand && currentLines == mExpandableLines) {
-                    // 希望是展开的，但实际没有
-                    mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
-                    return false;
-                } else if (!mExpand && currentLines == mAllLines) {
-                    // 希望是关闭的，但实际是展开的
-                    mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
-                    return false;
-                }
+            } finally {
+                clearOnPreDrawListener();
             }
-
-            return true;
         }
 
     }
 
-    public void toggler() {
+    public void toggle() {
         if (mAllLines == ALL_LINES_UNKNOWN) {
             reset(!mExpand);
         } else {
