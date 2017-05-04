@@ -39,8 +39,18 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                     @Override
                     public Collection apply(@NonNull String s) throws Exception {
                         ArrayList items = new ArrayList(10);
+
+                        StringBuilder builder = new StringBuilder();
                         for (int i = 0; i < 20; i++) {
-                            items.add(Item.from(pageNo + "#" + i + "\n line text\n line text\n line text\n line text\n line text\n line text"));
+                            int randomLine = ((int) (Math.random() * 10) % 10);
+
+                            builder.setLength(0);
+                            builder.append(pageNo + "#" + i + "#" + randomLine);
+
+                            for (int j = 0; j < randomLine; j++) {
+                                builder.append("\nrandom line text " + j);
+                            }
+                            items.add(Item.from(builder.toString()));
                         }
                         Threads.sleepQuietly(1000);
 
@@ -48,10 +58,12 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
                             throw new RuntimeException("network error");
                         }
 
-                        if (Math.random() > 0.5 && pageNo == 0) {
-                            return Collections.EMPTY_LIST;
-                        } else if (Math.random() > 0.8) {
-                            throw new RuntimeException("random error");
+                        if (Math.random() > 0.8) {
+                            if (pageNo == 0) {
+                                return Collections.EMPTY_LIST;
+                            } else {
+                                throw new RuntimeException("random error");
+                            }
                         }
 
                         return items;
