@@ -8,13 +8,13 @@ import com.okandroid.boot.util.NetUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -34,41 +34,40 @@ public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
     protected Disposable createPageLoadingRequest(final int pageNo) {
         Log.d(TAG + " createPageLoadingRequest pageNo:" + pageNo);
 
-        return Single.just("1")
-                .map(new Function<String, Collection>() {
-                    @Override
-                    public Collection apply(@NonNull String s) throws Exception {
-                        ArrayList items = new ArrayList(10);
+        return Single.fromCallable(new Callable<Collection>() {
+            @Override
+            public Collection call() throws Exception {
+                ArrayList items = new ArrayList(10);
 
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 0; i < 20; i++) {
-                            int randomLine = ((int) (Math.random() * 10) % 10);
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < 20; i++) {
+                    int randomLine = ((int) (Math.random() * 10) % 10);
 
-                            builder.setLength(0);
-                            builder.append(pageNo + "#" + i + "#" + randomLine);
+                    builder.setLength(0);
+                    builder.append(pageNo + "#" + i + "#" + randomLine);
 
-                            for (int j = 0; j < randomLine; j++) {
-                                builder.append("\nrandom line text " + j);
-                            }
-                            items.add(Item.from(builder.toString()));
-                        }
-                        Threads.sleepQuietly(1000);
-
-                        if (!NetUtil.hasActiveNetwork()) {
-                            throw new RuntimeException("network error");
-                        }
-
-                        if (Math.random() > 0.8) {
-                            if (pageNo == 0) {
-                                return Collections.EMPTY_LIST;
-                            } else {
-                                throw new RuntimeException("random error");
-                            }
-                        }
-
-                        return items;
+                    for (int j = 0; j < randomLine; j++) {
+                        builder.append("\nrandom line text " + j);
                     }
-                })
+                    items.add(Item.from(builder.toString()));
+                }
+                Threads.sleepQuietly(1000);
+
+                if (!NetUtil.hasActiveNetwork()) {
+                    throw new RuntimeException("network error");
+                }
+
+                if (Math.random() > 0.8) {
+                    if (pageNo == 0) {
+                        return Collections.EMPTY_LIST;
+                    } else {
+                        throw new RuntimeException("random error");
+                    }
+                }
+
+                return items;
+            }
+        })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Collection>() {
