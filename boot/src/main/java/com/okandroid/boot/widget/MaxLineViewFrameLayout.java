@@ -34,24 +34,24 @@ public class MaxLineViewFrameLayout extends FrameLayout implements MaxLineViewHe
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private MaxLineViewHelper.OnItemViewMeasureListener mOnItemViewMeasureListener;
+    private MaxLineViewHelper.OnViewMeasureListener mOnViewMeasureListener;
 
     @Override
-    public void setOnItemViewMeasureListener(MaxLineViewHelper.OnItemViewMeasureListener listener) {
-        mOnItemViewMeasureListener = listener;
+    public void setOnViewMeasureListener(MaxLineViewHelper.OnViewMeasureListener listener) {
+        mOnViewMeasureListener = listener;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mOnItemViewMeasureListener != null) {
-            mOnItemViewMeasureListener.onItemViewMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (mOnViewMeasureListener != null) {
+            mOnViewMeasureListener.onViewMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
 
     @SuppressLint("WrongCall")
     @Override
-    public void callOnItemViewMeasureSuper(int widthMeasureSpec, int heightMeasureSpec) {
+    public void callOnViewMeasureSuper(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

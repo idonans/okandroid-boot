@@ -92,7 +92,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
             mTextView = findViewByID(R.id.text);
             mExpandControl = findViewByID(R.id.expand_control);
 
-            mMaxLineViewHelper = new MaxLineViewHelper(mMaxLineView, 5, true, new MaxLineViewHelper.ExpandUpdateListener() {
+            mMaxLineViewHelper = new MaxLineViewHelper(mMaxLineView, new MaxLineViewHelper.ExpandUpdateListener() {
                 @Override
                 public int getCurrentLines() {
                     int lineCount = mTextView.getLineCount();
@@ -102,13 +102,15 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                 }
 
                 @Override
-                public void onExpandUpdate(boolean expand, int allLines, int expandableLines) {
-                    Log.d(TAG + " ViewHolderItemData onExpandUpdate expand: " + expand + ", allLines: " + allLines + ", expandableLines: " + expandableLines);
+                public void onExpandUpdate(boolean expand, int allLines) {
+                    Log.d(TAG + " ViewHolderItemData onExpandUpdate expand: " + expand + ", allLines: " + allLines);
                     if (mItem != null) {
                         mItem._expand = expand;
                     }
 
-                    if (allLines <= expandableLines) {
+                    final int limitLine = 5;
+
+                    if (allLines <= limitLine) {
                         // 总行数不足, 隐藏 展开/关闭 按钮
                         mTextView.setMaxLines(Integer.MAX_VALUE);
                         mExpandControl.setVisibility(View.GONE);
@@ -120,7 +122,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                             mExpandControl.setText("收起");
                         } else {
                             // 收起状态
-                            mTextView.setMaxLines(expandableLines);
+                            mTextView.setMaxLines(limitLine);
                             mExpandControl.setVisibility(View.VISIBLE);
                             mExpandControl.setText("展开");
                         }
@@ -131,6 +133,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
                 public void onReset() {
                     Log.d(TAG + " ViewHolderItemData onReset");
                     mTextView.setMaxLines(Integer.MAX_VALUE);
+                    mExpandControl.setVisibility(View.GONE);
                 }
             });
             mExpandControl.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +151,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
             mItem = (DataListViewProxy.Item) object;
 
             mTextView.setText(mItem.content);
-            mMaxLineViewHelper.reset(mItem._expand);
+            mMaxLineViewHelper.update(mItem._expand);
         }
     }
 

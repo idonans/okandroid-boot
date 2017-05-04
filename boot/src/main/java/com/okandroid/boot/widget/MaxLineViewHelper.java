@@ -12,108 +12,92 @@ package com.okandroid.boot.widget;
 
 public class MaxLineViewHelper {
 
-    private static final String TAG = "MaxLineViewHelper";
     private static final int ALL_LINES_UNKNOWN = -1;
 
     private final MaxLineView mMaxLineView;
 
-    private int mExpandableLines;
     private int mAllLines = ALL_LINES_UNKNOWN;
     private boolean mExpand;
     private final ExpandUpdateListener mListener;
 
-    public MaxLineViewHelper(MaxLineView maxLineView, int expandableLines, boolean expand, ExpandUpdateListener listener) {
+    public MaxLineViewHelper(MaxLineView maxLineView, ExpandUpdateListener listener) {
         mMaxLineView = maxLineView;
-        mExpandableLines = expandableLines;
-        mExpand = expand;
         mListener = listener;
 
-        mMaxLineView.setOnItemViewMeasureListener(new OnItemViewMeasureListener() {
+        mMaxLineView.setOnViewMeasureListener(new OnViewMeasureListener() {
             @Override
-            public void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                if (mOnItemViewMeasureListenerInternal != null) {
-                    mOnItemViewMeasureListenerInternal.onItemViewMeasure(widthMeasureSpec, heightMeasureSpec);
+            public void onViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                if (mOnViewMeasureListenerInternal != null) {
+                    mOnViewMeasureListenerInternal.onViewMeasure(widthMeasureSpec, heightMeasureSpec);
                 }
             }
         });
     }
 
-    private OnItemViewMeasureListenerImpl mOnItemViewMeasureListenerInternal;
+    private OnViewMeasureListenerImpl mOnViewMeasureListenerInternal;
 
-    private class OnItemViewMeasureListenerImpl implements OnItemViewMeasureListener {
+    private class OnViewMeasureListenerImpl implements OnViewMeasureListener {
 
         @Override
-        public void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            if (mOnItemViewMeasureListenerInternal != this) {
+        public void onViewMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            if (mOnViewMeasureListenerInternal != this) {
                 return;
             }
 
             int currentLines = mListener.getCurrentLines();
-
-            // Log.d(TAG + " currentLines: " + currentLines + ", all lines: " + mAllLines);
-
             if (mAllLines == ALL_LINES_UNKNOWN) {
                 mAllLines = currentLines;
 
-                mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
-                mMaxLineView.callOnItemViewMeasureSuper(widthMeasureSpec, heightMeasureSpec);
+                mListener.onExpandUpdate(mExpand, mAllLines);
+                mMaxLineView.callOnViewMeasureSuper(widthMeasureSpec, heightMeasureSpec);
             }
         }
     }
 
     public void toggle() {
         if (mAllLines == ALL_LINES_UNKNOWN) {
-            reset(!mExpand);
+            update(!mExpand);
         } else {
             mExpand = !mExpand;
-            mListener.onExpandUpdate(mExpand, mAllLines, mExpandableLines);
+            mListener.onExpandUpdate(mExpand, mAllLines);
         }
     }
 
-    public void reset() {
-        reset(mExpandableLines, mExpand);
+    public void update() {
+        update(mExpand);
     }
 
-    public void reset(boolean expand) {
-        reset(mExpandableLines, expand);
-    }
-
-    public void reset(int expandableLines, boolean expand) {
-        mOnItemViewMeasureListenerInternal = null;
+    public void update(boolean expand) {
+        mOnViewMeasureListenerInternal = null;
 
         mAllLines = ALL_LINES_UNKNOWN;
-        mExpandableLines = expandableLines;
         mExpand = expand;
 
         mListener.onReset();
 
-        mOnItemViewMeasureListenerInternal = new OnItemViewMeasureListenerImpl();
+        mOnViewMeasureListenerInternal = new OnViewMeasureListenerImpl();
     }
 
     public boolean isExpand() {
         return mExpand;
     }
 
-    public int getExpandableLines() {
-        return mExpandableLines;
-    }
-
     public interface ExpandUpdateListener {
         int getCurrentLines();
 
-        void onExpandUpdate(boolean expand, int allLines, int expandableLines);
+        void onExpandUpdate(boolean expand, int allLines);
 
         void onReset();
     }
 
     public interface MaxLineView {
-        void setOnItemViewMeasureListener(OnItemViewMeasureListener listener);
+        void setOnViewMeasureListener(OnViewMeasureListener listener);
 
-        void callOnItemViewMeasureSuper(int widthMeasureSpec, int heightMeasureSpec);
+        void callOnViewMeasureSuper(int widthMeasureSpec, int heightMeasureSpec);
     }
 
-    public interface OnItemViewMeasureListener {
-        void onItemViewMeasure(int widthMeasureSpec, int heightMeasureSpec);
+    public interface OnViewMeasureListener {
+        void onViewMeasure(int widthMeasureSpec, int heightMeasureSpec);
     }
 
 }
