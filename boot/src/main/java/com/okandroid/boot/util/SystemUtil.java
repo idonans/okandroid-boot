@@ -316,7 +316,7 @@ public class SystemUtil {
      */
     public static boolean installApk(File apkFile) {
         try {
-            Uri uri = Uri.fromFile(apkFile);
+            Uri uri = FileUtil.getFileUri(apkFile);
             Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
             intent.setData(uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
