@@ -326,4 +326,28 @@ public class SystemUtil {
         }
     }
 
+    /**
+     * 调用系统安装程序安装指定 apk, 调用成功返回 true, 否则返回 false.
+     */
+    public static boolean installApk(File apkFile) {
+        try {
+            Uri uri = Uri.fromFile(apkFile);
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setData(uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            if (intent.resolveActivity(AppContext.getContext().getPackageManager()) != null) {
+                Intent chooser = Intent.createChooser(intent, null);
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                AppContext.getContext().startActivity(chooser);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
