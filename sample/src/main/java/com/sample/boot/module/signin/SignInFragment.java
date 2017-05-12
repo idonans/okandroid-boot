@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import com.sample.boot.app.BaseFragment;
 import com.sample.boot.module.datalist.DataListActivity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by idonans on 2017/2/3.
@@ -233,12 +236,16 @@ public class SignInFragment extends BaseFragment implements SignInView {
             return;
         }
 
-        requestPermissions(new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.INSTALL_PACKAGES,
-        }, REQUEST_PERMISSION_CODE_DOWNLOAD_APK);
+        List<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        permissions.add(Manifest.permission.INTERNET);
+        permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            permissions.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
+        }
+
+        requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_PERMISSION_CODE_DOWNLOAD_APK);
     }
 
     private final File[] mTakePhotoFiles = new File[1];

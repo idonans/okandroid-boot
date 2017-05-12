@@ -1,5 +1,7 @@
 package com.okandroid.boot.util;
 
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.CheckResult;
 import android.text.TextUtils;
@@ -7,6 +9,7 @@ import android.text.TextUtils;
 import com.okandroid.boot.App;
 import com.okandroid.boot.AppContext;
 import com.okandroid.boot.data.ProcessManager;
+import com.okandroid.boot.lang.BootFileProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -360,6 +363,16 @@ public class FileUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Uri getFileUri(File file) {
+        Uri targetUri;
+        if (Build.VERSION.SDK_INT >= 24) {
+            targetUri = BootFileProvider.getUriForFile(file);
+        } else {
+            targetUri = Uri.fromFile(file);
+        }
+        return targetUri;
     }
 
 }
