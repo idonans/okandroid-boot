@@ -296,6 +296,13 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
                 errorApkFile = null;
                 mApkInstallInfo.localApkFile = apkFile.getAbsolutePath();
+
+                Threads.postUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        ApkDownloader.this.notifyFinish();
+                    }
+                });
                 ApkDownloader.this.notifyFinish();
             } catch (Throwable e) {
                 e.printStackTrace();
