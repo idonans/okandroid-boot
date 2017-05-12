@@ -273,8 +273,18 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                             @Override
                             protected void onUpdate() {
                                 super.onUpdate();
-                                mApkInstallInfo.downloadProgress = getPercent();
-                                Threads.runOnUi(new Runnable() {
+
+                                // for test, let download speed slow
+                                Threads.sleepQuietly(20);
+
+                                int newPercent = getPercent();
+                                if (mApkInstallInfo.downloadProgress == newPercent) {
+                                    return;
+                                }
+
+                                mApkInstallInfo.downloadProgress = newPercent;
+                                Log.d(TAG + " download progress: " + mApkInstallInfo.downloadProgress);
+                                Threads.postUi(new Runnable() {
                                     @Override
                                     public void run() {
                                         ApkDownloader.this.notifyUpdate();
@@ -289,7 +299,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                 ApkDownloader.this.notifyFinish();
             } catch (Throwable e) {
                 e.printStackTrace();
-                Threads.runOnUi(new Runnable() {
+                Threads.postUi(new Runnable() {
                     @Override
                     public void run() {
                         ApkDownloader.this.notifyError();
@@ -309,6 +319,10 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                 return;
             }
 
+            if (!isAvailable()) {
+                return;
+            }
+
             view.updateDownloadAndInstallApkDialog(mApkInstallInfo.copy());
         }
 
@@ -316,6 +330,10 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
         private void notifyError() {
             SignInView view = getView();
             if (view == null) {
+                return;
+            }
+
+            if (!isAvailable()) {
                 return;
             }
 
@@ -327,6 +345,10 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
         private void notifyFinish() {
             SignInView view = getView();
             if (view == null) {
+                return;
+            }
+
+            if (!isAvailable()) {
                 return;
             }
 
