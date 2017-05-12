@@ -62,6 +62,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="test data list"/>
+                <Button android:id="@+id/test_install_apk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="test install apk"/>
                 <TextView android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:text="space"/>

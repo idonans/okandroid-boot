@@ -7,4 +7,12 @@ import com.sample.boot.app.BaseView;
  */
 
 public interface SignInView extends BaseView {
+    void hideDownloadAndInstallApkDialog();
+
+    void showDownloadAndInstallApkDialog(SignInViewProxy.ApkInstallInfo apkInstallInfo);
+
+    void updateDownloadAndInstallApkDialog(SignInViewProxy.ApkInstallInfo apkInstallInfo);
+
+    void showDownloadAndInstallApkFail();
+
 }

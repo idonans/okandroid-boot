@@ -2,15 +2,18 @@ package com.sample.boot.module.signin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.okandroid.boot.AppContext;
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.GrantResultUtil;
@@ -58,6 +61,44 @@ public class SignInFragment extends BaseFragment implements SignInView {
         mContent = new Content(activity, inflater, contentView);
     }
 
+    private AlertDialog mDownloadAndInstallApkDialog;
+
+    @Override
+    public void hideDownloadAndInstallApkDialog() {
+        if (mDownloadAndInstallApkDialog != null) {
+            mDownloadAndInstallApkDialog.dismiss();
+            mDownloadAndInstallApkDialog = null;
+        }
+    }
+
+    @Override
+    public void showDownloadAndInstallApkDialog(SignInViewProxy.ApkInstallInfo apkInstallInfo) {
+        if (mDownloadAndInstallApkDialog != null) {
+            mDownloadAndInstallApkDialog.dismiss();
+            mDownloadAndInstallApkDialog = null;
+        }
+
+        Context context = SystemUtil.getActivityFromFragment(this);
+        mDownloadAndInstallApkDialog = new AlertDialog.Builder(context)
+                .setTitle("apk 下载")
+                .setMessage("url: " + apkInstallInfo.apkUrl)
+                .show();
+    }
+
+    @Override
+    public void updateDownloadAndInstallApkDialog(SignInViewProxy.ApkInstallInfo apkInstallInfo) {
+        if (mDownloadAndInstallApkDialog == null) {
+            return;
+        }
+
+        mDownloadAndInstallApkDialog.setMessage("url: " + apkInstallInfo.apkUrl + "\n" + " progress: " + apkInstallInfo.downloadProgress + "%");
+    }
+
+    @Override
+    public void showDownloadAndInstallApkFail() {
+        Toast.makeText(AppContext.getContext(), "apk 下载失败", Toast.LENGTH_SHORT).show();
+    }
+
     private class Content extends PreloadSubViewHelper {
 
         private final PtrLayout mPtrLayout;
@@ -67,6 +108,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestOpenUrl;
         private final View mTestTakePhoto;
         private final View mTestDataList;
+        private final View mTestInstallApk;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -148,6 +190,14 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 }
             });
 
+            mTestInstallApk = ViewUtil.findViewByID(mRootView, R.id.test_install_apk);
+            mTestInstallApk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkDownloadAndInstallApkPermissions();
+                }
+            });
+
             invokeAutoRefresh();
         }
 
@@ -163,8 +213,34 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
     }
 
+    private void downloadAndInstallApk() {
+        SignInViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            return;
+        }
+
+        final String apkUrl = "http://static.zcool.com.cn/zcool/client/app/1000/community/1.8.3/com.zcool.community-338-1.8.3-zcool-release.apk";
+        viewProxy.startDownloadAndInstallApk(apkUrl);
+    }
+
     private static final int REQUEST_PERMISSION_CODE_TAKE_PHOTO = 1;
     private static final int REQUEST_CODE_TAKE_PHOTO = 1;
+    private static final int REQUEST_PERMISSION_CODE_DOWNLOAD_APK = 2;
+
+    private void checkDownloadAndInstallApkPermissions() {
+        SignInViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            return;
+        }
+
+        requestPermissions(new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.INSTALL_PACKAGES,
+        }, REQUEST_PERMISSION_CODE_DOWNLOAD_APK);
+    }
+
     private final File[] mTakePhotoFiles = new File[1];
 
     private void checkPermissionAndContinueTakePhoto() {
@@ -184,9 +260,15 @@ public class SignInFragment extends BaseFragment implements SignInView {
             } else {
                 Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_LONG).show();
             }
-            return;
+        } else if (requestCode == REQUEST_PERMISSION_CODE_DOWNLOAD_APK) {
+            if (GrantResultUtil.isAllGranted(grantResults)) {
+                downloadAndInstallApk();
+            } else {
+                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
