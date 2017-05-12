@@ -260,6 +260,8 @@ public class SystemUtil {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getFileUri(file));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
         if (infos != null && infos.size() > 0) {
@@ -285,6 +287,8 @@ public class SystemUtil {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getFileUri(file));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
         if (infos != null && infos.size() > 0) {
@@ -320,6 +324,8 @@ public class SystemUtil {
             Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
             intent.setData(uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
             if (intent.resolveActivity(AppContext.getContext().getPackageManager()) != null) {
                 Intent chooser = Intent.createChooser(intent, null);

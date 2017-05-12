@@ -303,7 +303,6 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                         ApkDownloader.this.notifyFinish();
                     }
                 });
-                ApkDownloader.this.notifyFinish();
             } catch (Throwable e) {
                 e.printStackTrace();
                 Threads.postUi(new Runnable() {
