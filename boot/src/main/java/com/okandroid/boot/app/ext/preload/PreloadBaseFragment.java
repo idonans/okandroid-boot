@@ -12,7 +12,7 @@ import com.okandroid.boot.app.ext.backpressed.BackPressedFragment;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
-import com.okandroid.boot.widget.ContentLoadingWindow;
+import com.okandroid.boot.widget.ContentLoadingDialog;
 
 /**
  * Created by idonans on 2017/2/15.
@@ -85,12 +85,14 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
     public void onDestroyView() {
         super.onDestroyView();
         closeDefaultViewProxy();
+        dismissLoadingView();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         closeDefaultViewProxy();
+        dismissLoadingView();
     }
 
     @Nullable
@@ -119,11 +121,11 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         return super.onBackPressed();
     }
 
-    private ContentLoadingWindow mContentLoadingWindow;
+    private ContentLoadingDialog mContentLoadingDialog;
 
     @Override
     public boolean isLoadingViewShown() {
-        return mContentLoadingWindow != null;
+        return mContentLoadingDialog != null && mContentLoadingDialog.isShowing();
     }
 
     @Override
@@ -136,17 +138,20 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
             return;
         }
 
-        hideLoadingView();
-
-        mContentLoadingWindow = new ContentLoadingWindow(activity);
-        mContentLoadingWindow.show();
+        if (mContentLoadingDialog == null) {
+            mContentLoadingDialog = new ContentLoadingDialog(activity);
+        }
+        mContentLoadingDialog.show();
     }
 
     @Override
     public void hideLoadingView() {
-        if (mContentLoadingWindow != null) {
-            mContentLoadingWindow.dismiss();
-            mContentLoadingWindow = null;
+        dismissLoadingView();
+    }
+
+    private void dismissLoadingView() {
+        if (mContentLoadingDialog != null) {
+            mContentLoadingDialog.dismiss();
         }
     }
 

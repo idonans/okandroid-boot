@@ -1,0 +1,71 @@
+package com.okandroid.boot.widget;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ProgressBar;
+
+import com.okandroid.boot.R;
+import com.okandroid.boot.util.ViewUtil;
+
+/**
+ * Created by idonans on 2017/5/15.
+ */
+
+public class ContentLoadingDialog extends ContentDialog {
+
+    public ContentLoadingDialog(@NonNull Context context) {
+        super(context);
+    }
+
+    public ContentLoadingDialog(@NonNull Context context, @StyleRes int themeResId) {
+        super(context, themeResId);
+    }
+
+    private ProgressBar mProgressBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.okandroid_content_loading_dialog);
+
+        View rootView = getWindow().getDecorView();
+        mProgressBar = ViewUtil.findViewByID(rootView, R.id.progress_bar);
+        mProgressBar.setAlpha(0f);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startLoadingAnimation();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLoadingAnimation();
+    }
+
+    private void startLoadingAnimation() {
+        mProgressBar.animate()
+                .alpha(1f)
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .setDuration(500L)
+                .setStartDelay(500L)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+    }
+
+    private void stopLoadingAnimation() {
+        mProgressBar.animate().cancel();
+        mProgressBar.setAlpha(0f);
+        mProgressBar.setScaleX(1f);
+        mProgressBar.setScaleY(1f);
+    }
+
+}

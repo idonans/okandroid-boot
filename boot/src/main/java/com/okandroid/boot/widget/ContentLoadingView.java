@@ -44,8 +44,6 @@ public class ContentLoadingView extends FrameLayout {
         init();
     }
 
-    private static final int MIN_DELAY = 1000; // ms
-
     private ProgressBar mProgressBar;
 
     private void init() {
@@ -70,7 +68,7 @@ public class ContentLoadingView extends FrameLayout {
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        clearAlphaAnimator();
+        stopLoadingAnimator();
     }
 
     /**
@@ -92,7 +90,7 @@ public class ContentLoadingView extends FrameLayout {
 
     private Animator mAlphaAnimator;
 
-    private void clearAlphaAnimator() {
+    private void stopLoadingAnimator() {
         if (mAlphaAnimator != null) {
             mAlphaAnimator.cancel();
             mAlphaAnimator = null;
@@ -100,14 +98,14 @@ public class ContentLoadingView extends FrameLayout {
     }
 
     private void showLoadingWithAnimator() {
-        clearAlphaAnimator();
+        stopLoadingAnimator();
 
         setAlpha(0);
         mProgressBar.setVisibility(View.GONE);
 
         mAlphaAnimator = ObjectAnimator.ofFloat(this, "alpha", 0, 0.5f);
-        mAlphaAnimator.setStartDelay(MIN_DELAY);
-        mAlphaAnimator.setDuration(1000L);
+        mAlphaAnimator.setStartDelay(500);
+        mAlphaAnimator.setDuration(500L);
         mAlphaAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -124,7 +122,7 @@ public class ContentLoadingView extends FrameLayout {
     }
 
     private void hideLoadingImmediately() {
-        clearAlphaAnimator();
+        stopLoadingAnimator();
 
         setAlpha(0);
         mProgressBar.setVisibility(View.GONE);
