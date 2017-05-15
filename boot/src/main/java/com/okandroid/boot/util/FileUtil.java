@@ -1,5 +1,6 @@
 package com.okandroid.boot.util;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -373,6 +374,14 @@ public class FileUtil {
             targetUri = Uri.fromFile(file);
         }
         return targetUri;
+    }
+
+    /**
+     * use file content uri for Intent data, need set grant uri permission
+     */
+    public static void addGrantUriPermission(Intent intent) {
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
     }
 
 }
