@@ -8,6 +8,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -38,6 +39,8 @@ public class ContentLoadingView extends FrameLayout {
         init();
     }
 
+    private long mAnimationDelay = 500L;
+    private long mAnimationDuration = 500L;
     private ProgressBar mProgressBar;
 
     private void init() {
@@ -80,8 +83,9 @@ public class ContentLoadingView extends FrameLayout {
 
     private void startLoadingAnimation() {
         animate().alpha(0.5f)
-                .setStartDelay(500L)
-                .setDuration(500L)
+                .setDuration(mAnimationDuration)
+                .setStartDelay(mAnimationDelay)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -93,6 +97,14 @@ public class ContentLoadingView extends FrameLayout {
                     }
                 })
                 .start();
+    }
+
+    public void setAnimationDuration(long animationDuration) {
+        mAnimationDuration = animationDuration;
+    }
+
+    public void setAnimationDelay(long animationDelay) {
+        mAnimationDelay = animationDelay;
     }
 
 }

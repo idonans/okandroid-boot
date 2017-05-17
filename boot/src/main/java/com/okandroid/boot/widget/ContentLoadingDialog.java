@@ -25,6 +25,8 @@ public class ContentLoadingDialog extends ContentDialog {
         super(context, themeResId);
     }
 
+    private long mAnimationDelay = 500L;
+    private long mAnimationDuration = 500L;
     private ProgressBar mProgressBar;
 
     @Override
@@ -56,8 +58,8 @@ public class ContentLoadingDialog extends ContentDialog {
                 .alpha(1f)
                 .scaleX(1.1f)
                 .scaleY(1.1f)
-                .setDuration(500L)
-                .setStartDelay(500L)
+                .setDuration(mAnimationDuration)
+                .setStartDelay(mAnimationDelay)
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .start();
     }
@@ -67,6 +69,14 @@ public class ContentLoadingDialog extends ContentDialog {
         mProgressBar.setAlpha(0f);
         mProgressBar.setScaleX(1f);
         mProgressBar.setScaleY(1f);
+    }
+
+    public void setAnimationDuration(long animationDuration) {
+        mAnimationDuration = animationDuration;
+    }
+
+    public void setAnimationDelay(long animationDelay) {
+        mAnimationDelay = animationDelay;
     }
 
 }
