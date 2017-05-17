@@ -35,7 +35,8 @@ public class ContentLoadingDialog extends ContentDialog {
 
         View rootView = getWindow().getDecorView();
         mProgressBar = ViewUtil.findViewByID(rootView, R.id.progress_bar);
-        mProgressBar.setAlpha(0f);
+
+        stopLoadingAnimation();
     }
 
     @Override
