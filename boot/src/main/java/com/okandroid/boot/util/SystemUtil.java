@@ -334,4 +334,11 @@ public class SystemUtil {
         return false;
     }
 
+    /**
+     * 获取系统默认 user-agent
+     */
+    public static String getSystemUserAgent() {
+        return System.getProperty("http.agent");
+    }
+
 }

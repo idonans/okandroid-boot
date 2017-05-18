@@ -257,6 +257,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
             });
 
             invokeAutoRefresh();
+
+            printSystemUserAgent();
         }
 
         private void invokeAutoRefresh() {
@@ -269,6 +271,10 @@ public class SignInFragment extends BaseFragment implements SignInView {
             }, 2000L);
         }
 
+    }
+
+    private void printSystemUserAgent() {
+        Log.d("system user agent:", SystemUtil.getSystemUserAgent());
     }
 
     private void downloadAndInstallApk() {

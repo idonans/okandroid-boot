@@ -81,7 +81,7 @@ public class Log {
         }
 
         private boolean isLoggable(int logLevel) {
-            return logLevel <= mLogLevel;
+            return logLevel >= mLogLevel;
         }
 
         /**
