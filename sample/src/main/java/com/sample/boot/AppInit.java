@@ -88,7 +88,7 @@ public class AppInit {
 
         @Override
         public int getLogLevel() {
-            return android.util.Log.DEBUG;
+            return android.util.Log.VERBOSE;
         }
 
         @Override
