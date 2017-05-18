@@ -17,7 +17,7 @@ public class OKAndroidFragment extends Fragment implements Available {
     private boolean mAvailable;
     private boolean mResumed;
 
-    private final String CLASS_NAME = getClass().getName();
+    private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
 
     @Override
     public void onStart() {

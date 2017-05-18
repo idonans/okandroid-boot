@@ -18,7 +18,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     private boolean mResumed;
     private boolean mTransparentStatusBar = true;
 
-    private final String CLASS_NAME = getClass().getName();
+    private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
 
     /**
      * the best way u should always check available status,
