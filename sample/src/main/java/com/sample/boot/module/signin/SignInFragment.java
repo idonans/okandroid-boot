@@ -275,6 +275,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
 
     private void printSystemUserAgent() {
         Log.d("system user agent:", SystemUtil.getSystemUserAgent());
+        Log.d("webview user agent:", SystemUtil.getSystemWebViewUserAgent());
     }
 
     private void downloadAndInstallApk() {

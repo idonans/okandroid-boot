@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.EditText;
 
 import com.okandroid.boot.AppContext;
@@ -339,6 +341,17 @@ public class SystemUtil {
      */
     public static String getSystemUserAgent() {
         return System.getProperty("http.agent");
+    }
+
+    /**
+     * 获取系统 webview 默认 user-agent
+     */
+    public static String getSystemWebViewUserAgent() {
+        if (Build.VERSION.SDK_INT >= 17) {
+            return WebSettings.getDefaultUserAgent(AppContext.getContext());
+        } else {
+            return new WebView(AppContext.getContext()).getSettings().getUserAgentString();
+        }
     }
 
 }
