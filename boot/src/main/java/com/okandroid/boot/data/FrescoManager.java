@@ -44,6 +44,12 @@ public class FrescoManager {
             frescoCacheBaseDir = FileUtil.getCacheDir();
         }
 
+        FLogDefaultLoggingDelegate fLogDefaultLoggingDelegate = FLogDefaultLoggingDelegate.getInstance();
+        fLogDefaultLoggingDelegate.setApplicationTag(App.getBuildConfigAdapter().getLogTag());
+        if (App.getBuildConfigAdapter().isDebug()) {
+            fLogDefaultLoggingDelegate.setMinimumLoggingLevel(FLog.DEBUG);
+        }
+
         Bitmap.Config config = Bitmap.Config.ARGB_8888;
         if (App.isUse565Config()) {
             config = Bitmap.Config.RGB_565;
@@ -63,11 +69,6 @@ public class FrescoManager {
                 .setBitmapsConfig(config)
                 .build();
 
-        FLogDefaultLoggingDelegate fLogDefaultLoggingDelegate = FLogDefaultLoggingDelegate.getInstance();
-        fLogDefaultLoggingDelegate.setApplicationTag(App.getBuildConfigAdapter().getLogTag());
-        if (App.getBuildConfigAdapter().isDebug()) {
-            fLogDefaultLoggingDelegate.setMinimumLoggingLevel(FLog.DEBUG);
-        }
         Fresco.initialize(AppContext.getContext(), imagePipelineConfig);
     }
 

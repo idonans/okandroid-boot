@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.okandroid.boot.App;
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.SystemUtil;
@@ -19,11 +18,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     private boolean mResumed;
     private boolean mTransparentStatusBar = true;
 
-    private final String DEBUG_TAG = getClass().getName();
-
-    private boolean isDebug() {
-        return App.getBuildConfigAdapter().isDebug();
-    }
+    private final String CLASS_NAME = getClass().getName();
 
     /**
      * the best way u should always check available status,
@@ -44,9 +39,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onCreate");
-        }
+        Log.v(CLASS_NAME, "onCreate");
 
         if (mTransparentStatusBar) {
             SystemUtil.setStatusBarTransparent(getWindow());
@@ -91,44 +84,35 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onNewIntent");
-        }
+        Log.v(CLASS_NAME, "onNewIntent");
 
         super.onNewIntent(intent);
     }
 
     @Override
     protected void onRestart() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onRestart");
-        }
+        Log.v(CLASS_NAME, "onRestart");
 
         super.onRestart();
     }
 
     @Override
     protected void onStart() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onStart");
-        }
+        Log.v(CLASS_NAME, "onStart");
 
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onStop");
-        }
+        Log.v(CLASS_NAME, "onStop");
+
         super.onStop();
     }
 
     @Override
     protected void onPause() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onPause");
-        }
+        Log.v(CLASS_NAME, "onPause");
 
         super.onPause();
         mResumed = false;
@@ -136,9 +120,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
 
     @Override
     protected void onResume() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onResume");
-        }
+        Log.v(CLASS_NAME, "onResume");
 
         super.onResume();
         mResumed = true;
@@ -156,13 +138,33 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     }
 
     @Override
+    public void onTrimMemory(int level) {
+        Log.v(CLASS_NAME, "onTrimMemory", level);
+
+        super.onTrimMemory(level);
+    }
+
+    @Override
     protected void onDestroy() {
-        if (isDebug()) {
-            Log.d(DEBUG_TAG + " onDestroy");
-        }
+        Log.v(CLASS_NAME, "onDestroy");
 
         super.onDestroy();
         mAvailable = false;
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.v(CLASS_NAME, "onSaveInstanceState");
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(CLASS_NAME, "onRestoreInstanceState");
+
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
