@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ptr.PtrLayout;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
+import com.sample.boot.data.CircleTextView;
 import com.sample.boot.module.datalist.DataListActivity;
 
 import java.io.File;
@@ -112,6 +114,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestTakePhoto;
         private final View mTestDataList;
         private final View mTestInstallApk;
+        private final CircleTextView mCircleTextView;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -198,6 +201,58 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 @Override
                 public void onClick(View v) {
                     checkDownloadAndInstallApkPermissions();
+                }
+            });
+
+            mCircleTextView = ViewUtil.findViewByID(mRootView, R.id.circle_text);
+            mCircleTextView.setText("left top text 换\n行");
+            mCircleTextView.setGravity(Gravity.LEFT | Gravity.TOP);
+            mCircleTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int flag = (int) ((Math.random() * 20) % 9);
+                    switch (flag) {
+                        case 0:
+                            mCircleTextView.setText("A left top text A");
+                            mCircleTextView.setGravity(Gravity.LEFT | Gravity.TOP);
+                            break;
+                        case 1:
+                            mCircleTextView.setText("A center_h top text A");
+                            mCircleTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+                            break;
+                        case 2:
+                            mCircleTextView.setText("A right top text A");
+                            mCircleTextView.setGravity(Gravity.RIGHT | Gravity.TOP);
+                            break;
+                        case 3:
+                            mCircleTextView.setText("世界 left center_v text A");
+                            mCircleTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+                            break;
+                        case 4:
+                            mCircleTextView.setText("9 center text M");
+                            mCircleTextView.setGravity(Gravity.CENTER);
+                            break;
+                        case 5:
+                            mCircleTextView.setText("3.0 center_v right text 中文");
+                            mCircleTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+                            break;
+                        case 6:
+                            mCircleTextView.setText("B left bottom text C");
+                            mCircleTextView.setGravity(Gravity.LEFT | Gravity.BOTTOM);
+                            break;
+                        case 7:
+                            mCircleTextView.setText("D center_h bottom text 哈哈");
+                            mCircleTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
+                            break;
+                        case 8:
+                            mCircleTextView.setText("预定 right bottom 贝多芬 text");
+                            mCircleTextView.setGravity(Gravity.RIGHT | Gravity.BOTTOM);
+                            break;
+                        default:
+                            mCircleTextView.setText("default center text");
+                            mCircleTextView.setGravity(Gravity.CENTER);
+                            break;
+                    }
                 }
             });
 
