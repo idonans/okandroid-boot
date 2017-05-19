@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.okandroid.boot.app.OKAndroidFragment;
-import com.okandroid.boot.util.SystemUtil;
 
 /**
  * Created by idonans on 2017/2/15.
@@ -20,7 +19,7 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
 
     @Override
     public boolean callActivityBackPressed() {
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity != null) {
             activity.onBackPressed();
             return true;
@@ -32,7 +31,7 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity instanceof BackPressedActivityHost) {
             ((BackPressedActivityHost) activity).addBackPressedFragmentHost(this);
         }
@@ -42,7 +41,7 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
     public void onDestroy() {
         super.onDestroy();
 
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity instanceof BackPressedActivityHost) {
             ((BackPressedActivityHost) activity).removeBackPressedFragmentHost(this);
         }

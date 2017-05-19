@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.okandroid.boot.AppContext;
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.util.CameraUtil;
 import com.okandroid.boot.util.GrantResultUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
@@ -28,7 +29,6 @@ import com.sample.boot.app.BaseFragment;
 import com.sample.boot.data.CircleTextView;
 import com.sample.boot.module.datalist.DataListActivity;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mDownloadAndInstallApkDialog = null;
         }
 
-        Context context = SystemUtil.getActivityFromFragment(this);
+        Context context = getActivity();
         mDownloadAndInstallApkDialog = new AlertDialog.Builder(context)
                 .setTitle("apk 下载")
                 .setMessage("url: " + apkInstallInfo.apkUrl)
@@ -310,7 +310,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_PERMISSION_CODE_DOWNLOAD_APK);
     }
 
-    private final File[] mTakePhotoFiles = new File[1];
+    private CameraUtil.OutParams mCameraOutParams = new CameraUtil.OutParams();
 
     private void checkPermissionAndContinueTakePhoto() {
         SignInViewProxy viewProxy = getDefaultViewProxy();
@@ -325,15 +325,18 @@ public class SignInFragment extends BaseFragment implements SignInView {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_CODE_TAKE_PHOTO) {
             if (GrantResultUtil.isAllGranted(grantResults)) {
-                SystemUtil.takePhoto(this, REQUEST_CODE_TAKE_PHOTO, mTakePhotoFiles);
+                CameraUtil.takePhoto(this, REQUEST_CODE_TAKE_PHOTO, mCameraOutParams);
+                if (mCameraOutParams.error) {
+                    Toast.makeText(getActivity(), String.valueOf(mCameraOutParams.errorMsg), Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_PERMISSION_CODE_DOWNLOAD_APK) {
             if (GrantResultUtil.isAllGranted(grantResults)) {
                 downloadAndInstallApk();
             } else {
-                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "权限被拒绝", Toast.LENGTH_SHORT).show();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -343,7 +346,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-            Log.d(TAG + " requestCode: " + requestCode + ", resultCode: " + resultCode + ", file: " + mTakePhotoFiles[0]);
+            Log.d(TAG + " requestCode: " + requestCode + ", resultCode: " + resultCode + ", file: " + mCameraOutParams.cameraTmpFile);
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -11,7 +11,6 @@ import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.AvailableUtil;
-import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ContentLoadingView;
 
@@ -76,7 +75,7 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
             return;
         }
 
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity == null) {
             new IllegalAccessError("activity is null").printStackTrace();
             return;

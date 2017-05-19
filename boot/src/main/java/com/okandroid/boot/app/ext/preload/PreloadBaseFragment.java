@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.okandroid.boot.app.ext.backpressed.BackPressedFragment;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
-import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.widget.ContentLoadingDialog;
 
 /**
@@ -33,7 +32,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
             return null;
         }
 
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity == null) {
             new IllegalAccessError("activity is null").printStackTrace();
             return null;
@@ -61,7 +60,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
             return;
         }
 
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (activity == null) {
             new IllegalAccessError("activity is null").printStackTrace();
             return;
@@ -133,7 +132,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         if (!isAvailable()) {
             return;
         }
-        Activity activity = SystemUtil.getActivityFromFragment(this);
+        Activity activity = getActivity();
         if (!AvailableUtil.isAvailable(activity)) {
             return;
         }

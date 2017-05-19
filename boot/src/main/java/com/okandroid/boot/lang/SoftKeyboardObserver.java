@@ -65,7 +65,7 @@ public class SoftKeyboardObserver implements ViewTreeObserver.OnGlobalLayoutList
     }
 
     public void register(@NonNull Fragment fragment) {
-        Activity activity = SystemUtil.getActivityFromFragment(fragment);
+        Activity activity = fragment.getActivity();
         if (activity == null) {
             Log.e(TAG + " register fragment error. activity not found from fragment " + fragment.getClass().getName() + "@" + fragment.hashCode());
             return;
