@@ -4,16 +4,11 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.support.annotation.CheckResult;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -29,9 +24,6 @@ import com.okandroid.boot.data.AppIDManager;
 import com.okandroid.boot.lang.Log;
 
 import java.io.File;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -125,7 +117,7 @@ public class SystemUtil {
      * @see #isSoftKeyboardShown(View)
      */
     public static boolean isSoftKeyboardShown(Fragment fragment) {
-        return isSoftKeyboardShown(getActivityFromFragment(fragment));
+        return isSoftKeyboardShown(fragment.getActivity());
     }
 
     /**
@@ -209,94 +201,6 @@ public class SystemUtil {
 
         unsetFullscreenWithSystemUi(window.getDecorView());
     }
-
-    @CheckResult
-    public static FragmentActivity getActivityFromFragment(@Nullable Fragment fragment) {
-        if (fragment == null) {
-            return null;
-        }
-
-        FragmentActivity activity = fragment.getActivity();
-        if (activity != null) {
-            return activity;
-        }
-
-        return getActivityFromFragment(fragment.getParentFragment());
-    }
-
-    /////
-
-    /**
-     * 正确处理，等待拍照结果，在 onActivityResult 中接收结果
-     */
-    public static final int TAKE_PHOTO_RESULT_OK = 0;
-    /**
-     * SD卡错误，不能创建用于存储拍照结果的文件
-     */
-    public static final int TAKE_PHOTO_RESULT_SDCARD_ERROR = 1;
-    /**
-     * 没有找到系统程序用来处理拍照请求
-     */
-    public static final int TAKE_PHOTO_RESULT_CAMERA_NOT_FOUND = 2;
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TAKE_PHOTO_RESULT_OK, TAKE_PHOTO_RESULT_SDCARD_ERROR, TAKE_PHOTO_RESULT_CAMERA_NOT_FOUND})
-    public @interface TakePhotoResult {
-    }
-
-    /**
-     * @param outPhotos 如果拍照成功，outPhotos[0] 将用来存储拍照的图
-     */
-    @TakePhotoResult
-    public static int takePhoto(Fragment fragment, int requestCode, File[] outPhotos) {
-        File file = FileUtil.createNewTmpFileQuietly("camera", ".jpg", FileUtil.getPublicDCIMDir());
-        if (file == null) {
-            return TAKE_PHOTO_RESULT_SDCARD_ERROR;
-        }
-
-        FileUtil.deleteFileQuietly(file);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getFileUri(file));
-        FileUtil.addGrantUriPermission(intent);
-
-        List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
-        if (infos != null && infos.size() > 0) {
-            fragment.startActivityForResult(intent, requestCode);
-            outPhotos[0] = file;
-            return TAKE_PHOTO_RESULT_OK;
-        } else {
-            return TAKE_PHOTO_RESULT_CAMERA_NOT_FOUND;
-        }
-    }
-
-    /**
-     * @param outPhotos 如果拍照成功，outPhotos[0] 将用来存储拍照的图
-     */
-    @TakePhotoResult
-    public static int takePhoto(Activity activity, int requestCode, File[] outPhotos) {
-        File file = FileUtil.createNewTmpFileQuietly("camera", ".jpg", FileUtil.getPublicDCIMDir());
-        if (file == null) {
-            return TAKE_PHOTO_RESULT_SDCARD_ERROR;
-        }
-
-        FileUtil.deleteFileQuietly(file);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.getFileUri(file));
-        FileUtil.addGrantUriPermission(intent);
-
-        List<ResolveInfo> infos = AppContext.getContext().getPackageManager().queryIntentActivities(intent, 0);
-        if (infos != null && infos.size() > 0) {
-            activity.startActivityForResult(intent, requestCode);
-            outPhotos[0] = file;
-            return TAKE_PHOTO_RESULT_OK;
-        } else {
-            return TAKE_PHOTO_RESULT_CAMERA_NOT_FOUND;
-        }
-    }
-
-    /////
 
     /**
      * 将指定文件添加到系统媒体库，如将一张图片添加到系统媒体库，使得在 Gallery 中能够显示.
