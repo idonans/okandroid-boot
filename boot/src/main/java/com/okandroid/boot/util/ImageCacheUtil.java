@@ -140,7 +140,7 @@ public class ImageCacheUtil {
      *
      * @param maxFileSize 传递 -1 表示不限制图片文件尺寸
      */
-    public static void cacheImageThumb(final String imageUrl, final int width, final int height, final int maxFileSize, final ImageCacheListener listener) {
+    public static void cacheImageThumb(final String imageUrl, final int width, final int height, final long maxFileSize, final ImageCacheListener listener) {
         // init fresco if need.
         FrescoManager.getInstance();
 

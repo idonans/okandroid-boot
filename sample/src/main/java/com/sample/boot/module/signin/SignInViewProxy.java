@@ -11,7 +11,7 @@ import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.util.FileUtil;
 import com.okandroid.boot.util.HumanUtil;
 import com.okandroid.boot.util.IOUtil;
-import com.okandroid.boot.util.ImageUtil;
+import com.okandroid.boot.util.ImageCacheUtil;
 import com.okandroid.boot.util.SystemUtil;
 import com.sample.boot.app.BaseViewProxy;
 
@@ -57,15 +57,16 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
             return;
         }
 
-        ImageUtil.cacheImageWithFresco(
+        ImageCacheUtil.cacheImageThumb(
                 "http://img.zcool.cn/community/016c5258d0d7e8a801219c77d69fa1.jpg",
-                200,
-                200,
-                new ImageUtil.ImageFileFetchListener() {
+                512,
+                512,
+                32 * HumanUtil.KB,
+                new ImageCacheUtil.ImageCacheListener() {
                     @Override
-                    public void onFileFetched(@Nullable File file) {
+                    public void onImageCached(@Nullable File file) {
                         StringBuilder builder = new StringBuilder();
-                        builder.append(TAG + " cacheImageWithFresco for thumb onFileFetched ");
+                        builder.append(TAG + " cacheImageThumb onImageCached ");
                         if (file == null) {
                             builder.append("file is null");
                         } else {
@@ -80,13 +81,13 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                     }
                 });
 
-        ImageUtil.cacheImageWithFresco(
+        ImageCacheUtil.cacheImage(
                 "http://img.zcool.cn/community/016c5258d0d7e8a801219c77d69fa1.jpg",
-                new ImageUtil.ImageFileFetchListener() {
+                new ImageCacheUtil.ImageCacheListener() {
                     @Override
-                    public void onFileFetched(@Nullable File file) {
+                    public void onImageCached(@Nullable File file) {
                         StringBuilder builder = new StringBuilder();
-                        builder.append(TAG + " cacheImageWithFresco onFileFetched ");
+                        builder.append(TAG + " cacheImage onImageCached ");
                         if (file == null) {
                             builder.append("file is null");
                         } else {
