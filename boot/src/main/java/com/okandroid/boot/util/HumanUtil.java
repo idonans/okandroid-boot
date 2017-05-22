@@ -8,10 +8,10 @@ import java.util.Locale;
  */
 public class HumanUtil {
 
-    private static final long B = 1L;
-    private static final long KB = 1024 * B;
-    private static final long MB = 1024 * KB;
-    private static final long GB = 1024 * MB;
+    public static final long B = 1L;
+    public static final long KB = 1024 * B;
+    public static final long MB = 1024 * KB;
+    public static final long GB = 1024 * MB;
 
     private static final long _80P_KB = _80p(KB);
     private static final long _80P_MB = _80p(MB);

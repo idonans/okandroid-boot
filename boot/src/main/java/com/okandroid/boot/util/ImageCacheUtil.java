@@ -11,6 +11,7 @@ import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.common.ImageDecodeOptions;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.common.RotationOptions;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
@@ -29,10 +30,12 @@ import java.util.concurrent.Executor;
  * Created by idonans on 2017/2/6.
  */
 
-public class ImageUtil {
+public class ImageCacheUtil {
 
-    private static final String TAG = "ImageUtil";
-    private static final String CACHE_FILE_PREFIX = "boot_image_cache";
+    private static final String TAG = "ImageCacheUtil";
+    private static final String CACHE_DIR = "okandroid_boot_image_cache";
+    private static final String CACHE_IMAGE_PREFIX = "image_cache";
+    private static final String CACHE_IMAGE_THUMB_PREFIX = "image_cache_thumb";
     private static final Executor DEFAULT_EXECUTOR = new Executor() {
         @Override
         public void execute(Runnable command) {
@@ -40,41 +43,38 @@ public class ImageUtil {
         }
     };
 
-    private ImageUtil() {
+    private ImageCacheUtil() {
     }
 
-    public interface ImageFileFetchListener {
-        void onFileFetched(@Nullable File file);
+    public static File getImageCacheDir() {
+        File extCacheDir = FileUtil.getExternalCacheDir();
+        if (extCacheDir == null) {
+            return null;
+        }
+
+        return new File(FileUtil.getExternalCacheDir(), CACHE_DIR);
     }
 
-    private static class OnceImageFileFetchListener implements ImageFileFetchListener {
-
-        private ImageFileFetchListener mOutListener;
-
-        private OnceImageFileFetchListener(ImageFileFetchListener listener) {
-            mOutListener = listener;
-        }
-
-        @Override
-        public void onFileFetched(@Nullable File file) {
-            if (mOutListener != null) {
-                mOutListener.onFileFetched(file);
-            }
-            mOutListener = null;
-        }
-
+    public static boolean clearImageCache() {
+        return FileUtil.deleteFileQuietly(getImageCacheDir());
     }
 
     /**
-     * 载入指定图片到本地磁盘
+     * 缓存指定图片到本地磁盘
      */
-    public static void cacheImageWithFresco(final String imageUrl, ImageFileFetchListener listener) {
+    public static void cacheImage(final String imageUrl, ImageCacheListener listener) {
         // init fresco if need.
         FrescoManager.getInstance();
 
-        final OnceImageFileFetchListener onceListener = new OnceImageFileFetchListener(listener);
+        final OnceImageCacheListener onceListener = new OnceImageCacheListener(listener);
         if (TextUtils.isEmpty(imageUrl)) {
-            onceListener.onFileFetched(null);
+            onceListener.onImageCached(null);
+            return;
+        }
+
+        final File imageCacheDir = getImageCacheDir();
+        if (imageCacheDir == null) {
+            onceListener.onImageCached(null);
             return;
         }
 
@@ -97,9 +97,9 @@ public class ImageUtil {
                                 extension = "." + extension;
                             }
                             File targetFile = FileUtil.createNewTmpFileQuietly(
-                                    CACHE_FILE_PREFIX,
+                                    CACHE_IMAGE_PREFIX,
                                     extension,
-                                    FileUtil.getExternalCacheDir());
+                                    imageCacheDir);
                             if (targetFile == null) {
                                 return;
                             }
@@ -115,7 +115,7 @@ public class ImageUtil {
                             long copy = IOUtil.copy(is, fos, AvailableUtil.always(), null);
                             if (copy > 0) {
                                 errFile = null;
-                                onceListener.onFileFetched(targetFile);
+                                onceListener.onImageCached(targetFile);
                             }
                         } catch (Throwable e) {
                             e.printStackTrace();
@@ -124,35 +124,60 @@ public class ImageUtil {
                             IOUtil.closeQuietly(is);
                             IOUtil.closeQuietly(fos);
                             FileUtil.deleteFileQuietly(errFile);
-                            onceListener.onFileFetched(null);
+                            onceListener.onImageCached(null);
                         }
                     }
 
                     @Override
                     protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                        onceListener.onFileFetched(null);
+                        onceListener.onImageCached(null);
                     }
                 }, DEFAULT_EXECUTOR);
     }
 
     /**
-     * 载入指定图片的缩略图到本地磁盘
+     * 载入指定图片的缩略图到本地磁盘, 如果缩略图尺寸不合适, 会自动调整到合适尺寸
+     *
+     * @param maxFileSize 传递 -1 表示不限制图片文件尺寸
      */
-    public static void cacheImageWithFresco(String imageUrl, int width, int height, ImageFileFetchListener listener) {
+    public static void cacheImageThumb(final String imageUrl, final int width, final int height, final int maxFileSize, final ImageCacheListener listener) {
         // init fresco if need.
         FrescoManager.getInstance();
 
-        final OnceImageFileFetchListener onceListener = new OnceImageFileFetchListener(listener);
+        final OnceImageCacheListener onceListener = new OnceImageCacheListener(listener);
         if (TextUtils.isEmpty(imageUrl)) {
-            onceListener.onFileFetched(null);
+            onceListener.onImageCached(null);
+            return;
+        }
+
+        final File imageCacheDir = getImageCacheDir();
+        if (imageCacheDir == null) {
+            onceListener.onImageCached(null);
             return;
         }
 
         ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imageUrl));
         builder.setRotationOptions(RotationOptions.autoRotate());
-        if (width > 0 && height > 0) {
-            builder.setResizeOptions(ResizeOptions.forDimensions(width, height));
+
+        final int resizeWidth;
+        final int resizeHeight;
+        if (width <= 0 || width > 1024) {
+            resizeWidth = 1024;
+        } else {
+            resizeWidth = width;
         }
+        if (height <= 0 || height > 1024) {
+            resizeHeight = 1024;
+        } else {
+            resizeHeight = height;
+        }
+
+        builder.setResizeOptions(ResizeOptions.forDimensions(resizeWidth, resizeHeight));
+        builder.setImageDecodeOptions(
+                ImageDecodeOptions.newBuilder()
+                        .setForceStaticImage(true)
+                        .setBitmapConfig(Bitmap.Config.RGB_565)
+                        .build());
 
         final ImageRequest imageRequest = builder.build();
 
@@ -164,7 +189,7 @@ public class ImageUtil {
                         File errFile = null;
                         try {
                             File targetFile = FileUtil.createNewTmpFileQuietly(
-                                    CACHE_FILE_PREFIX,
+                                    CACHE_IMAGE_THUMB_PREFIX,
                                     ".jpg",
                                     FileUtil.getExternalCacheDir());
                             if (targetFile == null) {
@@ -176,23 +201,71 @@ public class ImageUtil {
 
                             fos = new FileOutputStream(targetFile);
                             if (bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos)) {
-                                errFile = null;
-                                onceListener.onFileFetched(targetFile);
+
+                                fos.close();
+
+                                // 排除过小的文件尺寸
+                                final long minFileLength = 8 * HumanUtil.KB;
+                                final long fileLength = targetFile.length();
+
+                                if (fileLength <= 0) {
+                                    // error
+                                    throw new IllegalAccessException("invalid file length " + fileLength);
+                                } else if (maxFileSize <= 0 || fileLength <= minFileLength || fileLength <= maxFileSize) {
+                                    // success
+                                    errFile = null;
+                                    onceListener.onImageCached(targetFile);
+                                } else {
+                                    // file length too large, scale down file size
+                                    onceListener.clear();
+                                    // guess scale size
+                                    float scaleSize = (Math.max(minFileLength, maxFileSize)) * 1f / fileLength * 1.5f;
+                                    scaleSize = Math.max(0.5f, scaleSize);
+                                    scaleSize = Math.min(0.8f, scaleSize);
+                                    cacheImageThumb(imageUrl, (int) (width * scaleSize), (int) (height * scaleSize), maxFileSize, listener);
+                                }
                             }
                         } catch (Throwable e) {
                             e.printStackTrace();
                         } finally {
                             IOUtil.closeQuietly(fos);
                             FileUtil.deleteFileQuietly(errFile);
-                            onceListener.onFileFetched(null);
+                            onceListener.onImageCached(null);
                         }
                     }
 
                     @Override
                     protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                        onceListener.onFileFetched(null);
+                        onceListener.onImageCached(null);
                     }
                 }, DEFAULT_EXECUTOR);
+    }
+
+
+    public interface ImageCacheListener {
+        void onImageCached(@Nullable File file);
+    }
+
+    private static class OnceImageCacheListener implements ImageCacheListener {
+
+        private ImageCacheListener mOutListener;
+
+        private OnceImageCacheListener(ImageCacheListener listener) {
+            mOutListener = listener;
+        }
+
+        private void clear() {
+            mOutListener = null;
+        }
+
+        @Override
+        public void onImageCached(@Nullable File file) {
+            if (mOutListener != null) {
+                mOutListener.onImageCached(file);
+            }
+            mOutListener = null;
+        }
+
     }
 
 }
