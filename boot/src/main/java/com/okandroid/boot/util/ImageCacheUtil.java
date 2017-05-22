@@ -191,7 +191,7 @@ public class ImageCacheUtil {
                             File targetFile = FileUtil.createNewTmpFileQuietly(
                                     CACHE_IMAGE_THUMB_PREFIX,
                                     ".jpg",
-                                    FileUtil.getExternalCacheDir());
+                                    imageCacheDir);
                             if (targetFile == null) {
                                 return;
                             }
