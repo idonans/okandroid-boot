@@ -198,6 +198,10 @@ public class ImageCacheUtil {
                                     float scaleSize = (Math.max(minFileLength, maxFileSize)) * 1f / fileLength * 1.5f;
                                     scaleSize = Math.max(0.5f, scaleSize);
                                     scaleSize = Math.min(0.8f, scaleSize);
+                                    Log.v(TAG, "file size too large, scale size and try again",
+                                            "fileLength:", HumanUtil.getHumanSizeFromByte(fileLength),
+                                            "maxFileSize:", HumanUtil.getHumanSizeFromByte(maxFileSize),
+                                            "width:", width, "height:", height, "scaleSize:", scaleSize);
                                     cacheImageThumb(imageUrl, (int) (width * scaleSize), (int) (height * scaleSize), maxFileSize, listener);
                                 }
                             }
