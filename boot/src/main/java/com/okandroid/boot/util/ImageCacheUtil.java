@@ -19,6 +19,7 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.okandroid.boot.data.FrescoManager;
+import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class ImageCacheUtil {
 
     private static final String TAG = "ImageCacheUtil";
     private static final String CACHE_DIR = "okandroid_boot_image_cache";
+    private static final String CACHE_DIR_REMOVED = "okandroid_boot_image_cache_removed";
     private static final String CACHE_IMAGE_PREFIX = "image_cache";
     private static final String CACHE_IMAGE_THUMB_PREFIX = "image_cache_thumb";
     private static final Executor DEFAULT_EXECUTOR = new Executor() {
@@ -55,8 +57,48 @@ public class ImageCacheUtil {
         return new File(FileUtil.getExternalCacheDir(), CACHE_DIR);
     }
 
-    public static boolean clearImageCache() {
-        return FileUtil.deleteFileQuietly(getImageCacheDir());
+    public static File getImageCacheDirRemoved() {
+        File extCacheDir = FileUtil.getExternalCacheDir();
+        if (extCacheDir == null) {
+            return null;
+        }
+
+        return new File(FileUtil.getExternalCacheDir(), CACHE_DIR_REMOVED);
+    }
+
+    public static void clearImageCache() {
+        File cacheDir = getImageCacheDir();
+        if (cacheDir == null || !cacheDir.exists()) {
+            Log.v(TAG, "clearImageCache cache dir not found", cacheDir);
+            return;
+        }
+
+        final File cacheDirRemoved = getImageCacheDirRemoved();
+        if (!FileUtil.createDir(cacheDirRemoved)) {
+            Log.e(TAG, "clearImageCache fail to create cache dir removed", cacheDirRemoved);
+            return;
+        }
+
+        File renameTo = new File(cacheDirRemoved, "rename_" + System.currentTimeMillis());
+        if (!cacheDir.renameTo(renameTo)) {
+            Log.e(TAG, "clearImageCache rename fail", cacheDir, "->", renameTo);
+            return;
+        }
+
+        Log.v(TAG, "clearImageCache rename success", cacheDir, "->", renameTo);
+
+        // delete cache dir removed async
+        Threads.postBackground(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, "clearImageCache cacheDirRemoved in background doing", cacheDirRemoved);
+                if (FileUtil.deleteFileQuietly(cacheDirRemoved)) {
+                    Log.e(TAG, "clearImageCache cacheDirRemoved in background success", cacheDirRemoved);
+                } else {
+                    Log.e(TAG, "clearImageCache cacheDirRemoved in background fail", cacheDirRemoved);
+                }
+            }
+        });
     }
 
     /**
