@@ -9,7 +9,6 @@ import com.okandroid.boot.data.ProcessManager;
 import com.okandroid.boot.data.StorageManager;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
-import com.okandroid.boot.util.ImageCacheUtil;
 import com.sample.boot.data.SessionManager;
 
 /**
@@ -43,8 +42,6 @@ public class AppInit {
         if (!ProcessManager.getInstance().isMainProcess()) {
             return;
         }
-
-        ImageCacheUtil.clearImageCache();
 
         Threads.postBackground(new Runnable() {
             @Override
