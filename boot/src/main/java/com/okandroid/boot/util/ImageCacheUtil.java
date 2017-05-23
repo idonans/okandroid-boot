@@ -19,6 +19,7 @@ import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.okandroid.boot.data.FrescoManager;
+import com.okandroid.boot.data.TmpFileManager;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
 
@@ -28,14 +29,13 @@ import java.io.InputStream;
 import java.util.concurrent.Executor;
 
 /**
+ * 使用临时文件加载缓存图 {@link com.okandroid.boot.data.TmpFileManager}
  * Created by idonans on 2017/2/6.
  */
 
 public class ImageCacheUtil {
 
     private static final String TAG = "ImageCacheUtil";
-    private static final String CACHE_DIR = "okandroid_boot_image_cache";
-    private static final String CACHE_DIR_REMOVED = "okandroid_boot_image_cache_removed";
     private static final String CACHE_IMAGE_PREFIX = "image_cache";
     private static final String CACHE_IMAGE_THUMB_PREFIX = "image_cache_thumb";
     private static final Executor DEFAULT_EXECUTOR = new Executor() {
@@ -48,59 +48,6 @@ public class ImageCacheUtil {
     private ImageCacheUtil() {
     }
 
-    public static File getImageCacheDir() {
-        File extCacheDir = FileUtil.getExternalCacheDir();
-        if (extCacheDir == null) {
-            return null;
-        }
-
-        return new File(FileUtil.getExternalCacheDir(), CACHE_DIR);
-    }
-
-    public static File getImageCacheDirRemoved() {
-        File extCacheDir = FileUtil.getExternalCacheDir();
-        if (extCacheDir == null) {
-            return null;
-        }
-
-        return new File(FileUtil.getExternalCacheDir(), CACHE_DIR_REMOVED);
-    }
-
-    public static void clearImageCache() {
-        File cacheDir = getImageCacheDir();
-        if (cacheDir == null || !cacheDir.exists()) {
-            Log.v(TAG, "clearImageCache cache dir not found", cacheDir);
-            return;
-        }
-
-        final File cacheDirRemoved = getImageCacheDirRemoved();
-        if (!FileUtil.createDir(cacheDirRemoved)) {
-            Log.e(TAG, "clearImageCache fail to create cache dir removed", cacheDirRemoved);
-            return;
-        }
-
-        File renameTo = new File(cacheDirRemoved, "rename_" + System.currentTimeMillis());
-        if (!cacheDir.renameTo(renameTo)) {
-            Log.e(TAG, "clearImageCache rename fail", cacheDir, "->", renameTo);
-            return;
-        }
-
-        Log.v(TAG, "clearImageCache rename success", cacheDir, "->", renameTo);
-
-        // delete cache dir removed async
-        Threads.postBackground(new Runnable() {
-            @Override
-            public void run() {
-                Log.v(TAG, "clearImageCache cacheDirRemoved in background doing", cacheDirRemoved);
-                if (FileUtil.deleteFileQuietly(cacheDirRemoved)) {
-                    Log.v(TAG, "clearImageCache cacheDirRemoved in background success", cacheDirRemoved);
-                } else {
-                    Log.e(TAG, "clearImageCache cacheDirRemoved in background fail", cacheDirRemoved);
-                }
-            }
-        });
-    }
-
     /**
      * 缓存指定图片到本地磁盘
      */
@@ -110,12 +57,6 @@ public class ImageCacheUtil {
 
         final OnceImageCacheListener onceListener = new OnceImageCacheListener(listener);
         if (TextUtils.isEmpty(imageUrl)) {
-            onceListener.onImageCached(null);
-            return;
-        }
-
-        final File imageCacheDir = getImageCacheDir();
-        if (imageCacheDir == null) {
             onceListener.onImageCached(null);
             return;
         }
@@ -138,12 +79,11 @@ public class ImageCacheUtil {
                             if (extension != null) {
                                 extension = "." + extension;
                             }
-                            File targetFile = FileUtil.createNewTmpFileQuietly(
+                            File targetFile = TmpFileManager.getInstance().createNewTmpFileQuietly(
                                     CACHE_IMAGE_PREFIX,
-                                    extension,
-                                    imageCacheDir);
+                                    extension);
                             if (targetFile == null) {
-                                return;
+                                throw new IllegalArgumentException("fail to create target file");
                             }
 
                             errFile = targetFile;
@@ -172,6 +112,7 @@ public class ImageCacheUtil {
 
                     @Override
                     protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                        Log.v(TAG, "cacheImage onFailureImpl");
                         onceListener.onImageCached(null);
                     }
                 }, DEFAULT_EXECUTOR);
@@ -188,12 +129,6 @@ public class ImageCacheUtil {
 
         final OnceImageCacheListener onceListener = new OnceImageCacheListener(listener);
         if (TextUtils.isEmpty(imageUrl)) {
-            onceListener.onImageCached(null);
-            return;
-        }
-
-        final File imageCacheDir = getImageCacheDir();
-        if (imageCacheDir == null) {
             onceListener.onImageCached(null);
             return;
         }
@@ -230,12 +165,11 @@ public class ImageCacheUtil {
                         FileOutputStream fos = null;
                         File errFile = null;
                         try {
-                            File targetFile = FileUtil.createNewTmpFileQuietly(
+                            File targetFile = TmpFileManager.getInstance().createNewTmpFileQuietly(
                                     CACHE_IMAGE_THUMB_PREFIX,
-                                    ".jpg",
-                                    imageCacheDir);
+                                    ".jpg");
                             if (targetFile == null) {
-                                return;
+                                throw new IllegalArgumentException("fail to create target file");
                             }
 
                             errFile = targetFile;
@@ -278,11 +212,11 @@ public class ImageCacheUtil {
 
                     @Override
                     protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+                        Log.v(TAG, "cacheImageThumb onFailureImpl");
                         onceListener.onImageCached(null);
                     }
                 }, DEFAULT_EXECUTOR);
     }
-
 
     public interface ImageCacheListener {
         void onImageCached(@Nullable File file);
