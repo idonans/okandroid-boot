@@ -202,8 +202,8 @@ public class ImageCacheUtil {
                                             "fileLength:", HumanUtil.getHumanSizeFromByte(fileLength),
                                             "maxFileSize:", HumanUtil.getHumanSizeFromByte(maxFileSize),
                                             "minFileLength:", HumanUtil.getHumanSizeFromByte(minFileLength),
-                                            "width:", width, "height:", height, "scaleSize:", scaleSize);
-                                    cacheImageThumb(imageUrl, (int) (width * scaleSize), (int) (height * scaleSize), maxFileSize, listener);
+                                            "width:", resizeWidth, "height:", resizeHeight, "scaleSize:", scaleSize);
+                                    cacheImageThumb(imageUrl, (int) (resizeWidth * scaleSize), (int) (resizeHeight * scaleSize), maxFileSize, listener);
                                 }
                             }
                         } catch (Throwable e) {

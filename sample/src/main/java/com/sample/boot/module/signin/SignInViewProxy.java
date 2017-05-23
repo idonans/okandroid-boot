@@ -59,8 +59,8 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
 
         ImageCacheUtil.cacheImageThumb(
                 "http://img.zcool.cn/community/016c5258d0d7e8a801219c77d69fa1.jpg",
-                512,
-                512,
+                1024,
+                1024,
                 32 * HumanUtil.KB,
                 new ImageCacheUtil.ImageCacheListener() {
                     @Override
