@@ -201,6 +201,7 @@ public class ImageCacheUtil {
                                     Log.v(TAG, "file size too large, scale size and try again",
                                             "fileLength:", HumanUtil.getHumanSizeFromByte(fileLength),
                                             "maxFileSize:", HumanUtil.getHumanSizeFromByte(maxFileSize),
+                                            "minFileLength:", HumanUtil.getHumanSizeFromByte(minFileLength),
                                             "width:", width, "height:", height, "scaleSize:", scaleSize);
                                     cacheImageThumb(imageUrl, (int) (width * scaleSize), (int) (height * scaleSize), maxFileSize, listener);
                                 }
