@@ -91,9 +91,9 @@ public class ImageCacheUtil {
         Threads.postBackground(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "clearImageCache cacheDirRemoved in background doing", cacheDirRemoved);
+                Log.v(TAG, "clearImageCache cacheDirRemoved in background doing", cacheDirRemoved);
                 if (FileUtil.deleteFileQuietly(cacheDirRemoved)) {
-                    Log.e(TAG, "clearImageCache cacheDirRemoved in background success", cacheDirRemoved);
+                    Log.v(TAG, "clearImageCache cacheDirRemoved in background success", cacheDirRemoved);
                 } else {
                     Log.e(TAG, "clearImageCache cacheDirRemoved in background fail", cacheDirRemoved);
                 }
