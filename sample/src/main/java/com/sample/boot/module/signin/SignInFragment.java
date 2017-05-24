@@ -119,6 +119,10 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestInstallApk;
         private final CircleTextView mCircleTextView;
         private final View mTestMessageQueue;
+        private final View mTestFullLight;
+        private final View mTestNormalLight;
+        private final View mTestFullDark;
+        private final View mTestNormalDark;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -205,6 +209,38 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 @Override
                 public void onClick(View v) {
                     checkDownloadAndInstallApkPermissions();
+                }
+            });
+
+            mTestFullLight = ViewUtil.findViewByID(mRootView, R.id.test_full_light);
+            mTestFullLight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SystemUtil.setFullscreenWithSystemUi(v, true);
+                }
+            });
+
+            mTestNormalLight = ViewUtil.findViewByID(mRootView, R.id.test_normal_light);
+            mTestNormalLight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SystemUtil.unsetFullscreenWithSystemUi(v, true);
+                }
+            });
+
+            mTestFullDark = ViewUtil.findViewByID(mRootView, R.id.test_full_dark);
+            mTestFullDark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SystemUtil.setFullscreenWithSystemUi(v, false);
+                }
+            });
+
+            mTestNormalDark = ViewUtil.findViewByID(mRootView, R.id.test_normal_dark);
+            mTestNormalDark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SystemUtil.unsetFullscreenWithSystemUi(v, false);
                 }
             });
 
