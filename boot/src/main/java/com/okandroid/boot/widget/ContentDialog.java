@@ -16,6 +16,7 @@ import com.okandroid.boot.util.SystemUtil;
 public class ContentDialog extends Dialog {
 
     private boolean mTransparentStatusBar = true;
+    private boolean mLightStatusBar = false;
 
     public ContentDialog(@NonNull Context context) {
         this(context, R.style.OKAndroid_ContentDialog);
@@ -28,15 +29,18 @@ public class ContentDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (mTransparentStatusBar) {
-            SystemUtil.setStatusBarTransparent(getWindow());
+            SystemUtil.setStatusBarTransparent(getWindow(), mLightStatusBar);
         }
 
         super.onCreate(savedInstanceState);
     }
 
-
     protected void setTransparentStatusBar(boolean transparentStatusBar) {
         mTransparentStatusBar = transparentStatusBar;
+    }
+
+    public void setLightStatusBar(boolean lightStatusBar) {
+        mLightStatusBar = lightStatusBar;
     }
 
 }

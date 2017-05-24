@@ -17,6 +17,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     private boolean mAvailable;
     private boolean mResumed;
     private boolean mTransparentStatusBar = true;
+    private boolean mLightStatusBar = false;
 
     private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
 
@@ -42,7 +43,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
         Log.v(CLASS_NAME, "onCreate");
 
         if (mTransparentStatusBar) {
-            SystemUtil.setStatusBarTransparent(getWindow());
+            SystemUtil.setStatusBarTransparent(getWindow(), mLightStatusBar);
         }
         super.onCreate(savedInstanceState);
 
@@ -80,6 +81,10 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
      */
     protected void setTransparentStatusBar(boolean transparentStatusBar) {
         mTransparentStatusBar = transparentStatusBar;
+    }
+
+    protected void setLightStatusBar(boolean lightStatusBar) {
+        mLightStatusBar = lightStatusBar;
     }
 
     @Override
