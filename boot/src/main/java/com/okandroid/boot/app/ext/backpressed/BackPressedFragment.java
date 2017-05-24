@@ -10,7 +10,7 @@ import com.okandroid.boot.app.OKAndroidFragment;
  * Created by idonans on 2017/2/15.
  */
 
-public class BackPressedFragment extends OKAndroidFragment implements BackPressedFragmentHost {
+public class BackPressedFragment extends OKAndroidFragment implements BackPressedComponent {
 
     @Override
     public boolean onBackPressed() {
@@ -18,7 +18,7 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
     }
 
     @Override
-    public boolean callActivityBackPressed() {
+    public boolean requestBackPressed() {
         Activity activity = getActivity();
         if (activity != null) {
             activity.onBackPressed();
@@ -32,8 +32,8 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
         super.onCreate(savedInstanceState);
 
         Activity activity = getActivity();
-        if (activity instanceof BackPressedActivityHost) {
-            ((BackPressedActivityHost) activity).addBackPressedFragmentHost(this);
+        if (activity instanceof BackPressedHost) {
+            ((BackPressedHost) activity).addBackPressedComponent(this);
         }
     }
 
@@ -42,8 +42,8 @@ public class BackPressedFragment extends OKAndroidFragment implements BackPresse
         super.onDestroy();
 
         Activity activity = getActivity();
-        if (activity instanceof BackPressedActivityHost) {
-            ((BackPressedActivityHost) activity).removeBackPressedFragmentHost(this);
+        if (activity instanceof BackPressedHost) {
+            ((BackPressedHost) activity).removeBackPressedComponent(this);
         }
     }
 
