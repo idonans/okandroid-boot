@@ -3,8 +3,8 @@
     <item>
         <color android:color="#ffffff"/>
     </item>
-    <item android:bottom="20dp">
-        <bitmap android:gravity="bottom|center_horizontal"
+    <item android:bottom="25dp">
+        <bitmap android:gravity="center_horizontal|bottom"
             android:src="@drawable/sample_ic_logo"/>
     </item>
 </layer-list>
