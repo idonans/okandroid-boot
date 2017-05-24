@@ -84,14 +84,14 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
     public void onDestroyView() {
         super.onDestroyView();
         closeDefaultViewProxy();
-        dismissLoadingView();
+        hideLoadingView();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         closeDefaultViewProxy();
-        dismissLoadingView();
+        hideLoadingView();
     }
 
     @Nullable
@@ -145,10 +145,6 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
 
     @Override
     public void hideLoadingView() {
-        dismissLoadingView();
-    }
-
-    private void dismissLoadingView() {
         if (mContentLoadingDialog != null) {
             mContentLoadingDialog.dismiss();
         }

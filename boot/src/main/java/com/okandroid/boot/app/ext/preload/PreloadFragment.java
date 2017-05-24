@@ -11,6 +11,7 @@ import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.AvailableUtil;
+import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ContentLoadingView;
 
@@ -103,21 +104,20 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
         viewProxy.onPrepared();
     }
 
-    private ContentLoadingView mPreloadLoadingView;
+    private PreloadSubViewHelper mPreloadLoadingViewHelper;
 
     protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        if (mPreloadLoadingView != null) {
-            mPreloadLoadingView.hideLoading();
-            contentView.removeView(mPreloadLoadingView);
-            mPreloadLoadingView = null;
+        if (mPreloadLoadingViewHelper != null) {
+            IOUtil.closeQuietly(mPreloadLoadingViewHelper);
+            mPreloadLoadingViewHelper = null;
         }
     }
 
     protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        if (mPreloadLoadingView == null) {
-            mPreloadLoadingView = new ContentLoadingView(activity);
-            contentView.addView(mPreloadLoadingView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            mPreloadLoadingView.showLoading();
+        if (mPreloadLoadingViewHelper == null) {
+            ContentLoadingView loadingView = new ContentLoadingView(activity);
+            loadingView.showLoading();
+            mPreloadLoadingViewHelper = new PreloadSubViewHelper(activity, inflater, contentView, loadingView);
         }
     }
 
