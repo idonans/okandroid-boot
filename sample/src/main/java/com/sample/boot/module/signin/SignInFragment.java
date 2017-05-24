@@ -28,8 +28,8 @@ import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ptr.PtrLayout;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
-import com.sample.boot.data.CircleTextView;
 import com.sample.boot.module.datalist.DataListActivity;
+import com.sample.boot.widget.CircleTextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

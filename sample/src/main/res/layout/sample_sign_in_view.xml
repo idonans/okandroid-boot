@@ -66,7 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="test install apk"/>
-                <com.sample.boot.data.CircleTextView android:id="@+id/circle_text"
+                <com.sample.boot.widget.CircleTextView android:id="@+id/circle_text"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:background="@color/okandroid_color_md_grey_900"/>

@@ -1,4 +1,4 @@
-package com.sample.boot.data;
+package com.sample.boot.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
