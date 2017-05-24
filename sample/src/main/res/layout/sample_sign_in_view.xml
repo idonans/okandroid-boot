@@ -70,6 +70,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:background="@color/okandroid_color_md_grey_900"/>
+                <Button android:id="@+id/test_message_queue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="test message queue"/>
                 <TextView android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:text="space"/>

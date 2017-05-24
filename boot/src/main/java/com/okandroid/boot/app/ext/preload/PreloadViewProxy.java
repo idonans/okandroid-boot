@@ -91,10 +91,10 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
         mDefaultRequestHolder.setDisposable(disposable);
     }
 
-    public boolean callActivityBackPressed() {
+    public boolean requestBackPressed() {
         T view = getView();
         if (view != null) {
-            return view.callActivityBackPressed();
+            return view.requestBackPressed();
         }
         return false;
     }

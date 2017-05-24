@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.MessageQueue;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -29,6 +31,7 @@ import com.sample.boot.app.BaseFragment;
 import com.sample.boot.data.CircleTextView;
 import com.sample.boot.module.datalist.DataListActivity;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +118,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestDataList;
         private final View mTestInstallApk;
         private final CircleTextView mCircleTextView;
+        private final View mTestMessageQueue;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -256,6 +260,14 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 }
             });
 
+            mTestMessageQueue = ViewUtil.findViewByID(mRootView, R.id.test_message_queue);
+            mTestMessageQueue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    printMainLooperMessageQueueInfo();
+                }
+            });
+
             invokeAutoRefresh();
 
             printSystemUserAgent();
@@ -271,6 +283,21 @@ public class SignInFragment extends BaseFragment implements SignInView {
             }, 2000L);
         }
 
+    }
+
+    private void printMainLooperMessageQueueInfo() {
+        try {
+            Field looperQueueField = Looper.class.getDeclaredField("mQueue");
+            looperQueueField.setAccessible(true);
+            MessageQueue messageQueue = (MessageQueue) looperQueueField.get(Looper.getMainLooper());
+
+            Field field = MessageQueue.class.getDeclaredField("mNextBarrierToken");
+            field.setAccessible(true);
+            int nextBarrierToken = (int) field.get(messageQueue);
+            Log.d(TAG, "main looper queue mNextBarrierToken:", nextBarrierToken);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     private void printSystemUserAgent() {

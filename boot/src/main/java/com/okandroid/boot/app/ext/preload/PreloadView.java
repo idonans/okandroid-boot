@@ -6,7 +6,7 @@ package com.okandroid.boot.app.ext.preload;
 
 public interface PreloadView {
 
-    boolean callActivityBackPressed();
+    boolean requestBackPressed();
 
     boolean isLoadingViewShown();
 
