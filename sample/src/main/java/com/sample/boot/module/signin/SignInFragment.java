@@ -216,7 +216,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestFullLight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setFullscreenWithSystemUi(v, true);
+                    SystemUtil.setSystemUi(v, true, true);
                 }
             });
 
@@ -224,7 +224,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestNormalLight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.unsetFullscreenWithSystemUi(v, true);
+                    SystemUtil.setSystemUi(v, false, true);
                 }
             });
 
@@ -232,7 +232,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestFullDark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setFullscreenWithSystemUi(v, false);
+                    SystemUtil.setSystemUi(v, true, false);
                 }
             });
 
@@ -240,7 +240,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestNormalDark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.unsetFullscreenWithSystemUi(v, false);
+                    SystemUtil.setSystemUi(v, false, false);
                 }
             });
 

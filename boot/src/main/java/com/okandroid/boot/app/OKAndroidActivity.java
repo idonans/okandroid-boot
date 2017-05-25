@@ -3,6 +3,7 @@ package com.okandroid.boot.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
 
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
@@ -16,35 +17,15 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
 
     private boolean mAvailable;
     private boolean mResumed;
-    private boolean mTransparentStatusBar = true;
-    private boolean mLightStatusBar = false;
 
     private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
 
-    /**
-     * the best way u should always check available status,
-     * if false, means this activity will be finished soon.
-     * <pre>
-     *     protected void onCreate() {
-     *         super.onCreate();
-     *
-     *         if (!isAvailable()) {
-     *             return;
-     *         }
-     *
-     *         setContentView();
-     *     }
-     * </pre>
-     *
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(CLASS_NAME, "onCreate");
 
-        if (mTransparentStatusBar) {
-            SystemUtil.setStatusBarTransparent(getWindow(), mLightStatusBar);
-        }
+        updateSystemUi();
+
         super.onCreate(savedInstanceState);
 
         {
@@ -62,29 +43,10 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
         mAvailable = true;
     }
 
-    /**
-     * default is true, u can change to false but must call before onCreate()
-     * <pre>
-     *     protected void onCreate() {
-     *         setTransparentStatusBar(false);
-     *         super.onCreate();
-     *
-     *         if (!isAvailable()) {
-     *             return;
-     *         }
-     *
-     *         setContentView();
-     *     }
-     * </pre>
-     *
-     * @param transparentStatusBar
-     */
-    protected void setTransparentStatusBar(boolean transparentStatusBar) {
-        mTransparentStatusBar = transparentStatusBar;
-    }
-
-    protected void setLightStatusBar(boolean lightStatusBar) {
-        mLightStatusBar = lightStatusBar;
+    protected void updateSystemUi() {
+        Window window = getWindow();
+        SystemUtil.setStatusBarTransparent(window);
+        SystemUtil.setSystemUi(window.getDecorView(), false, false);
     }
 
     @Override

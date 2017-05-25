@@ -165,59 +165,39 @@ public class SystemUtil {
                 view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
     }
 
-    /**
-     * 注意：全屏模式下，软键盘监听将失效
-     * <p>
-     * 设置全屏
-     */
-    public static void setFullscreenWithSystemUi(View view) {
-        setFullscreenWithSystemUi(view, false);
+    public static void setSystemUi(View view,
+                                   boolean hideStatusBar, boolean lightStatusBar) {
+        setSystemUi(view, true, hideStatusBar, false, false, lightStatusBar);
     }
 
-    /**
-     * 注意：全屏模式下，软键盘监听将失效
-     * <p>
-     * 设置全屏
-     */
-    public static void setFullscreenWithSystemUi(View view, boolean lightStatusBar) {
-        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+    public static void setSystemUi(View view,
+                                   boolean layoutStatusBar, boolean hideStatusBar,
+                                   boolean layoutNavigationBar, boolean hideNavigationBar,
+                                   boolean lightStatusBar) {
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (layoutStatusBar) {
+            flag |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        }
+        if (layoutNavigationBar) {
+            flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        }
+
+        if (hideStatusBar) {
+            flag |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+        if (hideNavigationBar) {
+            flag |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
         if (lightStatusBar) {
             if (Build.VERSION.SDK_INT >= 23) {
                 flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
         }
 
-        view.getRootView().setSystemUiVisibility(flag);
-    }
-
-    /**
-     * 取消全屏设置
-     */
-    public static void unsetFullscreenWithSystemUi(View view) {
-        unsetFullscreenWithSystemUi(view, false);
-    }
-
-    /**
-     * 取消全屏设置
-     */
-    public static void unsetFullscreenWithSystemUi(View view, boolean lightStatusBar) {
-        int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        if (lightStatusBar) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            }
-        }
         view.getRootView().setSystemUiVisibility(flag);
     }
 
     public static void setStatusBarTransparent(Window window) {
-        setStatusBarTransparent(window, false);
-    }
-
-    public static void setStatusBarTransparent(Window window, boolean lightStatusBar) {
         if (Build.VERSION.SDK_INT >= 19) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -226,11 +206,25 @@ public class SystemUtil {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         if (Build.VERSION.SDK_INT >= 23) {
-            // 发现：华为手机在 5.1 上的透明状态栏仍然使用的是 4.4 的效果，此处设置完全透明状态栏的 API 调整到最低 6.0
+            // 部分手机上发现 bug, 此处设置完全透明状态栏的 API 调整到最低 6.0
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+    }
 
-        unsetFullscreenWithSystemUi(window.getDecorView(), lightStatusBar);
+    public static void setNavigationBarTransparent(Window window) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
+        if (Build.VERSION.SDK_INT >= 23) {
+            /**
+             * @see #setStatusBarTransparent(Window)
+             */
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
     }
 
     /**

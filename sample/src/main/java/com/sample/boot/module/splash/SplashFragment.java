@@ -55,6 +55,16 @@ public class SplashFragment extends BaseFragment implements SplashView {
         return true;
     }
 
+    @Override
+    protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+        // ignore
+    }
+
+    @Override
+    protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+        // ignore
+    }
+
     private Content mContent;
 
     @Override
