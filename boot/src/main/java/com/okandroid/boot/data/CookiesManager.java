@@ -65,7 +65,7 @@ public class CookiesManager {
         }
     }
 
-    public OkHttp3CookieJar getOkHttp3CookieJar() {
+    public CookieJar getOkHttp3CookieJar() {
         return mOkHttp3CookieJar;
     }
 
