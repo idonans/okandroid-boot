@@ -81,10 +81,12 @@ public class OkHttpManager {
                     .addInterceptor(defaultUserAgentInterceptor)
                     .addInterceptor(contentEncodingInterceptor)
                     .addInterceptor(httpLoggingInterceptor)
+                    .cookieJar(CookiesManager.getInstance().getOkHttp3CookieJar())
                     .build();
         } else {
             mOkHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(defaultUserAgentInterceptor)
+                    .cookieJar(CookiesManager.getInstance().getOkHttp3CookieJar())
                     .build();
         }
     }
