@@ -6,7 +6,7 @@
     <application android:allowBackup="true"
         android:label="@string/okandroid_app_name"
         android:supportsRtl="true"
-        android:theme="@style/OKAndroid">
+        android:theme="@style/OKAndroid.Theme">
         <provider android:name="com.okandroid.boot.lang.BootFileProvider"
             android:authorities="${applicationId}.okandroid.boot.fileprovider"
             android:exported="false"

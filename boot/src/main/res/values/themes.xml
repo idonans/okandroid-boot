@@ -1,0 +1,22 @@
+<resources>
+    <style name="OKAndroid.Theme"
+        parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/okandroid_color_md_grey_50</item>
+    </style>
+    <style name="OKAndroid.Theme.DayNight"
+        parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/okandroid_color_md_grey_50</item>
+    </style>
+    <style name="OKAndroid.Theme.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+    <style name="OKAndroid.Theme.ContentDialog"
+        parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+</resources>
