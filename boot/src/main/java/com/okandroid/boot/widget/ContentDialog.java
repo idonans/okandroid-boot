@@ -17,7 +17,7 @@ import com.okandroid.boot.util.SystemUtil;
 public class ContentDialog extends Dialog {
 
     public ContentDialog(@NonNull Context context) {
-        this(context, R.style.OKAndroid_ContentDialog);
+        this(context, R.style.OKAndroid_Theme_ContentDialog);
     }
 
     public ContentDialog(@NonNull Context context, @StyleRes int themeResId) {
