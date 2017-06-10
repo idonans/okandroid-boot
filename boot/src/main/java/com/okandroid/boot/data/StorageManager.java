@@ -4,10 +4,9 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.okandroid.boot.db.FastDB;
+import com.okandroid.boot.db.SimpleDB;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.ThreadPool;
-import com.okandroid.boot.util.HumanUtil;
 
 /**
  * 数据存储服务
@@ -38,18 +37,18 @@ public class StorageManager {
     }
 
     private static final String TAG = "StorageManager";
-    private final FastDB mDBSetting;
-    private final FastDB mDBCache;
+    private final SimpleDB mDBSetting;
+    private final SimpleDB mDBCache;
 
     private StorageManager() {
-        mDBSetting = new FastDB("setting", false);
-        mDBCache = new FastDB("cache", true);
+        mDBSetting = new SimpleDB("setting");
+        mDBCache = new SimpleDB("cache");
 
         // 数据库启动时, 做一次 trim 操作.
         int settingTrimSize = mDBSetting.trim(5000);
-        Log.d(TAG + " setting trim size:" + settingTrimSize + ", max memory cache size:" + HumanUtil.getHumanSizeFromByte(mDBSetting.getMaxMemoryCacheSize()));
+        Log.d(TAG, "setting trim size:", settingTrimSize);
         int cacheTrimSize = mDBCache.trim(5000);
-        Log.d(TAG + " cache trim size:" + cacheTrimSize + ", max memory cache size:" + HumanUtil.getHumanSizeFromByte(mDBCache.getMaxMemoryCacheSize()));
+        Log.d(TAG, "cache trim size:" + cacheTrimSize);
     }
 
     public void setSetting(@Nullable String key, @Nullable String value) {
