@@ -64,6 +64,12 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mContentView = null;
+    }
+
+    @Override
     public void notifyPreDataPrepared() {
         View view = getView();
         if (view == null) {

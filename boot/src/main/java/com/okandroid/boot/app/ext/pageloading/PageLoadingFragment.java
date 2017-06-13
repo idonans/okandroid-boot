@@ -40,6 +40,13 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
         return new PageContentView(activity, inflater, contentView, R.layout.okandroid_ext_pageloading_view);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        IOUtil.closeQuietly(mPageContentView);
+        mPageContentView = null;
+    }
+
     protected class PageContentView extends PreloadSubViewHelper {
 
         public PageContentView(Activity activity, LayoutInflater inflater, ViewGroup parentView, View rootView) {
