@@ -108,6 +108,9 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
         showPreloadContentView(activity, inflater, mContentView);
 
         viewProxy.onPrepared();
+
+        // clear saved retain object
+        getRetainDataObject().clear();
     }
 
     private PreloadSubViewHelper mPreloadLoadingViewHelper;
