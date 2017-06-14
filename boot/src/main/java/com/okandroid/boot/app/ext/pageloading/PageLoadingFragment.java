@@ -18,6 +18,7 @@ import com.okandroid.boot.widget.PageDataAdapter;
 import com.okandroid.boot.widget.ptr.PtrLayout;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by idonans on 2017/4/20.
@@ -47,6 +48,15 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
         mPageContentView = null;
     }
 
+    @Override
+    protected void onSaveDataObject(@NonNull Map retainObject) {
+        super.onSaveDataObject(retainObject);
+
+        if (mPageContentView != null) {
+            mPageContentView.onSaveDataObject(retainObject);
+        }
+    }
+
     protected class PageContentView extends PreloadSubViewHelper {
 
         public PageContentView(Activity activity, LayoutInflater inflater, ViewGroup parentView, View rootView) {
@@ -64,6 +74,8 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
 
         protected PageDataAdapter mPageDataAdapter;
 
+        private static final String RETAIN_KEY_ADAPTER_CONTENT = "preloading.retain.key.AdapterContent";
+
         protected void init() {
             mPtrLayout = ViewUtil.findViewByID(mRootView, R.id.ptr_layout);
             mRecyclerView = ViewUtil.findViewByID(mRootView, R.id.recycler_view);
@@ -72,6 +84,8 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false));
 
             mPageDataAdapter = createPageDataAdapter(mRecyclerView);
+            mPageDataAdapter.onRestoreDataObject(getRetainDataObject());
+
             mPageDataAdapter.setOnMoreLoadListener(new PageDataAdapter.OnMoreLoadListener() {
                 @Override
                 public void onLoadMore() {
@@ -86,6 +100,15 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
                     loadFirstPage();
                 }
             });
+        }
+
+        /**
+         * 保存数据
+         */
+        protected void onSaveDataObject(@NonNull Map retainObject) {
+            if (mPageDataAdapter != null) {
+                mPageDataAdapter.onSaveDataObject(retainObject);
+            }
         }
 
         protected void showPageLoadingStatus(PageDataAdapter.PageLoadingStatus pageLoadingStatus) {

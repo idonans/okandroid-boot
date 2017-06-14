@@ -1,11 +1,15 @@
 package com.okandroid.boot.app.ext.pageloading;
 
+import android.support.annotation.NonNull;
+
 import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.PageDataAdapter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import io.reactivex.disposables.Disposable;
 
@@ -29,7 +33,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     public void onPrepared() {
         super.onPrepared();
 
-        loadFirstPage();
+        loadNextPage();
     }
 
     // 上一次成功加载的数据页
@@ -41,6 +45,34 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
 
     // 总页数
     private int mTotalPage = -1;
+
+    private static final String SAVED_KEY_SAVED_OBJECT = "okandroid.boot.pageloading.proxy.SavedObject";
+
+    private static class SavedObject {
+        private final int mLastLoadingSuccessPageNo;
+        private final int mTotalPage;
+
+        private SavedObject(int lastLoadingSuccessPageNo, int totalPage) {
+            this.mLastLoadingSuccessPageNo = lastLoadingSuccessPageNo;
+            this.mTotalPage = totalPage;
+        }
+    }
+
+    @Override
+    protected void onSaveDataObject(@NonNull Map retainObject) {
+        super.onSaveDataObject(retainObject);
+        retainObject.put(SAVED_KEY_SAVED_OBJECT, new SavedObject(mLastLoadSuccessPageNo, mTotalPage));
+    }
+
+    @Override
+    protected void onRestoreDataObject(@NonNull Map retainObject) {
+        super.onRestoreDataObject(retainObject);
+        SavedObject savedObject = (SavedObject) retainObject.get(SAVED_KEY_SAVED_OBJECT);
+        if (savedObject != null) {
+            mLastLoadSuccessPageNo = savedObject.mLastLoadingSuccessPageNo;
+            mTotalPage = savedObject.mTotalPage;
+        }
+    }
 
     public void loadFirstPage() {
         tryLoadPage(mFirstPageNo);
@@ -63,13 +95,19 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return;
         }
 
+        boolean retainLastPageStatus = false;
+
         if (alwaysAllowLoadFirstPage()
                 && mFirstPageNo == pageNo) {
             // 总是允许加载第一页
         } else if (mTotalPage >= 0
                 && pageNo >= mTotalPage) {
-            Log.d(TAG + " tryLoadPage with no more page [" + pageNo + "/" + mTotalPage + "]");
-            return;
+            Log.d(TAG + " tryLoadPage with no more page [" + pageNo + "/" + mTotalPage + "] mCurrentLoadingPageNo", mCurrentLoadingPageNo);
+            if (mCurrentLoadingPageNo == -1) {
+                retainLastPageStatus = true;
+            } else {
+                return;
+            }
         }
 
         if (!isPrepared()) {
@@ -90,7 +128,14 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
 
         replaceDefaultRequestHolder(null);
 
+        // 恢复重建时, 手动模拟恢复最后一页的加载结束状态(一个加载成功的空的分页)
+        if (retainLastPageStatus) {
+            notifyPageLoadingEnd(pageNo, new ArrayList(), null);
+            return;
+        }
+
         boolean firstPage = pageNo == mFirstPageNo;
+
         view.showPageLoadingStatus(new PageDataAdapter.PageLoadingStatus.Builder()
                 .setFirstPage(firstPage)
                 .setLoading(true)
@@ -104,7 +149,6 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     @Override
     public void close() throws IOException {
         super.close();
-
         mCurrentLoadingPageNo = -1;
     }
 

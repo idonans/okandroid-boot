@@ -6,8 +6,11 @@ import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.okandroid.boot.lang.Log;
+
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * 同一时间至多只有一页数据处于加载中。例如：当前正在加载第二页数据，又触发了下拉刷新开始加载第一页，那么正在加载的第二页的请求会被终止。
@@ -120,6 +123,27 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
     public void notifyLoadMore() {
         if (mOnMoreLoadListener != null) {
             mOnMoreLoadListener.onLoadMore();
+        }
+    }
+
+    private static final String SAVE_KEY_PAGE_CONTNET_DEFAULT = "save.key.PAGE_CONTENT_DEFAULT";
+
+    /**
+     * 保存数据
+     */
+    public void onSaveDataObject(@NonNull Map retainObject) {
+        Log.v(TAG, "onSaveDataObject");
+        retainObject.put(SAVE_KEY_PAGE_CONTNET_DEFAULT, getData().get(GROUP_PAGE_CONTENT_DEFAULT));
+    }
+
+    /**
+     * 恢复数据
+     */
+    public void onRestoreDataObject(@NonNull Map retainObject) {
+        Log.v(TAG, "onRestoreDataObject");
+        Object data = retainObject.get(SAVE_KEY_PAGE_CONTNET_DEFAULT);
+        if (data != null) {
+            getData().put(GROUP_PAGE_CONTENT_DEFAULT, data);
         }
     }
 
