@@ -126,14 +126,14 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         }
     }
 
-    private static final String SAVE_KEY_PAGE_CONTNET_DEFAULT = "save.key.PAGE_CONTENT_DEFAULT";
+    private static final String SAVE_KEY_PAGE_CONTENT_DEFAULT = "okandroid.save.key.PAGE_CONTENT_DEFAULT";
 
     /**
      * 保存数据
      */
     public void onSaveDataObject(@NonNull Map retainObject) {
         Log.v(TAG, "onSaveDataObject");
-        retainObject.put(SAVE_KEY_PAGE_CONTNET_DEFAULT, getData().get(GROUP_PAGE_CONTENT_DEFAULT));
+        retainObject.put(SAVE_KEY_PAGE_CONTENT_DEFAULT, getData().get(GROUP_PAGE_CONTENT_DEFAULT));
     }
 
     /**
@@ -141,7 +141,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
      */
     public void onRestoreDataObject(@NonNull Map retainObject) {
         Log.v(TAG, "onRestoreDataObject");
-        Object data = retainObject.get(SAVE_KEY_PAGE_CONTNET_DEFAULT);
+        Object data = retainObject.get(SAVE_KEY_PAGE_CONTENT_DEFAULT);
         if (data != null) {
             getData().put(GROUP_PAGE_CONTENT_DEFAULT, data);
         }

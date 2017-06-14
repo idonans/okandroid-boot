@@ -105,6 +105,8 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         super.onDestroyView();
 
         // 在视图销毁时保存数据
+        // 保存数据之前, 清空可能的旧的数据
+        getRetainDataObject().clear();
         onSaveDataObject(getRetainDataObject());
         PreloadViewProxy viewProxy = getDefaultViewProxy();
         if (viewProxy != null) {
@@ -130,7 +132,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         hideLoadingView();
 
         // clear retain data object
-        mRetainDataObject.clear();
+        getRetainDataObject().clear();
     }
 
     @Nullable

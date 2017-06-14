@@ -74,7 +74,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
 
         protected PageDataAdapter mPageDataAdapter;
 
-        private static final String RETAIN_KEY_ADAPTER_CONTENT = "preloading.retain.key.AdapterContent";
+        private static final String SAVE_KEY_PAGE_RECYCLER_SCROLL = "okandroid.save.key.PAGE_RECYCLER_SCROLL";
 
         protected void init() {
             mPtrLayout = ViewUtil.findViewByID(mRootView, R.id.ptr_layout);
@@ -94,6 +94,11 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
             });
             mRecyclerView.setAdapter(mPageDataAdapter);
 
+            Object adapterPositionObject = getRetainDataObject().get(SAVE_KEY_PAGE_RECYCLER_SCROLL);
+            if (adapterPositionObject != null) {
+                mRecyclerView.scrollToPosition((Integer) adapterPositionObject);
+            }
+
             mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -108,6 +113,13 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
         protected void onSaveDataObject(@NonNull Map retainObject) {
             if (mPageDataAdapter != null) {
                 mPageDataAdapter.onSaveDataObject(retainObject);
+            }
+
+            if (mRecyclerView != null) {
+                if (mRecyclerView.getChildCount() > 0) {
+                    int adapterPosition = mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0));
+                    retainObject.put(SAVE_KEY_PAGE_RECYCLER_SCROLL, adapterPosition);
+                }
             }
         }
 
