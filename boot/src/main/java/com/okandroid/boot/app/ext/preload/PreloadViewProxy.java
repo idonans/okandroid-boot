@@ -1,12 +1,15 @@
 package com.okandroid.boot.app.ext.preload;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 
+import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.rx.DisposableHolder;
 import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.viewproxy.ViewProxy;
 
 import java.io.IOException;
+import java.util.Map;
 
 import io.reactivex.disposables.Disposable;
 
@@ -16,6 +19,7 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<T> {
 
+    private final String CLASS_NAME = getClass().getSimpleName();
     // 前置数据是否已经准备好
     private boolean mPreDataPrepared;
 
@@ -101,8 +105,30 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
 
     @Override
     public void close() throws IOException {
+        T view = getView();
+        if (view != null) {
+            onSaveDataObject(view.getRetainDataObject());
+        } else {
+            Log.v(CLASS_NAME, "view is not available, miss to save data");
+        }
         mDefaultRequestHolder.clear();
         super.close();
+    }
+
+    /**
+     * 保存数据
+     */
+    @CallSuper
+    protected void onSaveDataObject(@NonNull Map retainObject) {
+        Log.v(CLASS_NAME, "onSaveDataObject");
+    }
+
+    /**
+     * 恢复数据
+     */
+    @CallSuper
+    protected void onRestoreDataObject(@NonNull Map retainObject) {
+        Log.v(CLASS_NAME, "onRestoreDataObject");
     }
 
 }
