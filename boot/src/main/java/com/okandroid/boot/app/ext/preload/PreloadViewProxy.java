@@ -105,12 +105,6 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
 
     @Override
     public void close() throws IOException {
-        T view = getView();
-        if (view != null) {
-            onSaveDataObject(view.getRetainDataObject());
-        } else {
-            Log.v(CLASS_NAME, "view is not available, miss to save data");
-        }
         mDefaultRequestHolder.clear();
         super.close();
     }

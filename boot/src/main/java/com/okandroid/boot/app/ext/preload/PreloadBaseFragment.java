@@ -103,7 +103,14 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        // 在视图销毁时保存数据
         onSaveDataObject(getRetainDataObject());
+        PreloadViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy != null) {
+            viewProxy.onSaveDataObject(getRetainDataObject());
+        }
+
         closeDefaultViewProxy();
         hideLoadingView();
     }
