@@ -33,7 +33,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     public void onPrepared() {
         super.onPrepared();
 
-        loadNextPage();
+        loadFirstPageOrRetainPageStatus();
     }
 
     // 上一次成功加载的数据页
@@ -83,6 +83,26 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     }
 
     /**
+     * 如果没有 retain 数据, 则加载第一页, 否则恢复上一次页面的状态
+     */
+    public void loadFirstPageOrRetainPageStatus() {
+        replaceDefaultRequestHolder(null);
+
+        if (mLastLoadSuccessPageNo == -1) {
+            loadFirstPage();
+            return;
+        }
+
+        boolean isLastPage = mTotalPage >= 0
+                && (mLastLoadSuccessPageNo + 1) >= mTotalPage;
+        if (isLastPage) {
+            // 恢复重建时, 手动模拟恢复最后一页的加载结束状态(一个加载成功的空的分页)
+            notifyPageLoadingEnd(mLastLoadSuccessPageNo, new ArrayList(), null);
+        }
+        // 其他加载状态由页面自动触发, 此处不处理
+    }
+
+    /**
      * 第一页的数据是否总是可以发起请求，即使当前总页数是 0.
      */
     protected boolean alwaysAllowLoadFirstPage() {
@@ -95,19 +115,13 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return;
         }
 
-        boolean retainLastPageStatus = false;
-
         if (alwaysAllowLoadFirstPage()
                 && mFirstPageNo == pageNo) {
             // 总是允许加载第一页
         } else if (mTotalPage >= 0
                 && pageNo >= mTotalPage) {
             Log.d(TAG + " tryLoadPage with no more page [" + pageNo + "/" + mTotalPage + "] mCurrentLoadingPageNo", mCurrentLoadingPageNo);
-            if (mCurrentLoadingPageNo == -1) {
-                retainLastPageStatus = true;
-            } else {
-                return;
-            }
+            return;
         }
 
         if (!isPrepared()) {
@@ -127,12 +141,6 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
         mCurrentLoadingPageNo = pageNo;
 
         replaceDefaultRequestHolder(null);
-
-        // 恢复重建时, 手动模拟恢复最后一页的加载结束状态(一个加载成功的空的分页)
-        if (retainLastPageStatus) {
-            notifyPageLoadingEnd(pageNo, new ArrayList(), null);
-            return;
-        }
 
         boolean firstPage = pageNo == mFirstPageNo;
 
