@@ -19,23 +19,11 @@ public abstract class PreloadActivity extends BackPressedActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        removeDirtyFragment();
-
         if (!isAvailable()) {
             return;
         }
 
         initContent();
-    }
-
-    protected void removeDirtyFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        PreloadFragment fragment = (PreloadFragment) fragmentManager.findFragmentByTag(TAG_DEFAULT_CONTENT_FRAGMENT);
-        if (fragment != null) {
-            fragmentManager.beginTransaction()
-                    .remove(fragment)
-                    .commitNowAllowingStateLoss();
-        }
     }
 
     protected void initContent() {
