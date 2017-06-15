@@ -830,6 +830,14 @@ public class RecyclerViewGroupAdapter extends RecyclerView.Adapter {
         public boolean onMove(RecyclerView recyclerView,
                               RecyclerView.ViewHolder viewHolder,
                               RecyclerView.ViewHolder target) {
+
+            if (!(viewHolder instanceof HolderDrag)
+                    || !(target instanceof HolderDrag)
+                    || ((HolderDrag) viewHolder).getDragFlagsAction() == HolderFlags.NONE
+                    || ((HolderDrag) target).getDragFlagsAction() == HolderDrag.NONE) {
+                return false;
+            }
+
             int fromPosition = viewHolder.getAdapterPosition();
             int toPosition = target.getAdapterPosition();
 
