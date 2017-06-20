@@ -198,6 +198,10 @@ public class SystemUtil {
     }
 
     public static void setStatusBarTransparent(Window window) {
+        setStatusBarTransparent(window, false);
+    }
+
+    public static void setStatusBarTransparent(Window window, boolean clearTranslucentFlag) {
         if (Build.VERSION.SDK_INT >= 19) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
@@ -207,11 +211,17 @@ public class SystemUtil {
         }
         if (Build.VERSION.SDK_INT >= 23) {
             // 部分手机上发现 bug, 此处设置完全透明状态栏的 API 调整到最低 6.0
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if (clearTranslucentFlag) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         }
     }
 
     public static void setNavigationBarTransparent(Window window) {
+        setNavigationBarTransparent(window, false);
+    }
+
+    public static void setNavigationBarTransparent(Window window, boolean clearTranslucentFlag) {
         if (Build.VERSION.SDK_INT >= 19) {
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
@@ -220,10 +230,9 @@ public class SystemUtil {
             window.setNavigationBarColor(Color.TRANSPARENT);
         }
         if (Build.VERSION.SDK_INT >= 23) {
-            /**
-             * @see #setStatusBarTransparent(Window)
-             */
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            if (clearTranslucentFlag) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            }
         }
     }
 
