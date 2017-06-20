@@ -13,7 +13,7 @@ public class SplashActivity extends BaseActivity {
         Window window = getWindow();
         SystemUtil.setStatusBarTransparent(window);
         SystemUtil.setNavigationBarTransparent(window);
-        SystemUtil.setSystemUi(window.getDecorView(), true, true, true, true, false);
+        SystemUtil.setSystemUi(window.getDecorView(), true, true, true, false, false);
     }
 
     @Override
