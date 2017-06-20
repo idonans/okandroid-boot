@@ -2,6 +2,7 @@ package com.okandroid.boot.app.ext.preload;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 
 import com.okandroid.boot.R;
 import com.okandroid.boot.app.ext.backpressed.BackPressedActivity;
@@ -27,7 +28,7 @@ public abstract class PreloadActivity extends BackPressedActivity {
     }
 
     protected void initContent() {
-        setContentView(new ContentView(this));
+        setContentView(createDefaultContentView());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         PreloadFragment fragment = (PreloadFragment) fragmentManager.findFragmentByTag(TAG_DEFAULT_CONTENT_FRAGMENT);
@@ -37,6 +38,10 @@ public abstract class PreloadActivity extends BackPressedActivity {
                 fragmentManager.beginTransaction().add(DEFAULT_CONTENT_VIEW_ID, fragment, TAG_DEFAULT_CONTENT_FRAGMENT).commitNowAllowingStateLoss();
             }
         }
+    }
+
+    protected View createDefaultContentView() {
+        return new ContentView(this);
     }
 
     protected abstract PreloadFragment createPreloadFragment();
