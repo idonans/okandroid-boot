@@ -26,6 +26,7 @@ import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.SystemUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ptr.PtrLayout;
+import com.okandroid.boot.widget.r2lr.R2lrLayout;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
 import com.sample.boot.module.datalist.DataListActivity;
@@ -123,6 +124,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
         private final View mTestNormalLight;
         private final View mTestFullDark;
         private final View mTestNormalDark;
+
+        private final R2lrLayout mR2lrLayout;
 
         private Content(Activity activity, LayoutInflater inflater, ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_sign_in_view);
@@ -301,6 +304,15 @@ public class SignInFragment extends BaseFragment implements SignInView {
                 @Override
                 public void onClick(View v) {
                     printMainLooperMessageQueueInfo();
+                }
+            });
+
+            mR2lrLayout = ViewUtil.findViewByID(mRootView, R.id.r2lr_layout);
+            mR2lrLayout.setOnRefreshListener(new R2lrLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Log.v(TAG, "R2lrLayout onRefresh");
+                    mR2lrLayout.setRefreshing(false);
                 }
             });
 
