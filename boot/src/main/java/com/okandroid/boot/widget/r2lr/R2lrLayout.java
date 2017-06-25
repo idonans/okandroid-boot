@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.okandroid.boot.lang.Log;
 
@@ -246,6 +247,11 @@ public class R2lrLayout extends ViewGroup implements NestedScrollingParent, Nest
             mLastMotionX = x;
             mLastMotionY = y;
             mIsBeingDragged = true;
+
+            ViewParent parent = getParent();
+            if (parent != null) {
+                parent.requestDisallowInterceptTouchEvent(true);
+            }
         }
     }
 
