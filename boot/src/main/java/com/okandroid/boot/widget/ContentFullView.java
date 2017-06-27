@@ -7,11 +7,15 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.WindowInsets;
 
+import com.okandroid.boot.lang.Log;
+
 /**
  * Created by idonans on 2017/6/20.
  */
 
 public class ContentFullView extends ContentView {
+
+    private final String CLASS_NAME = getClass().getSimpleName();
 
     public ContentFullView(Context context) {
         super(context);
@@ -31,6 +35,7 @@ public class ContentFullView extends ContentView {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
+        Log.v(CLASS_NAME, "fitSystemWindows", insets);
         insets.left = 0;
         insets.top = 0;
         insets.right = 0;
@@ -41,6 +46,7 @@ public class ContentFullView extends ContentView {
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        Log.v(CLASS_NAME, "onApplyWindowInsets", insets);
         return insets.consumeSystemWindowInsets();
     }
 

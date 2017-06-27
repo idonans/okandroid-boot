@@ -9,11 +9,14 @@ import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
 import com.okandroid.boot.R;
+import com.okandroid.boot.lang.Log;
 
 /**
  * Created by idonans on 2016/7/21.
  */
 public class ContentView extends FrameLayout {
+
+    private final String CLASS_NAME = getClass().getSimpleName();
 
     public ContentView(Context context) {
         super(context);
@@ -41,12 +44,12 @@ public class ContentView extends FrameLayout {
             throw new IllegalArgumentException("id should set with R.id.okandroid_content");
         }
         setId(R.id.okandroid_content);
-        setFitsSystemWindows(true);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected boolean fitSystemWindows(Rect insets) {
+        Log.v(CLASS_NAME, "fitSystemWindows", insets);
         insets.top = 0;
         return super.fitSystemWindows(insets);
     }
@@ -54,12 +57,19 @@ public class ContentView extends FrameLayout {
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
-        insets = insets.replaceSystemWindowInsets(
+        Log.v(CLASS_NAME, "dispatchApplyWindowInsets", insets);
+        return super.dispatchApplyWindowInsets(insets);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    @Override
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        Log.v(CLASS_NAME, "onApplyWindowInsets", insets);
+        return insets.replaceSystemWindowInsets(
                 insets.getSystemWindowInsetLeft(),
                 0,
                 insets.getSystemWindowInsetRight(),
                 insets.getSystemWindowInsetBottom());
-        return super.dispatchApplyWindowInsets(insets);
     }
 
 }
