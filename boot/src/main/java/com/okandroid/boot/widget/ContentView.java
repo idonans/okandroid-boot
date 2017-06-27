@@ -16,7 +16,7 @@ import com.okandroid.boot.lang.Log;
  */
 public class ContentView extends FrameLayout {
 
-    private final String CLASS_NAME = getClass().getSimpleName();
+    private final String CLASS_NAME = getClass().getSimpleName() + "@" + hashCode();
 
     public ContentView(Context context) {
         super(context);

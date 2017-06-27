@@ -15,7 +15,7 @@ import com.okandroid.boot.lang.Log;
 
 public class ContentFullView extends ContentView {
 
-    private final String CLASS_NAME = getClass().getSimpleName();
+    private final String CLASS_NAME = getClass().getSimpleName() + "@" + hashCode();
 
     public ContentFullView(Context context) {
         super(context);
