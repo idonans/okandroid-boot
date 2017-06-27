@@ -219,7 +219,15 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestFullLight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setSystemUi(v, true, true);
+                    int flag = View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    }
+                    v.setSystemUiVisibility(flag);
                 }
             });
 
@@ -227,7 +235,11 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestNormalLight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setSystemUi(v, false, true);
+                    int flag = 0;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    }
+                    v.setSystemUiVisibility(flag);
                 }
             });
 
@@ -235,7 +247,12 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestFullDark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setSystemUi(v, true, false);
+                    int flag = View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+                    }
+                    v.setSystemUiVisibility(flag);
                 }
             });
 
@@ -243,7 +260,8 @@ public class SignInFragment extends BaseFragment implements SignInView {
             mTestNormalDark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SystemUtil.setSystemUi(v, false, false);
+                    int flag = 0;
+                    v.setSystemUiVisibility(flag);
                 }
             });
 

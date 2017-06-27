@@ -33,8 +33,7 @@ public class ContentDialog extends Dialog {
 
     protected void updateSystemUi() {
         Window window = getWindow();
-        SystemUtil.setStatusBarTransparent(window);
-        SystemUtil.setSystemUi(window.getDecorView(), false, false);
+        SystemUtil.setLayoutFullscreen(window.getDecorView());
     }
 
 }

@@ -45,8 +45,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
 
     protected void updateSystemUi() {
         Window window = getWindow();
-        SystemUtil.setStatusBarTransparent(window);
-        SystemUtil.setSystemUi(window.getDecorView(), false, false);
+        SystemUtil.setLayoutFullscreen(window.getDecorView());
     }
 
     @Override

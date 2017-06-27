@@ -31,20 +31,17 @@ public class ContentFullView extends ContentView {
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
+        insets.left = 0;
         insets.top = 0;
+        insets.right = 0;
         insets.bottom = 0;
-        return super.fitSystemWindows(insets);
+        return true;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
     @Override
-    public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
-        insets = insets.replaceSystemWindowInsets(
-                insets.getSystemWindowInsetLeft(),
-                0,
-                insets.getSystemWindowInsetRight(),
-                0);
-        return super.dispatchApplyWindowInsets(insets);
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        return insets.consumeSystemWindowInsets();
     }
 
 }
