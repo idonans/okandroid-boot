@@ -13,7 +13,7 @@
         <activity android:name="com.sample.boot.module.splash.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:theme="@style/SampleTheme.Splash"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
@@ -24,12 +24,12 @@
         <activity android:name="com.sample.boot.module.signin.SignInActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".module.datalist.DataListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
     </application>
 </manifest>
