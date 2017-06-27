@@ -6,6 +6,12 @@
     <style name="OKAndroid.Theme"
         parent="OKAndroid.Base.Theme">
         <item name="android:windowBackground">@color/okandroid_color_md_white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateAlwaysHidden</item>
+        <item name="android:colorBackground">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
     <style name="OKAndroid.Theme.Splash"
         parent="OKAndroid.Base.Theme.Splash">
@@ -14,15 +20,7 @@
     <style name="OKAndroid.Theme.ContentDialog">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowFrame">@null</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:colorBackground">@null</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
-        <item name="android:windowSoftInputMode">adjustResize|stateAlwaysHidden</item>
-        <item name="windowActionModeOverlay">true</item>
     </style>
 </resources>

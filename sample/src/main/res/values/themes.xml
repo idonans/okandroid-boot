@@ -1,11 +1,8 @@
 <resources>
     <style name="SampleTheme"
-        parent="OKAndroid.Theme">
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
+        parent="OKAndroid.Theme"/>
     <style name="SampleTheme.Splash"
-        parent="OKAndroid.Theme">
-        <item name="android:windowContentOverlay">@null</item>
+        parent="OKAndroid.Theme.Splash">
         <item name="android:windowBackground">@drawable/sample_splash_bg</item>
     </style>
 </resources>
