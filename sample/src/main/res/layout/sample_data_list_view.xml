@@ -3,12 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView android:layout_width="match_parent"
-        android:layout_height="50dp"
+    <FrameLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/okandroid_color_md_black"
-        android:gravity="center"
-        android:text="data list"
-        android:textColor="@color/okandroid_color_md_white"/>
+        android:fitsSystemWindows="true">
+        <TextView android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="data list"
+            android:textColor="@color/okandroid_color_md_white"/>
+    </FrameLayout>
     <com.okandroid.boot.widget.ptr.PtrLayout android:id="@+id/ptr_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

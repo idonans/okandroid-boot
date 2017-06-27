@@ -44,6 +44,7 @@ public class ContentView extends FrameLayout {
             throw new IllegalArgumentException("id should set with R.id.okandroid_content");
         }
         setId(R.id.okandroid_content);
+        setFitsSystemWindows(false);
     }
 
     @SuppressWarnings("deprecation")
@@ -54,7 +55,7 @@ public class ContentView extends FrameLayout {
         setPadding(insets.left, 0, insets.right, insets.bottom);
 
         insets.set(0, insets.top, 0, 0);
-        return false;
+        return super.fitSystemWindows(insets);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
