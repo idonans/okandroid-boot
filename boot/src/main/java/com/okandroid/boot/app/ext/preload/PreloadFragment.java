@@ -1,6 +1,7 @@
 package com.okandroid.boot.app.ext.preload;
 
 import android.app.Activity;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,6 +107,13 @@ public abstract class PreloadFragment extends PreloadBaseFragment {
 
         hidePreloadLoadingView(activity, inflater, mContentView);
         showPreloadContentView(activity, inflater, mContentView);
+
+        // 动态添加 view 后, 如果添加的 view 中有 fitSystemWindow 的内容, 需要刷新 window insets
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            mContentView.requestApplyInsets();
+        } else {
+            mContentView.requestFitSystemWindows();
+        }
 
         viewProxy.onPrepared();
 
