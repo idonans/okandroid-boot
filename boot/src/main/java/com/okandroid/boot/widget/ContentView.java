@@ -50,8 +50,11 @@ public class ContentView extends FrameLayout {
     @Override
     protected boolean fitSystemWindows(Rect insets) {
         Log.v(CLASS_NAME, "fitSystemWindows", insets);
-        insets.top = 0;
-        return super.fitSystemWindows(insets);
+
+        setPadding(insets.left, 0, insets.right, insets.bottom);
+
+        insets.set(0, insets.top, 0, 0);
+        return false;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
@@ -65,11 +68,16 @@ public class ContentView extends FrameLayout {
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
         Log.v(CLASS_NAME, "onApplyWindowInsets", insets);
-        return insets.replaceSystemWindowInsets(
-                insets.getSystemWindowInsetLeft(),
+
+        setPadding(insets.getSystemWindowInsetLeft(),
                 0,
                 insets.getSystemWindowInsetRight(),
                 insets.getSystemWindowInsetBottom());
+
+        return insets.replaceSystemWindowInsets(0,
+                insets.getSystemWindowInsetTop(),
+                0,
+                0);
     }
 
 }
