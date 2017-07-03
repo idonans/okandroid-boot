@@ -366,13 +366,7 @@ public class R2lrLayout extends ViewGroup implements NestedScrollingParent, Nest
             return false;
         }
 
-        if (mHeader.getTranslationX() != 0) {
-            return false;
-        }
-
-        return isEnabled()
-                && !isHeaderStatusBusy()
-                && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_HORIZONTAL) != 0;
+        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_HORIZONTAL) != 0;
     }
 
     @Override
@@ -394,7 +388,15 @@ public class R2lrLayout extends ViewGroup implements NestedScrollingParent, Nest
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        ensureTargetAndHeader();
+
         int[] parentOffsetInWindow = new int[2];
+
+        if (mTarget == null || mHeader == null) {
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
+            return;
+        }
+
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
 
         final int dx = dxUnconsumed + parentOffsetInWindow[0];
@@ -413,7 +415,7 @@ public class R2lrLayout extends ViewGroup implements NestedScrollingParent, Nest
             return;
         }
 
-        if (dx < 0 && mHeader.getTranslationX() < 0) {
+        if (dx < 0) {
             float usedDx = applyOffsetXDiff(-dx);
             usedDx = -usedDx;
             dx -= usedDx;
@@ -486,14 +488,12 @@ public class R2lrLayout extends ViewGroup implements NestedScrollingParent, Nest
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        return false;
-        // return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+        return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        return false;
-        // return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+        return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
     public interface OnRefreshListener {

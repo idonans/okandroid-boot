@@ -366,7 +366,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return false;
         }
 
-        return isEnabled() && ((nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0);
+        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
