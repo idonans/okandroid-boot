@@ -366,13 +366,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return false;
         }
 
-        if (mHeader.getTranslationY() != 0) {
-            return false;
-        }
-
-        return isEnabled()
-                && !isHeaderStatusBusy()
-                && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        return isEnabled() && ((nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0);
     }
 
     @Override
@@ -394,7 +388,17 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        ensureTargetAndHeader();
+
+        // 记录父滑动后, 当前控件实际产生的窗口偏移 (滑动后的位置减去滑动前的位置, 因此如果是向下滑动, 偏移值为正)
+        // dx, dy, 向上,向左是正, 向下,向右是负 (上一个位置减去当前位置)
         int[] parentOffsetInWindow = new int[2];
+
+        if (mTarget == null || mHeader == null) {
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
+            return;
+        }
+
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
 
         final int dy = dyUnconsumed + parentOffsetInWindow[1];
@@ -413,7 +417,9 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return;
         }
 
-        if (dy > 0 && mHeader.getTranslationY() > 0) {
+        // 向上滑动 dy > 0
+
+        if (dy > 0) {
             float usedDy = applyOffsetYDiff(-dy);
             usedDy = -usedDy;
             dy -= usedDy;
@@ -486,14 +492,12 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        return false;
-        // return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+        return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        return false;
-        // return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+        return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
     public interface OnRefreshListener {
