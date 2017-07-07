@@ -1,4 +1,4 @@
-package com.okandroid.boot.app.ext.pageloading.adapter;
+package com.okandroid.boot.app.ext.page.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,15 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.okandroid.boot.R;
-import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
-import com.okandroid.boot.widget.PageDataAdapter;
+import com.okandroid.boot.app.ext.page.PageViewProxy;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
 
 /**
  * Created by idonans on 2017/4/27.
  */
 
-public class PageLoadingDataAdapter extends PageDataAdapter {
+public class PageDataAdapter extends com.okandroid.boot.widget.PageDataAdapter {
 
     /**
      * large loading style
@@ -80,12 +79,12 @@ public class PageLoadingDataAdapter extends PageDataAdapter {
 
     private final LayoutInflater mLayoutInflater;
 
-    public PageLoadingDataAdapter(RecyclerView recyclerView) {
+    public PageDataAdapter(RecyclerView recyclerView) {
         super(recyclerView);
         mLayoutInflater = LayoutInflater.from(recyclerView.getContext());
     }
 
-    public PageLoadingDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
+    public PageDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
         super(data, recyclerView);
         mLayoutInflater = LayoutInflater.from(recyclerView.getContext());
     }
@@ -132,9 +131,9 @@ public class PageLoadingDataAdapter extends PageDataAdapter {
             case GROUP_INIT:
             case GROUP_MORE:
                 PageLoadingStatus pageLoadingStatus = (PageLoadingStatus) getGroupItem(group, positionInGroup);
-                PageLoadingViewProxy.ExtraPageMessage extraPageMessage = null;
-                if (pageLoadingStatus.extraMessage instanceof PageLoadingViewProxy.ExtraPageMessage) {
-                    extraPageMessage = (PageLoadingViewProxy.ExtraPageMessage) pageLoadingStatus.extraMessage;
+                PageViewProxy.ExtraPageMessage extraPageMessage = null;
+                if (pageLoadingStatus.extraMessage instanceof PageViewProxy.ExtraPageMessage) {
+                    extraPageMessage = (PageViewProxy.ExtraPageMessage) pageLoadingStatus.extraMessage;
                 }
 
                 if (pageLoadingStatus.loading) {
@@ -204,13 +203,13 @@ public class PageLoadingDataAdapter extends PageDataAdapter {
             super.update(object, position);
 
             PageLoadingStatus pageLoadingStatus = null;
-            PageLoadingViewProxy.ExtraPageMessage extraPageMessage = null;
+            PageViewProxy.ExtraPageMessage extraPageMessage = null;
 
             if (object instanceof PageLoadingStatus) {
                 pageLoadingStatus = (PageLoadingStatus) object;
 
-                if (pageLoadingStatus.extraMessage instanceof PageLoadingViewProxy.ExtraPageMessage) {
-                    extraPageMessage = (PageLoadingViewProxy.ExtraPageMessage) pageLoadingStatus.extraMessage;
+                if (pageLoadingStatus.extraMessage instanceof PageViewProxy.ExtraPageMessage) {
+                    extraPageMessage = (PageViewProxy.ExtraPageMessage) pageLoadingStatus.extraMessage;
                 }
             }
 

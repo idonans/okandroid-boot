@@ -1,4 +1,4 @@
-package com.okandroid.boot.app.ext.pageloading;
+package com.okandroid.boot.app.ext.page;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.okandroid.boot.R;
-import com.okandroid.boot.app.ext.preload.PreloadFragment;
+import com.okandroid.boot.app.ext.dynamic.DynamicFragment;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
@@ -24,21 +24,21 @@ import java.util.Map;
  * Created by idonans on 2017/4/20.
  */
 
-public abstract class PageLoadingFragment extends PreloadFragment implements PageLoadingView {
+public abstract class PageFragment extends DynamicFragment implements PageView {
 
     @Override
-    protected abstract PageLoadingViewProxy newDefaultViewProxy();
+    protected abstract PageViewProxy newDefaultViewProxy();
 
     protected PageContentView mPageContentView;
 
     @Override
-    protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mPageContentView);
         mPageContentView = createPageContentView(activity, inflater, contentView);
     }
 
     protected PageContentView createPageContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        return new PageContentView(activity, inflater, contentView, R.layout.okandroid_ext_pageloading_view);
+        return new PageContentView(activity, inflater, contentView, R.layout.okandroid_ext_page_view);
     }
 
     @Override
@@ -57,7 +57,7 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
         }
     }
 
-    protected class PageContentView extends PreloadSubViewHelper {
+    protected class PageContentView extends ContentViewHelper {
 
         public PageContentView(Activity activity, LayoutInflater inflater, ViewGroup parentView, View rootView) {
             super(activity, inflater, parentView, rootView);
@@ -153,14 +153,14 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
     }
 
     protected void loadFirstPage() {
-        PageLoadingViewProxy proxy = getDefaultViewProxy();
+        PageViewProxy proxy = getDefaultViewProxy();
         if (proxy != null) {
             proxy.loadFirstPage();
         }
     }
 
     protected void loadNextPage() {
-        PageLoadingViewProxy proxy = getDefaultViewProxy();
+        PageViewProxy proxy = getDefaultViewProxy();
         if (proxy != null) {
             proxy.loadNextPage();
         }
@@ -184,8 +184,8 @@ public abstract class PageLoadingFragment extends PreloadFragment implements Pag
 
     @Nullable
     @Override
-    public PageLoadingViewProxy getDefaultViewProxy() {
-        return (PageLoadingViewProxy) super.getDefaultViewProxy();
+    public PageViewProxy getDefaultViewProxy() {
+        return (PageViewProxy) super.getDefaultViewProxy();
     }
 
 }

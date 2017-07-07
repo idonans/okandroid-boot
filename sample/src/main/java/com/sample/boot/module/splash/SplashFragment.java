@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
+import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.util.IOUtil;
 import com.sample.boot.R;
 import com.sample.boot.app.BaseFragment;
@@ -34,7 +34,7 @@ public class SplashFragment extends BaseFragment implements SplashView {
     }
 
     @Override
-    protected PreloadViewProxy newDefaultViewProxy() {
+    protected DynamicViewProxy newDefaultViewProxy() {
         return new SplashViewProxy(this);
     }
 
@@ -55,24 +55,19 @@ public class SplashFragment extends BaseFragment implements SplashView {
     }
 
     @Override
-    protected void showPreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
-        // ignore
-    }
-
-    @Override
-    protected void hidePreloadLoadingView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         // ignore
     }
 
     private Content mContent;
 
     @Override
-    protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
     }
 
-    private class Content extends PreloadSubViewHelper {
+    private class Content extends ContentViewHelper {
 
         private Content(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
             super(activity, inflater, contentView, R.layout.sample_splash_view);

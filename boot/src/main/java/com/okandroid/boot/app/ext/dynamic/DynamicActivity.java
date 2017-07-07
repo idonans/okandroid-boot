@@ -1,4 +1,4 @@
-package com.okandroid.boot.app.ext.preload;
+package com.okandroid.boot.app.ext.dynamic;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +11,7 @@ import com.okandroid.boot.widget.ContentView;
 /**
  * Created by idonans on 2017/2/15.
  */
-public abstract class PreloadActivity extends BackPressedActivity {
+public abstract class DynamicActivity extends BackPressedActivity {
 
     protected static final String TAG_DEFAULT_CONTENT_FRAGMENT = "okandroid_default_content_fragment";
     protected static final int DEFAULT_CONTENT_VIEW_ID = R.id.okandroid_content;
@@ -31,9 +31,9 @@ public abstract class PreloadActivity extends BackPressedActivity {
         setContentView(createDefaultContentView());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        PreloadFragment fragment = (PreloadFragment) fragmentManager.findFragmentByTag(TAG_DEFAULT_CONTENT_FRAGMENT);
+        DynamicFragment fragment = (DynamicFragment) fragmentManager.findFragmentByTag(TAG_DEFAULT_CONTENT_FRAGMENT);
         if (fragment == null) {
-            fragment = createPreloadFragment();
+            fragment = createDynamicFragment();
             if (fragment != null) {
                 fragmentManager.beginTransaction().add(DEFAULT_CONTENT_VIEW_ID, fragment, TAG_DEFAULT_CONTENT_FRAGMENT).commitNowAllowingStateLoss();
             }
@@ -44,6 +44,6 @@ public abstract class PreloadActivity extends BackPressedActivity {
         return new ContentView(this);
     }
 
-    protected abstract PreloadFragment createPreloadFragment();
+    protected abstract DynamicFragment createDynamicFragment();
 
 }

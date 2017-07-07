@@ -3,7 +3,7 @@ package com.sample.boot.module.signin;
 import android.content.Context;
 import android.content.Intent;
 
-import com.okandroid.boot.app.ext.preload.PreloadFragment;
+import com.okandroid.boot.app.ext.dynamic.DynamicFragment;
 import com.sample.boot.app.BaseActivity;
 
 /**
@@ -19,7 +19,7 @@ public class SignInActivity extends BaseActivity {
     }
 
     @Override
-    protected PreloadFragment createPreloadFragment() {
+    protected DynamicFragment createDynamicFragment() {
         return SignInFragment.newInstance();
     }
 

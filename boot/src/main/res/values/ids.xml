@@ -1,6 +1,6 @@
 <resources>
     <item name="okandroid_content"
         type="id"/>
-    <item name="okandroid_preload_content"
+    <item name="okandroid_dynamic_content"
         type="id"/>
 </resources>

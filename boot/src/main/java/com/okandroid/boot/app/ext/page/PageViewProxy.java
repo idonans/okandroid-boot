@@ -1,8 +1,8 @@
-package com.okandroid.boot.app.ext.pageloading;
+package com.okandroid.boot.app.ext.page;
 
 import android.support.annotation.NonNull;
 
-import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
+import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.PageDataAdapter;
 
@@ -17,21 +17,21 @@ import io.reactivex.disposables.Disposable;
  * Created by idonans on 2017/4/20.
  */
 
-public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends PreloadViewProxy<T> {
+public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy<T> {
 
     private static final String TAG = "PageLoadingViewProxy";
 
-    public PageLoadingViewProxy(T view) {
+    public PageViewProxy(T view) {
         super(view);
     }
 
     @Override
-    protected void onPreDataLoadBackground() {
+    protected void onInitBackground() {
     }
 
     @Override
-    public void onPrepared() {
-        super.onPrepared();
+    public void onCompleteContentViewCreated() {
+        super.onCompleteContentViewCreated();
 
         loadFirstPageOrRetainPageStatus();
     }
@@ -46,7 +46,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
     // 总页数
     private int mTotalPage = -1;
 
-    private static final String SAVED_KEY_SAVED_OBJECT = "okandroid.boot.pageloading.proxy.SavedObject";
+    private static final String SAVED_KEY_SAVED_OBJECT = "okandroid.boot.page.proxy.SavedObject";
 
     private static class SavedObject {
         private final int mLastLoadingSuccessPageNo;
@@ -128,7 +128,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return;
         }
 
-        PageLoadingView view = getView();
+        PageView view = getView();
         if (view == null) {
             return;
         }
@@ -229,7 +229,7 @@ public abstract class PageLoadingViewProxy<T extends PageLoadingView> extends Pr
             return;
         }
 
-        PageLoadingView view = getView();
+        PageView view = getView();
         if (view == null) {
             return;
         }

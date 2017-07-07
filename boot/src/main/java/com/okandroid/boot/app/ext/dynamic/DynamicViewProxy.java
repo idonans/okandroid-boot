@@ -1,4 +1,4 @@
-package com.okandroid.boot.app.ext.preload;
+package com.okandroid.boot.app.ext.dynamic;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -17,39 +17,40 @@ import io.reactivex.disposables.Disposable;
  * Created by idonans on 2017/2/15.
  */
 
-public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<T> {
+public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<T> {
 
     private final String CLASS_NAME = getClass().getSimpleName();
-    // 前置数据是否已经准备好
-    private boolean mPreDataPrepared;
 
-    public PreloadViewProxy(T view) {
+    // 是否已经初始化
+    private boolean mInit;
+
+    public DynamicViewProxy(T view) {
         super(view);
     }
 
     /**
-     * 前置数据是否已经准备好
+     * 数据是否已经初始化
      *
      * @return
      */
-    public final boolean isPreDataPrepared() {
-        return mPreDataPrepared;
+    public final boolean isInit() {
+        return mInit;
     }
 
-    public final void setPreDataPrepared(boolean preDataPrepared) {
-        mPreDataPrepared = preDataPrepared;
+    public final void setInit(boolean init) {
+        mInit = init;
     }
 
-    public final void startLoadPreData() {
+    public final void startInit() {
         Threads.postBackground(new Runnable() {
             @Override
             public void run() {
                 try {
-                    onPreDataLoadBackground();
+                    onInitBackground();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                setPreDataPrepared(true);
+                setInit(true);
                 Threads.postUi(new Runnable() {
                     @Override
                     public void run() {
@@ -57,7 +58,8 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
                         if (view == null) {
                             return;
                         }
-                        view.notifyPreDataPrepared();
+
+                        view.notifyInitComplete();
                     }
                 });
             }
@@ -65,9 +67,9 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
     }
 
     /**
-     * 后台处理需要异步加载的前置数据
+     * 子线程加载初始化数据, 可以加载网络数据, 在数据的加载过程中, 视图上正在显示一个 initContentView
      */
-    protected abstract void onPreDataLoadBackground();
+    protected abstract void onInitBackground();
 
     private boolean mPrepared;
 
@@ -75,18 +77,22 @@ public abstract class PreloadViewProxy<T extends PreloadView> extends ViewProxy<
         return mPrepared;
     }
 
-    /**
-     * 实际内容 view 已经显示，需要的前置数据也已经加载
-     */
-    @CallSuper
-    public void onPrepared() {
-        if (!isPreDataPrepared()) {
-            throw new IllegalAccessError("pre data not prepared");
-        }
+    public void setPrepared() {
         if (isPrepared()) {
             new IllegalAccessError("already prepared").printStackTrace();
         }
         mPrepared = true;
+    }
+
+    /**
+     * complete content view 已经创建好
+     */
+    @CallSuper
+    public void onCompleteContentViewCreated() {
+        if (!isInit()) {
+            throw new IllegalAccessError("not init");
+        }
+        setPrepared();
     }
 
     private final DisposableHolder mDefaultRequestHolder = new DisposableHolder();

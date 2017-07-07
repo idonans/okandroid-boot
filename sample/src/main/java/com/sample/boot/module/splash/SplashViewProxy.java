@@ -14,13 +14,13 @@ public class SplashViewProxy extends BaseViewProxy<SplashView> {
     }
 
     @Override
-    protected void onPreDataLoadBackground() {
+    protected void onInitBackground() {
         Threads.sleepQuietly(2000);
     }
 
     @Override
-    public void onPrepared() {
-        super.onPrepared();
+    public void onCompleteContentViewCreated() {
+        super.onCompleteContentViewCreated();
 
         SplashView view = getView();
         if (view == null) {

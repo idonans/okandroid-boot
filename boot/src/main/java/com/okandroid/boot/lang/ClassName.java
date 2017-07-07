@@ -7,7 +7,7 @@ package com.okandroid.boot.lang;
 public class ClassName {
 
     public static String valueOf(Object object) {
-        return object.getClass().getName() + "@" + object.hashCode();
+        return object.getClass().getSimpleName() + "@" + object.hashCode();
     }
 
 }

@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.okandroid.boot.AppContext;
-import com.okandroid.boot.app.ext.preload.PreloadViewProxy;
+import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.CameraUtil;
 import com.okandroid.boot.util.GrantResultUtil;
@@ -58,14 +58,14 @@ public class SignInFragment extends BaseFragment implements SignInView {
     }
 
     @Override
-    protected PreloadViewProxy newDefaultViewProxy() {
+    protected DynamicViewProxy newDefaultViewProxy() {
         return new SignInViewProxy(this);
     }
 
     private Content mContent;
 
     @Override
-    protected void showPreloadContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
     }
@@ -108,7 +108,7 @@ public class SignInFragment extends BaseFragment implements SignInView {
         Toast.makeText(AppContext.getContext(), "apk 下载失败", Toast.LENGTH_SHORT).show();
     }
 
-    private class Content extends PreloadSubViewHelper {
+    private class Content extends ContentViewHelper {
 
         private final PtrLayout mPtrLayout;
 

@@ -1,4 +1,4 @@
-package com.okandroid.boot.app.ext.preload;
+package com.okandroid.boot.app.ext.dynamic;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.okandroid.boot.app.ext.backpressed.BackPressedFragment;
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
@@ -22,9 +23,10 @@ import java.util.Map;
  * Created by idonans on 2017/2/15.
  */
 
-public abstract class PreloadBaseFragment extends BackPressedFragment implements PreloadView {
+public abstract class DynamicBaseFragment extends BackPressedFragment implements DynamicView {
 
-    private final String CLASS_NAME = getClass().getSimpleName();
+    private final String CLASS_NAME = ClassName.valueOf(this);
+
     // 用于在 fragment 前后台切换时保存数据, 此过程 ui 部分会销毁和重建, 因此数据中不能包含 ui 的引用
     private final Map mRetainDataObject = new HashMap();
 
@@ -108,7 +110,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
         // 保存数据之前, 清空可能的旧的数据
         getRetainDataObject().clear();
         onSaveDataObject(getRetainDataObject());
-        PreloadViewProxy viewProxy = getDefaultViewProxy();
+        DynamicViewProxy viewProxy = getDefaultViewProxy();
         if (viewProxy != null) {
             viewProxy.onSaveDataObject(getRetainDataObject());
         }
@@ -136,11 +138,11 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
     }
 
     @Nullable
-    public PreloadViewProxy getDefaultViewProxy() {
+    public DynamicViewProxy getDefaultViewProxy() {
         return mDefaultViewProxy;
     }
 
-    protected abstract PreloadViewProxy newDefaultViewProxy();
+    protected abstract DynamicViewProxy newDefaultViewProxy();
 
     private void closeDefaultViewProxy() {
         IOUtil.closeQuietly(mDefaultViewProxy);
@@ -149,7 +151,7 @@ public abstract class PreloadBaseFragment extends BackPressedFragment implements
 
     protected abstract void onViewCreatedSafety(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull View view);
 
-    private PreloadViewProxy mDefaultViewProxy;
+    private DynamicViewProxy mDefaultViewProxy;
 
     @Override
     public boolean onBackPressed() {

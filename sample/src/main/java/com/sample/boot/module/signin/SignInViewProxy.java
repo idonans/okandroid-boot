@@ -43,7 +43,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
     }
 
     @Override
-    protected void onPreDataLoadBackground() {
+    protected void onInitBackground() {
         Threads.sleepQuietly(5000);
     }
 

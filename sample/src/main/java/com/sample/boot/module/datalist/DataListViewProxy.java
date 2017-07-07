@@ -1,6 +1,6 @@
 package com.sample.boot.module.datalist;
 
-import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
+import com.okandroid.boot.app.ext.page.PageViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.thread.Threads;
 import com.okandroid.boot.util.NetUtil;
@@ -22,7 +22,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by idonans on 2017/4/21.
  */
 
-public class DataListViewProxy extends PageLoadingViewProxy<DataListView> {
+public class DataListViewProxy extends PageViewProxy<DataListView> {
 
     private static final String TAG = "DataListViewProxy";
 

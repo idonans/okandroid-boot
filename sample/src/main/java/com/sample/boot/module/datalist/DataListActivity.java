@@ -1,6 +1,6 @@
 package com.sample.boot.module.datalist;
 
-import com.okandroid.boot.app.ext.preload.PreloadFragment;
+import com.okandroid.boot.app.ext.dynamic.DynamicFragment;
 import com.sample.boot.app.BaseActivity;
 
 /**
@@ -10,7 +10,7 @@ import com.sample.boot.app.BaseActivity;
 public class DataListActivity extends BaseActivity {
 
     @Override
-    protected PreloadFragment createPreloadFragment() {
+    protected DynamicFragment createDynamicFragment() {
         return new DataListFragment();
     }
 

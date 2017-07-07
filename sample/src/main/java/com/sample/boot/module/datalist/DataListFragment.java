@@ -8,13 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.okandroid.boot.app.ext.pageloading.PageLoadingFragment;
-import com.okandroid.boot.app.ext.pageloading.PageLoadingViewProxy;
-import com.okandroid.boot.app.ext.pageloading.adapter.PageLoadingDataAdapter;
+import com.okandroid.boot.app.ext.page.PageFragment;
+import com.okandroid.boot.app.ext.page.PageViewProxy;
+import com.okandroid.boot.app.ext.page.adapter.PageDataAdapter;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.MaxLineViewFrameLayout;
 import com.okandroid.boot.widget.MaxLineViewHelper;
-import com.okandroid.boot.widget.PageDataAdapter;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
 import com.sample.boot.R;
 
@@ -22,17 +21,17 @@ import com.sample.boot.R;
  * Created by idonans on 2017/4/21.
  */
 
-public class DataListFragment extends PageLoadingFragment implements DataListView {
+public class DataListFragment extends PageFragment implements DataListView {
 
     private static final String TAG = "DataListFragment";
 
     @Override
-    protected PageLoadingViewProxy newDefaultViewProxy() {
+    protected PageViewProxy newDefaultViewProxy() {
         return new DataListViewProxy(this);
     }
 
     @Override
-    protected PageDataAdapter createPageDataAdapter(RecyclerView recyclerView) {
+    protected com.okandroid.boot.widget.PageDataAdapter createPageDataAdapter(RecyclerView recyclerView) {
         return new DataListAdapter(recyclerView);
     }
 
@@ -41,7 +40,7 @@ public class DataListFragment extends PageLoadingFragment implements DataListVie
         return new PageContentView(activity, inflater, contentView, R.layout.sample_data_list_view);
     }
 
-    private class DataListAdapter extends PageLoadingDataAdapter {
+    private class DataListAdapter extends PageDataAdapter {
 
         private final LayoutInflater mLayoutInflater;
 
