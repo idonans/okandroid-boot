@@ -70,6 +70,10 @@ public class SignInFragment extends BaseFragment implements SignInView {
         mContent = new Content(activity, inflater, contentView);
     }
 
+    @Override
+    public void onUpdateCompleteContentViewIfChanged() {
+    }
+
     private AlertDialog mDownloadAndInstallApkDialog;
 
     @Override

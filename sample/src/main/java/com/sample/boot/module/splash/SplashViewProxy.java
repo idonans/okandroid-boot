@@ -19,9 +19,7 @@ public class SplashViewProxy extends BaseViewProxy<SplashView> {
     }
 
     @Override
-    public void onCompleteContentViewCreated() {
-        super.onCompleteContentViewCreated();
-
+    public void onReady() {
         SplashView view = getView();
         if (view == null) {
             return;

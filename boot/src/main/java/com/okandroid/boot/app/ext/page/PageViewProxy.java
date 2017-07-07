@@ -93,8 +93,6 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
      * 尝试恢复上一次页面的状态
      */
     public void tryRestorePageStatus() {
-        replaceDefaultRequestHolder(null);
-
         if (mLastLoadSuccessPageNo == -1) {
             return;
         }
@@ -102,6 +100,7 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
         boolean isLastPage = mTotalPage >= 0
                 && (mLastLoadSuccessPageNo + 1) >= mTotalPage;
         if (isLastPage) {
+            replaceDefaultRequestHolder(null);
             // 恢复重建时, 手动模拟恢复最后一页的加载结束状态(一个加载成功的空的分页)
             notifyPageLoadingEnd(mLastLoadSuccessPageNo, new ArrayList(), null);
         }
@@ -110,8 +109,6 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
 
     public void loadFirstPageIfNeed() {
         Log.v(CLASS_NAME, "loadFirstPageIfNeed");
-
-        replaceDefaultRequestHolder(null);
 
         if (mLastLoadSuccessPageNo == -1) {
             loadFirstPage();

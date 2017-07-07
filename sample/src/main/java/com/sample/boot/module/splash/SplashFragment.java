@@ -67,6 +67,10 @@ public class SplashFragment extends BaseFragment implements SplashView {
         mContent = new Content(activity, inflater, contentView);
     }
 
+    @Override
+    public void onUpdateCompleteContentViewIfChanged() {
+    }
+
     private class Content extends ContentViewHelper {
 
         private Content(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {

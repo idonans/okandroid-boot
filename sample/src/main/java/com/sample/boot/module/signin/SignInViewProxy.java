@@ -47,6 +47,10 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
         Threads.sleepQuietly(5000);
     }
 
+    @Override
+    public void onReady() {
+    }
+
     public void prefetchImage() {
         if (!isPrepared()) {
             return;
