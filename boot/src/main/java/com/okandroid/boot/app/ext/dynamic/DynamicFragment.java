@@ -169,4 +169,43 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
 
     }
 
+    @Override
+    public boolean isReallyForeground() {
+        return isAppCompatResumed()
+                && !isHidden()
+                && getUserVisibleHint();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        requestProxyUpdateCompleteContentViewIfChanged();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (!hidden) {
+            requestProxyUpdateCompleteContentViewIfChanged();
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+            requestProxyUpdateCompleteContentViewIfChanged();
+        }
+    }
+
+    public void requestProxyUpdateCompleteContentViewIfChanged() {
+        DynamicViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy != null) {
+            viewProxy.requestUpdateCompleteContentViewIfChanged();
+        }
+    }
+
 }

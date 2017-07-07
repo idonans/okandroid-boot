@@ -3,6 +3,7 @@ package com.okandroid.boot.app.ext.dynamic;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.rx.DisposableHolder;
 import com.okandroid.boot.thread.Threads;
@@ -19,7 +20,7 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<T> {
 
-    private final String CLASS_NAME = getClass().getSimpleName();
+    private final String CLASS_NAME = ClassName.valueOf(this);
 
     // 是否已经初始化
     private boolean mInit;
@@ -46,6 +47,7 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
             @Override
             public void run() {
                 try {
+                    Log.v(CLASS_NAME, "call onInitBackground");
                     onInitBackground();
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -77,7 +79,7 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
         return mPrepared;
     }
 
-    public void setPrepared() {
+    private void setPrepared() {
         if (isPrepared()) {
             new IllegalAccessError("already prepared").printStackTrace();
         }
@@ -89,10 +91,12 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
      */
     @CallSuper
     public void onCompleteContentViewCreated() {
+        Log.v(CLASS_NAME, "onCompleteContentViewCreated");
         if (!isInit()) {
             throw new IllegalAccessError("not init");
         }
         setPrepared();
+        requestUpdateCompleteContentViewIfChanged();
     }
 
     private final DisposableHolder mDefaultRequestHolder = new DisposableHolder();
@@ -130,5 +134,42 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
     protected void onRestoreDataObject(@NonNull Map retainObject) {
         Log.v(CLASS_NAME, "onRestoreDataObject");
     }
+
+    /**
+     * 请求刷新 complete content view 内容
+     */
+    public void requestUpdateCompleteContentViewIfChanged() {
+        T view = getView();
+        if (view == null) {
+            return;
+        }
+
+        if (!isInit()) {
+            return;
+        }
+
+        if (!isPrepared()) {
+            return;
+        }
+
+        if (!view.isReallyForeground()) {
+            return;
+        }
+
+        if (!mCalledReady) {
+            mCalledReady = true;
+            Log.v(CLASS_NAME, "call onReady");
+            onReady();
+        }
+
+        view.onUpdateCompleteContentViewIfChanged();
+    }
+
+    private boolean mCalledReady;
+
+    /**
+     * 初始化完成时调用, 先于页面上的 onUpdateCompleteContentViewIfChanged, 仅调用一次
+     */
+    public abstract void onReady();
 
 }
