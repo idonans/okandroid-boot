@@ -3,6 +3,7 @@ package com.okandroid.boot.widget;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.SparseArrayCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -443,7 +444,12 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     int adapterPosition = recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0));
                     if (adapterPosition == 0) {
                         // 如果页面没有向下滚动，尽量使得第一页的加载状态可以显示出来
-                        recyclerView.scrollToPosition(0);
+                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                        if (layoutManager instanceof LinearLayoutManager) {
+                            ((LinearLayoutManager) layoutManager).scrollToPositionWithOffset(0, 0);
+                        } else {
+                            recyclerView.scrollToPosition(0);
+                        }
                     }
                 }
             }
