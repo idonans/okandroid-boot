@@ -19,6 +19,7 @@ import android.widget.EditText;
 import com.okandroid.boot.AppContext;
 import com.okandroid.boot.R;
 import com.okandroid.boot.data.AppIDManager;
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 
 import java.io.File;
@@ -143,12 +144,12 @@ public class SystemUtil {
             contentView = okandroidContent;
         }
 
-        int softKeyboardHeight = DimenUtil.dp2px(100);
+        int softKeyboardHeight = DimenUtil.dp2px(80);
 
         // print log
         Log.v(TAG, "isSoftKeyboardShown"
-                , "\nrootView " + rootView.getClass().getName() + ", bottom:" + rootView.getBottom() + ", padding:" + getPadding(rootView)
-                , "\ncontentView " + contentView.getClass().getName() + ", bottom:" + contentView.getBottom() + ", padding:" + getPadding(contentView)
+                , "\nrootView " + ClassName.valueOf(rootView) + ", bottom:" + rootView.getBottom() + ", padding:" + getPadding(rootView)
+                , "\ncontentView " + ClassName.valueOf(contentView) + ", bottom:" + contentView.getBottom() + ", padding:" + getPadding(contentView)
                 , "\nsoftKeyboardHeight:" + softKeyboardHeight);
 
         if (contentView.getPaddingBottom() > softKeyboardHeight) {

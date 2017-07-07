@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.okandroid.boot.lang.Available;
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 
 /**
@@ -17,7 +18,7 @@ public class OKAndroidFragment extends Fragment implements Available {
     private boolean mAvailable;
     private boolean mResumed;
 
-    private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
+    private final String CLASS_NAME = ClassName.valueOf(this);
 
     @Override
     public void onStart() {

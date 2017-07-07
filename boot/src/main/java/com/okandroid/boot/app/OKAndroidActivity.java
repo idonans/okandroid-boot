@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
 import com.okandroid.boot.lang.Available;
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.SystemUtil;
 
@@ -18,7 +19,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
     private boolean mAvailable;
     private boolean mResumed;
 
-    private final String CLASS_NAME = getClass().getName() + "@" + hashCode();
+    private final String CLASS_NAME = ClassName.valueOf(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class OKAndroidActivity extends AppCompatActivity implements Available {
             if (!isTaskRoot()) {
                 Intent intent = getIntent();
                 if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
-                    Log.e("close this launcher instance " + getClass().getName() + "@" + hashCode());
+                    Log.e("close this launcher instance " + CLASS_NAME);
                     finish();
                     return;
                 }

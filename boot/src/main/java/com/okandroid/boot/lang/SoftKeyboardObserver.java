@@ -67,7 +67,7 @@ public class SoftKeyboardObserver implements ViewTreeObserver.OnGlobalLayoutList
     public void register(@NonNull Fragment fragment) {
         Activity activity = fragment.getActivity();
         if (activity == null) {
-            Log.e(TAG + " register fragment error. activity not found from fragment " + fragment.getClass().getName() + "@" + fragment.hashCode());
+            Log.e(TAG + " register fragment error. activity not found from fragment " + ClassName.valueOf(fragment));
             return;
         }
 
@@ -127,7 +127,7 @@ public class SoftKeyboardObserver implements ViewTreeObserver.OnGlobalLayoutList
         if (activity.getWindow() != null) {
             if ((activity.getWindow().getAttributes().softInputMode & WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
                     != WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE) {
-                throw new IllegalArgumentException("softInputMode is not adjustResize " + activity.getClass().getName() + "@" + activity.hashCode());
+                throw new IllegalArgumentException("softInputMode is not adjustResize " + ClassName.valueOf(activity));
             }
         }
     }
