@@ -3,6 +3,7 @@ package com.okandroid.boot.app.ext.page;
 import android.support.annotation.NonNull;
 
 import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
+import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.PageDataAdapter;
 
@@ -19,6 +20,7 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy<T> {
 
+    private final String CLASS_NAME = ClassName.valueOf(this);
     private static final String TAG = "PageLoadingViewProxy";
 
     public PageViewProxy(T view) {
@@ -33,7 +35,12 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
     public void onCompleteContentViewCreated() {
         super.onCompleteContentViewCreated();
 
-        loadFirstPageOrRetainPageStatus();
+        tryRestorePageStatus();
+    }
+
+    @Override
+    public void onReady() {
+        loadFirstPageIfNeed();
     }
 
     // 上一次成功加载的数据页
@@ -83,13 +90,12 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
     }
 
     /**
-     * 如果没有 retain 数据, 则加载第一页, 否则恢复上一次页面的状态
+     * 尝试恢复上一次页面的状态
      */
-    public void loadFirstPageOrRetainPageStatus() {
+    public void tryRestorePageStatus() {
         replaceDefaultRequestHolder(null);
 
         if (mLastLoadSuccessPageNo == -1) {
-            loadFirstPage();
             return;
         }
 
@@ -100,6 +106,16 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
             notifyPageLoadingEnd(mLastLoadSuccessPageNo, new ArrayList(), null);
         }
         // 其他加载状态由页面自动触发, 此处不处理
+    }
+
+    public void loadFirstPageIfNeed() {
+        Log.v(CLASS_NAME, "loadFirstPageIfNeed");
+
+        replaceDefaultRequestHolder(null);
+
+        if (mLastLoadSuccessPageNo == -1) {
+            loadFirstPage();
+        }
     }
 
     /**

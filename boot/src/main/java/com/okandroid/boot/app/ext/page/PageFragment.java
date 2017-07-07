@@ -57,6 +57,10 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
         }
     }
 
+    @Override
+    public void onUpdateCompleteContentViewIfChanged() {
+    }
+
     protected class PageContentView extends ContentViewHelper {
 
         public PageContentView(Activity activity, LayoutInflater inflater, ViewGroup parentView, View rootView) {
