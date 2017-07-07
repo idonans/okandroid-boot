@@ -18,7 +18,7 @@ import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
  * Created by idonans on 2017/4/27.
  */
 
-public class PageDataAdapter extends com.okandroid.boot.widget.PageDataAdapter {
+public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAdapter {
 
     /**
      * large loading style
@@ -79,12 +79,12 @@ public class PageDataAdapter extends com.okandroid.boot.widget.PageDataAdapter {
 
     private final LayoutInflater mLayoutInflater;
 
-    public PageDataAdapter(RecyclerView recyclerView) {
+    public PageStatusDataAdapter(RecyclerView recyclerView) {
         super(recyclerView);
         mLayoutInflater = LayoutInflater.from(recyclerView.getContext());
     }
 
-    public PageDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
+    public PageStatusDataAdapter(SparseArrayCompat data, RecyclerView recyclerView) {
         super(data, recyclerView);
         mLayoutInflater = LayoutInflater.from(recyclerView.getContext());
     }

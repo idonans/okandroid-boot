@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.okandroid.boot.app.ext.page.PageFragment;
 import com.okandroid.boot.app.ext.page.PageViewProxy;
-import com.okandroid.boot.app.ext.page.adapter.PageDataAdapter;
+import com.okandroid.boot.app.ext.page.adapter.PageStatusDataAdapter;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.widget.MaxLineViewFrameLayout;
 import com.okandroid.boot.widget.MaxLineViewHelper;
@@ -40,7 +40,7 @@ public class DataListFragment extends PageFragment implements DataListView {
         return new PageContentView(activity, inflater, contentView, R.layout.sample_data_list_view);
     }
 
-    private class DataListAdapter extends PageDataAdapter {
+    private class DataListAdapter extends PageStatusDataAdapter {
 
         private final LayoutInflater mLayoutInflater;
 
