@@ -74,8 +74,6 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
 
         protected PageDataAdapter mPageDataAdapter;
 
-        private static final String SAVE_KEY_PAGE_RECYCLER_SCROLL = "okandroid.save.key.PAGE_RECYCLER_SCROLL";
-
         protected void init() {
             mPtrLayout = ViewUtil.findViewByID(mRootView, R.id.ptr_layout);
             mRecyclerView = ViewUtil.findViewByID(mRootView, R.id.recycler_view);
@@ -94,11 +92,6 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
             });
             mRecyclerView.setAdapter(mPageDataAdapter);
 
-            Object adapterPositionObject = getRetainDataObject().get(SAVE_KEY_PAGE_RECYCLER_SCROLL);
-            if (adapterPositionObject != null) {
-                mRecyclerView.scrollToPosition((Integer) adapterPositionObject);
-            }
-
             mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -111,16 +104,7 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
          * 保存数据
          */
         protected void onSaveDataObject(@NonNull Map retainObject) {
-            if (mPageDataAdapter != null) {
-                mPageDataAdapter.onSaveDataObject(retainObject);
-            }
-
-            if (mRecyclerView != null) {
-                if (mRecyclerView.getChildCount() > 0) {
-                    int adapterPosition = mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0));
-                    retainObject.put(SAVE_KEY_PAGE_RECYCLER_SCROLL, adapterPosition);
-                }
-            }
+            mPageDataAdapter.onSaveDataObject(retainObject);
         }
 
         protected void showPageLoadingStatus(PageDataAdapter.PageLoadingStatus pageLoadingStatus) {
