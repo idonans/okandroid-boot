@@ -74,6 +74,7 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
             init();
         }
 
+        @Nullable
         protected PtrLayout mPtrLayout;
         protected RecyclerView mRecyclerView;
 
@@ -97,12 +98,14 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
             });
             mRecyclerView.setAdapter(mPageDataAdapter);
 
-            mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    loadFirstPage();
-                }
-            });
+            if (mPtrLayout != null) {
+                mPtrLayout.setOnRefreshListener(new PtrLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        loadFirstPage();
+                    }
+                });
+            }
         }
 
         /**
@@ -116,22 +119,30 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
             mPageDataAdapter.showPageLoadingStatus(pageLoadingStatus, new PageDataAdapter.ExtraPageLoadingStatusCallback() {
                 @Override
                 public void showSwipeRefreshing() {
-                    mPtrLayout.setRefreshing(true);
+                    if (mPtrLayout != null) {
+                        mPtrLayout.setRefreshing(true);
+                    }
                 }
 
                 @Override
                 public void hideSwipeRefreshing() {
-                    mPtrLayout.setRefreshing(false);
+                    if (mPtrLayout != null) {
+                        mPtrLayout.setRefreshing(false);
+                    }
                 }
 
                 @Override
                 public void enableSwipeRefreshing() {
-                    mPtrLayout.setEnabled(true);
+                    if (mPtrLayout != null) {
+                        mPtrLayout.setEnabled(true);
+                    }
                 }
 
                 @Override
                 public void disableSwipeRefreshing() {
-                    mPtrLayout.setEnabled(false);
+                    if (mPtrLayout != null) {
+                        mPtrLayout.setEnabled(false);
+                    }
                 }
             });
         }
