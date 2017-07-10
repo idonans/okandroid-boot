@@ -62,13 +62,13 @@ public class SplashFragment extends BaseFragment implements SplashView {
     private Content mContent;
 
     @Override
-    protected void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
     }
 
     @Override
-    public void onUpdateCompleteContentViewIfChanged() {
+    public void onUpdateContentViewIfChanged() {
     }
 
     private class Content extends ContentViewHelper {

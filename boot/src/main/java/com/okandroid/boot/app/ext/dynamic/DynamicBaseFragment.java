@@ -116,7 +116,7 @@ public abstract class DynamicBaseFragment extends BackPressedFragment implements
         }
 
         closeDefaultViewProxy();
-        hideLoadingView();
+        hideLoadingDialog();
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class DynamicBaseFragment extends BackPressedFragment implements
     public void onDestroy() {
         super.onDestroy();
         closeDefaultViewProxy();
-        hideLoadingView();
+        hideLoadingDialog();
 
         // clear retain data object
         getRetainDataObject().clear();
@@ -155,8 +155,8 @@ public abstract class DynamicBaseFragment extends BackPressedFragment implements
 
     @Override
     public boolean onBackPressed() {
-        if (isLoadingViewShown()) {
-            hideLoadingView();
+        if (isLoadingDialogShown()) {
+            hideLoadingDialog();
             return true;
         }
 
@@ -166,12 +166,12 @@ public abstract class DynamicBaseFragment extends BackPressedFragment implements
     private ContentLoadingDialog mContentLoadingDialog;
 
     @Override
-    public boolean isLoadingViewShown() {
+    public boolean isLoadingDialogShown() {
         return mContentLoadingDialog != null && mContentLoadingDialog.isShowing();
     }
 
     @Override
-    public void showLoadingView() {
+    public void showLoadingDialog() {
         if (!isAvailable()) {
             return;
         }
@@ -187,7 +187,7 @@ public abstract class DynamicBaseFragment extends BackPressedFragment implements
     }
 
     @Override
-    public void hideLoadingView() {
+    public void hideLoadingDialog() {
         if (mContentLoadingDialog != null) {
             mContentLoadingDialog.dismiss();
         }

@@ -117,7 +117,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
             return;
         }
 
-        view.showLoadingView();
+        view.showLoadingDialog();
 
         replaceDefaultRequestHolder(Single.just("1")
                 .delay(3000L, TimeUnit.MILLISECONDS)
@@ -130,7 +130,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                         if (view == null) {
                             return;
                         }
-                        view.hideLoadingView();
+                        view.hideLoadingDialog();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -140,7 +140,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
                             return;
                         }
                         e.printStackTrace();
-                        view.hideLoadingView();
+                        view.hideLoadingDialog();
                     }
                 }));
     }
@@ -158,7 +158,7 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
             return;
         }
 
-        view.hideLoadingView();
+        view.hideLoadingDialog();
         view.hideDownloadAndInstallApkDialog();
 
         final ApkInstallInfo info = new ApkInstallInfo();

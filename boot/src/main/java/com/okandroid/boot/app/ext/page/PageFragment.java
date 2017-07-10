@@ -32,7 +32,7 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
     protected PageContentView mPageContentView;
 
     @Override
-    protected void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         IOUtil.closeQuietly(mPageContentView);
         mPageContentView = createPageContentView(activity, inflater, contentView);
     }
@@ -58,7 +58,7 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
     }
 
     @Override
-    public void onUpdateCompleteContentViewIfChanged() {
+    public void onUpdateContentViewIfChanged() {
     }
 
     protected class PageContentView extends ContentViewHelper {

@@ -22,8 +22,8 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
 
     private final String CLASS_NAME = ClassName.valueOf(this);
 
-    // 是否已经初始化
-    private boolean mInit;
+    // 初始化数据
+    protected DynamicViewData mDynamicViewData;
 
     public DynamicViewProxy(T view) {
         super(view);
@@ -35,24 +35,53 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
      * @return
      */
     public final boolean isInit() {
-        return mInit;
+        return mDynamicViewData != null;
     }
 
-    public final void setInit(boolean init) {
-        mInit = init;
+    /**
+     * @return true if changed.
+     */
+    public final boolean setInit(DynamicViewData dynamicViewData) {
+        if (mDynamicViewData != null) {
+            Log.e(CLASS_NAME, "already init");
+            return false;
+        }
+        mDynamicViewData = dynamicViewData;
+        return true;
+    }
+
+    public DynamicViewData getDynamicViewData() {
+        return mDynamicViewData;
     }
 
     public final void startInit() {
+        replaceDefaultRequestHolder(null);
+
+        DynamicView view = getView();
+        if (view == null) {
+            return;
+        }
+
+        if (!isInit()) {
+            Log.e(CLASS_NAME, "already init");
+            return;
+        }
+
+        view.notifyInitLoading();
+
         Threads.postBackground(new Runnable() {
             @Override
             public void run() {
+                DynamicViewData dynamicViewData = null;
                 try {
                     Log.v(CLASS_NAME, "call onInitBackground");
-                    onInitBackground();
+                    dynamicViewData = onInitBackground();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                setInit(true);
+                if (!setInit(dynamicViewData)) {
+                    return;
+                }
                 Threads.postUi(new Runnable() {
                     @Override
                     public void run() {
@@ -61,7 +90,11 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
                             return;
                         }
 
-                        view.notifyInitComplete();
+                        if (isInit()) {
+                            view.notifyInitSuccess();
+                        } else {
+                            view.notifyInitFail();
+                        }
                     }
                 });
             }
@@ -69,9 +102,9 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
     }
 
     /**
-     * 子线程加载初始化数据, 可以加载网络数据, 在数据的加载过程中, 视图上正在显示一个 initContentView
+     * 子线程加载初始化数据, 可以加载网络数据, 在数据的加载过程中, 视图上正在显示一个 initContentView. 如果返回空, 或者抛出异常, 则视为初始化失败.
      */
-    protected abstract void onInitBackground();
+    protected abstract DynamicViewData onInitBackground();
 
     private boolean mPrepared;
 
@@ -90,13 +123,13 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
      * complete content view 已经创建好
      */
     @CallSuper
-    public void onCompleteContentViewCreated() {
-        Log.v(CLASS_NAME, "onCompleteContentViewCreated");
+    public void onInitSuccessContentViewCreated() {
+        Log.v(CLASS_NAME, "onInitSuccessContentViewCreated");
         if (!isInit()) {
             throw new IllegalAccessError("not init");
         }
         setPrepared();
-        requestUpdateCompleteContentViewIfChanged();
+        requestUpdateContentViewIfChanged();
     }
 
     private final DisposableHolder mDefaultRequestHolder = new DisposableHolder();
@@ -138,7 +171,7 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
     /**
      * 请求刷新 complete content view 内容
      */
-    public void requestUpdateCompleteContentViewIfChanged() {
+    public void requestUpdateContentViewIfChanged() {
         T view = getView();
         if (view == null) {
             return;
@@ -162,13 +195,13 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
             onReady();
         }
 
-        view.onUpdateCompleteContentViewIfChanged();
+        view.onUpdateContentViewIfChanged();
     }
 
     private boolean mCalledReady;
 
     /**
-     * 初始化完成时调用, 先于页面上的 onUpdateCompleteContentViewIfChanged, 仅调用一次
+     * 初始化完成时调用, 先于页面上的 onUpdateContentViewIfChanged, 仅调用一次
      */
     public abstract void onReady();
 

@@ -9,9 +9,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.okandroid.boot.R;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatus;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusNetworkErrorLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusUnknownErrorLarge;
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
+import com.okandroid.boot.lang.ResumedViewClickListener;
 import com.okandroid.boot.util.AvailableUtil;
+import com.okandroid.boot.util.NetUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.ContentLoadingView;
 
@@ -56,9 +61,8 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
         }
 
         if (viewProxy.isInit()) {
-            notifyInitComplete();
+            notifyInitSuccess();
         } else {
-            showInitContentView(activity, inflater, mContentView);
             viewProxy.startInit();
         }
     }
@@ -70,7 +74,7 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
     }
 
     @Override
-    public void notifyInitComplete() {
+    public void notifyInitFail() {
         View view = getView();
         if (view == null) {
             new IllegalAccessError("view is null").printStackTrace();
@@ -104,7 +108,112 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
             return;
         }
 
-        showCompleteContentView(activity, inflater, mContentView);
+        if (viewProxy.isInit()) {
+            Log.e(TAG, " view proxy already init");
+            return;
+        }
+
+        showInitFailContentView(activity, inflater, mContentView);
+
+        // 动态添加 view 后, 如果添加的 view 中有 fitSystemWindow 的内容, 需要刷新 window insets
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            mContentView.requestApplyInsets();
+        } else {
+            mContentView.requestFitSystemWindows();
+        }
+    }
+
+    @Override
+    public void notifyInitLoading() {
+        View view = getView();
+        if (view == null) {
+            new IllegalAccessError("view is null").printStackTrace();
+        }
+
+        LayoutInflater inflater = getLayoutInflater(null);
+        if (inflater == null) {
+            new IllegalAccessError("inflater is null").printStackTrace();
+            return;
+        }
+
+        Activity activity = getActivity();
+        if (activity == null) {
+            new IllegalAccessError("activity is null").printStackTrace();
+            return;
+        }
+
+        if (!AvailableUtil.isAvailable(activity)) {
+            new IllegalAccessError("activity is not available").printStackTrace();
+            return;
+        }
+
+        if (mContentView == null) {
+            Log.e(TAG + " content view not found");
+            return;
+        }
+
+        DynamicViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            Log.e(TAG + " view proxy is null");
+            return;
+        }
+
+        if (viewProxy.isInit()) {
+            Log.e(TAG, " view proxy already init");
+            return;
+        }
+
+        showInitLoadingContentView(activity, inflater, mContentView);
+
+        // 动态添加 view 后, 如果添加的 view 中有 fitSystemWindow 的内容, 需要刷新 window insets
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            mContentView.requestApplyInsets();
+        } else {
+            mContentView.requestFitSystemWindows();
+        }
+    }
+
+    @Override
+    public void notifyInitSuccess() {
+        View view = getView();
+        if (view == null) {
+            new IllegalAccessError("view is null").printStackTrace();
+        }
+
+        LayoutInflater inflater = getLayoutInflater(null);
+        if (inflater == null) {
+            new IllegalAccessError("inflater is null").printStackTrace();
+            return;
+        }
+
+        Activity activity = getActivity();
+        if (activity == null) {
+            new IllegalAccessError("activity is null").printStackTrace();
+            return;
+        }
+
+        if (!AvailableUtil.isAvailable(activity)) {
+            new IllegalAccessError("activity is not available").printStackTrace();
+            return;
+        }
+
+        if (mContentView == null) {
+            Log.e(TAG + " content view not found");
+            return;
+        }
+
+        DynamicViewProxy viewProxy = getDefaultViewProxy();
+        if (viewProxy == null) {
+            Log.e(TAG + " view proxy is null");
+            return;
+        }
+
+        if (!viewProxy.isInit()) {
+            Log.e(TAG, " view proxy not init");
+            return;
+        }
+
+        showInitSuccessContentView(activity, inflater, mContentView);
 
         // 动态添加 view 后, 如果添加的 view 中有 fitSystemWindow 的内容, 需要刷新 window insets
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -113,7 +222,7 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
             mContentView.requestFitSystemWindows();
         }
 
-        viewProxy.onCompleteContentViewCreated();
+        viewProxy.onInitSuccessContentViewCreated();
 
         // clear saved retain object
         getRetainDataObject().clear();
@@ -122,16 +231,40 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
     /**
      * proxy 在初始化数据过程中显示的 content view
      */
-    protected void showInitContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitLoadingContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         ContentLoadingView loadingView = new ContentLoadingView(activity);
         loadingView.showLoading();
         new ContentViewHelper(activity, inflater, contentView, loadingView);
     }
 
+    protected void showInitFailContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+        LoadingStatus loadingStatus;
+        if (!NetUtil.hasActiveNetwork()) {
+            // 网络错误
+            loadingStatus = new LoadingStatusNetworkErrorLarge(activity, inflater, contentView);
+        } else {
+            // 未知错误
+            loadingStatus = new LoadingStatusUnknownErrorLarge(activity, inflater, contentView);
+        }
+
+        if (loadingStatus.itemRetry != null) {
+            loadingStatus.itemRetry.setOnClickListener(new ResumedViewClickListener(DynamicFragment.this) {
+                @Override
+                public void onClick(View v, ResumedViewClickListener listener) {
+                    DynamicViewProxy viewProxy = getDefaultViewProxy();
+                    if (viewProxy != null) {
+                        viewProxy.startInit();
+                    }
+                }
+            });
+        }
+        new ContentViewHelper(activity, inflater, contentView, loadingStatus.view);
+    }
+
     /**
      * proxy 初始化数据完成时显示的 content view
      */
-    protected abstract void showCompleteContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
+    protected abstract void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
 
     /**
      * 每一个 content view 是一个独立的部分, 后创建的 content view 会覆盖之前创建的 content view 内容(前面的 content view 会从 view tree 中删除)
@@ -204,7 +337,7 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
     public void requestProxyUpdateCompleteContentViewIfChanged() {
         DynamicViewProxy viewProxy = getDefaultViewProxy();
         if (viewProxy != null) {
-            viewProxy.requestUpdateCompleteContentViewIfChanged();
+            viewProxy.requestUpdateContentViewIfChanged();
         }
     }
 

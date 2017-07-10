@@ -32,8 +32,8 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
     }
 
     @Override
-    public void onCompleteContentViewCreated() {
-        super.onCompleteContentViewCreated();
+    public void onInitSuccessContentViewCreated() {
+        super.onInitSuccessContentViewCreated();
 
         tryRestorePageStatus();
     }
