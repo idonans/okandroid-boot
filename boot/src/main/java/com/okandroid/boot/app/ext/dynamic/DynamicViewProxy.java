@@ -62,7 +62,7 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
             return;
         }
 
-        if (!isInit()) {
+        if (isInit()) {
             Log.e(CLASS_NAME, "already init");
             return;
         }
