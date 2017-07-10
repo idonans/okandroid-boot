@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.okandroid.boot.R;
 import com.okandroid.boot.app.ext.dynamic.DynamicFragment;
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
@@ -32,12 +33,12 @@ public abstract class PageFragment extends DynamicFragment implements PageView {
     protected PageContentView mPageContentView;
 
     @Override
-    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData) {
         IOUtil.closeQuietly(mPageContentView);
-        mPageContentView = createPageContentView(activity, inflater, contentView);
+        mPageContentView = createPageContentView(activity, inflater, contentView, dynamicViewData);
     }
 
-    protected PageContentView createPageContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected PageContentView createPageContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData) {
         return new PageContentView(activity, inflater, contentView, R.layout.okandroid_ext_page_view);
     }
 

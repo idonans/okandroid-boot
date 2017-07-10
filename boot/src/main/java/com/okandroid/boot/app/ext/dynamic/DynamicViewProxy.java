@@ -201,7 +201,7 @@ public abstract class DynamicViewProxy<T extends DynamicView> extends ViewProxy<
     private boolean mCalledReady;
 
     /**
-     * 初始化完成时调用, 先于页面上的 onUpdateContentViewIfChanged, 仅调用一次
+     * 初始化完成时调用, 先于页面上的 onUpdateContentViewIfChanged, 仅调用一次. 此时页面上的 initSuccessContentView 已经显示.
      */
     public abstract void onReady();
 

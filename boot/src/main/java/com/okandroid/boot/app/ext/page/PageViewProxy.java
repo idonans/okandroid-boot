@@ -2,6 +2,7 @@ package com.okandroid.boot.app.ext.page;
 
 import android.support.annotation.NonNull;
 
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.lang.Log;
@@ -28,7 +29,9 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
     }
 
     @Override
-    protected void onInitBackground() {
+    protected DynamicViewData onInitBackground() {
+        return new DynamicViewData() {
+        };
     }
 
     @Override
@@ -44,14 +47,14 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
     }
 
     // 上一次成功加载的数据页
-    private int mLastLoadSuccessPageNo = -1;
+    protected int mLastLoadSuccessPageNo = -1;
     // 当前正在加载的数据页
-    private int mCurrentLoadingPageNo = -1;
+    protected int mCurrentLoadingPageNo = -1;
     // 第一页从 0 开始
-    private final int mFirstPageNo = 0;
+    protected final int mFirstPageNo = 0;
 
     // 总页数
-    private int mTotalPage = -1;
+    protected int mTotalPage = -1;
 
     private static final String SAVED_KEY_SAVED_OBJECT = "okandroid.boot.page.proxy.SavedObject";
 
