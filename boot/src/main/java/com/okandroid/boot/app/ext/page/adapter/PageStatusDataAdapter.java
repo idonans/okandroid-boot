@@ -198,6 +198,7 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
 
         public LoadingStatusViewHolder(RecyclerViewGroupAdapter groupAdapter, LoadingStatus loadingStatus) {
             super(groupAdapter, loadingStatus.view);
+            mLoadingStatus = loadingStatus;
         }
 
         @Override
