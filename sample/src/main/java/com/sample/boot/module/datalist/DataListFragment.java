@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.app.ext.page.PageFragment;
 import com.okandroid.boot.app.ext.page.PageViewProxy;
 import com.okandroid.boot.app.ext.page.adapter.PageStatusDataAdapter;
@@ -36,7 +37,7 @@ public class DataListFragment extends PageFragment implements DataListView {
     }
 
     @Override
-    protected PageContentView createPageContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected PageContentView createPageContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData) {
         return new PageContentView(activity, inflater, contentView, R.layout.sample_data_list_view);
     }
 

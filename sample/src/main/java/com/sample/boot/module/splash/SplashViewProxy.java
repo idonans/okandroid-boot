@@ -1,5 +1,6 @@
 package com.sample.boot.module.splash;
 
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.thread.Threads;
 import com.sample.boot.app.BaseViewProxy;
 
@@ -14,8 +15,10 @@ public class SplashViewProxy extends BaseViewProxy<SplashView> {
     }
 
     @Override
-    protected void onInitBackground() {
+    protected DynamicViewData onInitBackground() {
         Threads.sleepQuietly(2000);
+        return new DynamicViewData() {
+        };
     }
 
     @Override

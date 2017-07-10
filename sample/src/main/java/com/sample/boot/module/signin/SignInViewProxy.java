@@ -3,6 +3,7 @@ package com.sample.boot.module.signin;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.data.OkHttpManager;
 import com.okandroid.boot.lang.Available;
 import com.okandroid.boot.lang.Log;
@@ -43,8 +44,10 @@ public class SignInViewProxy extends BaseViewProxy<SignInView> {
     }
 
     @Override
-    protected void onInitBackground() {
+    protected DynamicViewData onInitBackground() {
         Threads.sleepQuietly(5000);
+        return new DynamicViewData() {
+        };
     }
 
     @Override

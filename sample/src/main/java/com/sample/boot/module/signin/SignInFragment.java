@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.okandroid.boot.AppContext;
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.CameraUtil;
@@ -65,9 +66,16 @@ public class SignInFragment extends BaseFragment implements SignInView {
     private Content mContent;
 
     @Override
-    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        IOUtil.closeQuietly(mContent);
+        mContent = null;
     }
 
     @Override

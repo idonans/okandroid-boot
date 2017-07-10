@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.app.ext.dynamic.DynamicViewProxy;
 import com.okandroid.boot.util.IOUtil;
 import com.sample.boot.R;
@@ -55,16 +56,23 @@ public class SplashFragment extends BaseFragment implements SplashView {
     }
 
     @Override
-    protected void showInitContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitLoadingContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
         // ignore
     }
 
     private Content mContent;
 
     @Override
-    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView) {
+    protected void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData) {
         IOUtil.closeQuietly(mContent);
         mContent = new Content(activity, inflater, contentView);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        IOUtil.closeQuietly(mContent);
+        mContent = null;
     }
 
     @Override
