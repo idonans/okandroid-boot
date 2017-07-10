@@ -8,10 +8,23 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.okandroid.boot.R;
 import com.okandroid.boot.app.ext.page.PageViewProxy;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatus;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusEmptyDataLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusEmptyDataSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusLoadSuccessLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusLoadSuccessSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusLoadingLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusLoadingSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusNetworkErrorLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusNetworkErrorSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusNoMoreDataLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusNoMoreDataSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusServerErrorLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusServerErrorSmall;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusUnknownErrorLarge;
+import com.okandroid.boot.ext.loadingstatus.LoadingStatusUnknownErrorSmall;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
 
 /**
@@ -93,33 +106,33 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_HOLDER_TYPE_EXTRA_LOADING_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_loading_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusLoadingSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_LOADING_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_loading_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusLoadingLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_EMPTY_DATA_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_empty_data_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusEmptyDataSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_EMPTY_DATA_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_empty_data_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusEmptyDataLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_NO_MORE_DATA_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_no_more_data_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusNoMoreDataSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_NO_MORE_DATA_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_no_more_data_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusNoMoreDataLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_DATA_LOAD_SUCCESS_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_load_success_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusLoadSuccessSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_DATA_LOAD_SUCCESS_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_load_success_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusLoadSuccessLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_SERVER_ERROR_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_server_error_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusServerErrorSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_SERVER_ERROR_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_server_error_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusServerErrorLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_NET_ERROR_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_network_error_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusNetworkErrorSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_NET_ERROR_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_network_error_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusNetworkErrorLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_UNKNOWN_ERROR_SMALL:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_unknown_error_small);
+                return new LoadingStatusViewHolder(this, new LoadingStatusUnknownErrorSmall(getRecyclerView().getContext(), mLayoutInflater, parent));
             case VIEW_HOLDER_TYPE_EXTRA_UNKNOWN_ERROR_LARGE:
-                return new RetryViewHolder(this, mLayoutInflater, parent, R.layout.okandroid_ext_pageloading_view_holder_extra_unknown_error_large);
+                return new LoadingStatusViewHolder(this, new LoadingStatusUnknownErrorLarge(getRecyclerView().getContext(), mLayoutInflater, parent));
             default:
                 return super.onCreateViewHolder(parent, viewType);
         }
@@ -179,21 +192,18 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
         return super.getGroupItemViewType(position, group, positionInGroup);
     }
 
-    private class RetryViewHolder extends RecyclerViewGroupHolder {
+    public class LoadingStatusViewHolder extends RecyclerViewGroupHolder {
 
-        private final View mRetry;
-        private final TextView mExtraMsg;
+        protected LoadingStatus mLoadingStatus;
 
-        public RetryViewHolder(RecyclerViewGroupAdapter groupAdapter, LayoutInflater inflater, ViewGroup parent, int layout) {
-            super(groupAdapter, inflater, parent, layout);
-            mRetry = findViewByID(R.id.retry);
-            mExtraMsg = findViewByID(R.id.extra_msg);
+        public LoadingStatusViewHolder(RecyclerViewGroupAdapter groupAdapter, LoadingStatus loadingStatus) {
+            super(groupAdapter, loadingStatus.view);
         }
 
         @Override
         public void onHolderUpdate(@Nullable Object object, int position) {
-            if (mRetry != null) {
-                mRetry.setOnClickListener(null);
+            if (mLoadingStatus.itemRetry != null) {
+                mLoadingStatus.itemRetry.setOnClickListener(null);
             }
             super.onHolderUpdate(object, position);
         }
@@ -213,7 +223,7 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
                 }
             }
 
-            if (mRetry != null) {
+            if (mLoadingStatus.itemRetry != null) {
                 final int pageNo;
 
                 if (pageLoadingStatus != null && pageLoadingStatus.firstPage) {
@@ -225,7 +235,7 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
                 }
 
                 if (pageNo >= 0) {
-                    mRetry.setOnClickListener(new View.OnClickListener() {
+                    mLoadingStatus.itemRetry.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             reloadPageData(pageNo);
@@ -242,12 +252,12 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
         }
 
         private void setExtraMsg(CharSequence extraMsg) {
-            if (mExtraMsg != null) {
-                mExtraMsg.setText(extraMsg);
+            if (mLoadingStatus.itemMessage != null) {
+                mLoadingStatus.itemMessage.setText(extraMsg);
                 if (TextUtils.isEmpty(extraMsg)) {
-                    mExtraMsg.setVisibility(View.GONE);
+                    mLoadingStatus.itemMessage.setVisibility(View.GONE);
                 } else {
-                    mExtraMsg.setVisibility(View.VISIBLE);
+                    mLoadingStatus.itemMessage.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -257,7 +267,7 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
     /**
      * 重新加载指定页数据
      *
-     * @param pageNo
+     * @param pageNo base on page 0
      */
     protected void reloadPageData(int pageNo) {
     }
