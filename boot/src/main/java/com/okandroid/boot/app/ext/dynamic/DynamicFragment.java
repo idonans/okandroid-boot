@@ -209,11 +209,17 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
         }
 
         if (!viewProxy.isInit()) {
-            Log.e(TAG, " view proxy not init");
+            Log.e(TAG, "view proxy not init");
             return;
         }
 
-        showInitSuccessContentView(activity, inflater, mContentView);
+        DynamicViewData dynamicViewData = viewProxy.getDynamicViewData();
+        if (dynamicViewData == null) {
+            Log.e(TAG, "dynamic view data is null");
+            return;
+        }
+
+        showInitSuccessContentView(activity, inflater, mContentView, dynamicViewData);
 
         // 动态添加 view 后, 如果添加的 view 中有 fitSystemWindow 的内容, 需要刷新 window insets
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -264,7 +270,7 @@ public abstract class DynamicFragment extends DynamicBaseFragment {
     /**
      * proxy 初始化数据完成时显示的 content view
      */
-    protected abstract void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView);
+    protected abstract void showInitSuccessContentView(@NonNull Activity activity, @NonNull LayoutInflater inflater, @NonNull ViewGroup contentView, @NonNull DynamicViewData dynamicViewData);
 
     /**
      * 每一个 content view 是一个独立的部分, 后创建的 content view 会覆盖之前创建的 content view 内容(前面的 content view 会从 view tree 中删除)
