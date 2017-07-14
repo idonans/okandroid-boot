@@ -2,6 +2,7 @@ package com.okandroid.boot.lang;
 
 import android.app.Dialog;
 import android.view.View;
+import android.widget.PopupWindow;
 
 import com.okandroid.boot.app.OKAndroidActivity;
 import com.okandroid.boot.app.OKAndroidFragment;
@@ -14,27 +15,25 @@ import com.okandroid.boot.util.AvailableUtil;
 
 public abstract class ResumedViewClickListener implements View.OnClickListener {
 
-    private final OKAndroidActivity mActivity;
-    private final OKAndroidFragment mFragment;
-
-    private final Dialog mDialog;
+    private OKAndroidActivity mActivity;
+    private OKAndroidFragment mFragment;
+    private Dialog mDialog;
+    private PopupWindow mPopupWindow;
 
     public ResumedViewClickListener(OKAndroidActivity activity) {
         mActivity = activity;
-        mFragment = null;
-        mDialog = null;
     }
 
     public ResumedViewClickListener(OKAndroidFragment fragment) {
-        mActivity = null;
         mFragment = fragment;
-        mDialog = null;
     }
 
     public ResumedViewClickListener(Dialog dialog) {
-        mActivity = null;
-        mFragment = null;
         mDialog = dialog;
+    }
+
+    public ResumedViewClickListener(PopupWindow popupWindow) {
+        mPopupWindow = popupWindow;
     }
 
     @Override
@@ -54,6 +53,10 @@ public abstract class ResumedViewClickListener implements View.OnClickListener {
                     }
                 } else if (mDialog != null) {
                     if (mDialog.isShowing()) {
+                        onClick(v, ResumedViewClickListener.this);
+                    }
+                } else if (mPopupWindow != null) {
+                    if (mPopupWindow.isShowing()) {
                         onClick(v, ResumedViewClickListener.this);
                     }
                 }
