@@ -1,4 +1,10 @@
 <resources>
     <style name="OKAndroid.Style"
         parent=""/>
+    <style name="OKAndroid.Animation"
+        parent="android:Animation"/>
+    <style name="OKAndroid.Animation.ContentLoadingTop">
+        <item name="android:windowEnterAnimation">@anim/okandroid_fade_in_from_top</item>
+        <item name="android:windowExitAnimation">@anim/okandroid_fade_out_from_top</item>
+    </style>
 </resources>

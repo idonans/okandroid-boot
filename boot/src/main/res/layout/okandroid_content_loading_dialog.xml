@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.okandroid.boot.widget.ContentView xmlns:android="http://schemas.android.com/apk/res/android"
+<ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progress_bar"
+    style="@style/Widget.AppCompat.ProgressBar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ProgressBar android:id="@+id/progress_bar"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:layout_margin="40dp"
-        android:background="@color/okandroid_color_md_grey_300"
-        android:padding="10dp"/>
-</com.okandroid.boot.widget.ContentView>
+    android:layout_height="60dp"
+    android:layout_gravity="top"
+    android:background="@color/okandroid_color_md_grey_300"
+    android:padding="10dp"/>

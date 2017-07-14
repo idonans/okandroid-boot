@@ -17,10 +17,4 @@
         parent="OKAndroid.Base.Theme.Splash">
         <item name="android:windowBackground">@color/okandroid_color_md_white</item>
     </style>
-    <style name="OKAndroid.Theme.ContentDialog">
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
-    </style>
 </resources>
