@@ -62,8 +62,6 @@ public abstract class ContentDialog extends PopupWindow {
                 Log.v(CLASS_NAME, "onDismiss");
             }
         });
-
-        onCreate();
     }
 
     protected boolean mDimBackground;
@@ -103,6 +101,7 @@ public abstract class ContentDialog extends PopupWindow {
     }
 
     public void show() {
+        onCreate();
         showAtLocation(mContentParent, mTargetGravity, mTargetOffsetX, mTargetOffsetY);
         applyDim();
     }
