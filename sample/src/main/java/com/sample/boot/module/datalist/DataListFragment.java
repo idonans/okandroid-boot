@@ -17,6 +17,7 @@ import com.okandroid.boot.widget.MaxLineViewFrameLayout;
 import com.okandroid.boot.widget.MaxLineViewHelper;
 import com.okandroid.boot.widget.RecyclerViewGroupAdapter;
 import com.sample.boot.R;
+import com.sample.boot.module.ext.SampleInputDialog;
 
 /**
  * Created by idonans on 2017/4/21.
@@ -140,6 +141,14 @@ public class DataListFragment extends PageFragment implements DataListView {
                 @Override
                 public void onClick(View v) {
                     mMaxLineViewHelper.toggle();
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    new SampleInputDialog(getActivity()).show();
+                    return true;
                 }
             });
         }

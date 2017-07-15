@@ -1,6 +1,8 @@
 package com.okandroid.boot.widget;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
@@ -14,7 +16,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 
-import com.okandroid.boot.R;
 import com.okandroid.boot.lang.ClassName;
 import com.okandroid.boot.util.ViewUtil;
 
@@ -33,7 +34,7 @@ public abstract class ContentDialog extends PopupWindow {
     protected LayoutInflater mInflater;
 
     public ContentDialog(@NonNull Activity activity) {
-        ViewGroup contentParent = ViewUtil.findViewByID(activity, R.id.okandroid_content);
+        ViewGroup contentParent = null; // ViewUtil.findViewByID(activity, R.id.okandroid_content);
         if (contentParent == null) {
             contentParent = ViewUtil.findViewByID(activity, Window.ID_ANDROID_CONTENT);
         }
@@ -53,6 +54,9 @@ public abstract class ContentDialog extends PopupWindow {
         setFocusable(true);
         setTouchable(true);
         setOutsideTouchable(false);
+        setInputMethodMode(INPUT_METHOD_NEEDED);
+        setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         setAnimationStyle(0);
 
@@ -109,7 +113,12 @@ public abstract class ContentDialog extends PopupWindow {
     @CheckResult
     public View getDecorView() {
         try {
-            Field f = PopupWindow.class.getDeclaredField("mDecorView");
+            Field f;
+            try {
+                f = PopupWindow.class.getDeclaredField("mDecorView");
+            } catch (Throwable e) {
+                f = PopupWindow.class.getDeclaredField("mPopupView");
+            }
             f.setAccessible(true);
             return (View) f.get(this);
         } catch (Throwable e) {

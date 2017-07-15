@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.okandroid.boot.widget.ContentView xmlns:android="http://schemas.android.com/apk/res/android"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="wrap_content"
+                                       android:layout_gravity="bottom"
+                                       android:layout_marginLeft="0dp"
+                                       android:layout_marginRight="0dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:background="@color/okandroid_color_md_white"
+        android:orientation="vertical">
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="10dp"
+                  android:text="input content dialog"
+                  android:textColor="@color/okandroid_color_md_black"
+                  android:textSize="14sp"/>
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"/>
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:padding="10dp"
+                  android:text="底部文字"/>
+    </LinearLayout>
+</com.okandroid.boot.widget.ContentView>
