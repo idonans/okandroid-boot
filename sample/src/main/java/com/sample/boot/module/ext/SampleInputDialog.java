@@ -2,7 +2,6 @@ package com.sample.boot.module.ext;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.view.ViewGroup;
 
 import com.okandroid.boot.widget.ContentDialog;
 import com.sample.boot.R;
@@ -15,10 +14,6 @@ public class SampleInputDialog extends ContentDialog {
 
     public SampleInputDialog(@NonNull Activity activity) {
         super(activity);
-    }
-
-    public SampleInputDialog(@NonNull Activity activity, @NonNull ViewGroup contentParent) {
-        super(activity, contentParent);
     }
 
     @Override

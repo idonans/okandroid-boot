@@ -2,7 +2,6 @@ package com.okandroid.boot.widget;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.okandroid.boot.R;
@@ -18,10 +17,6 @@ public class ContentLoadingDialog extends ContentDialog {
 
     public ContentLoadingDialog(@NonNull Activity activity) {
         super(activity);
-    }
-
-    public ContentLoadingDialog(@NonNull Activity activity, @NonNull ViewGroup contentParent) {
-        super(activity, contentParent);
     }
 
     @Override

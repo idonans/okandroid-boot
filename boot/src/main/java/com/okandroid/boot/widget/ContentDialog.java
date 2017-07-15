@@ -11,13 +11,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 
 import com.okandroid.boot.lang.ClassName;
-import com.okandroid.boot.util.ViewUtil;
 
 import java.lang.reflect.Field;
 
@@ -30,32 +28,15 @@ public abstract class ContentDialog extends PopupWindow {
     private final String CLASS_NAME = ClassName.valueOf(this);
 
     protected Activity mActivity;
-    protected ViewGroup mContentParent;
     protected LayoutInflater mInflater;
 
     public ContentDialog(@NonNull Activity activity) {
-        ViewGroup contentParent = null; // ViewUtil.findViewByID(activity, R.id.okandroid_content);
-        if (contentParent == null) {
-            contentParent = ViewUtil.findViewByID(activity, Window.ID_ANDROID_CONTENT);
-        }
-
-        init(activity, contentParent);
-    }
-
-    public ContentDialog(@NonNull Activity activity, @NonNull ViewGroup contentParent) {
-        init(activity, contentParent);
-    }
-
-    private void init(@NonNull Activity activity, @NonNull ViewGroup contentParent) {
         mActivity = activity;
-        mContentParent = contentParent;
         mInflater = mActivity.getLayoutInflater();
         setClippingEnabled(false);
         setFocusable(true);
         setTouchable(true);
         setOutsideTouchable(false);
-        setInputMethodMode(INPUT_METHOD_NEEDED);
-        setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         setAnimationStyle(0);
@@ -106,7 +87,7 @@ public abstract class ContentDialog extends PopupWindow {
 
     public void show() {
         onCreate();
-        showAtLocation(mContentParent, mTargetGravity, mTargetOffsetX, mTargetOffsetY);
+        showAtLocation(mActivity.getWindow().getDecorView(), mTargetGravity, mTargetOffsetX, mTargetOffsetY);
         applyDim();
     }
 
@@ -139,7 +120,9 @@ public abstract class ContentDialog extends PopupWindow {
         }
 
         try {
+            decorView.setFitsSystemWindows(false);
             WindowManager.LayoutParams attrs = (WindowManager.LayoutParams) decorView.getLayoutParams();
+            attrs.flags = ((WindowManager.LayoutParams) mActivity.getWindow().getDecorView().getLayoutParams()).flags;
             attrs.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             attrs.dimAmount = mDimAmount;
             mActivity.getWindowManager().updateViewLayout(decorView, attrs);
