@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.okandroid.boot.app.ext.backpressed.BackPressedActivity;
 import com.okandroid.boot.app.ext.dynamic.DynamicViewData;
 import com.okandroid.boot.app.ext.page.PageFragment;
 import com.okandroid.boot.app.ext.page.PageViewProxy;
@@ -147,7 +148,7 @@ public class DataListFragment extends PageFragment implements DataListView {
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    new SampleInputDialog(getActivity()).show();
+                    new SampleInputDialog().show((BackPressedActivity) getActivity());
                     return true;
                 }
             });
