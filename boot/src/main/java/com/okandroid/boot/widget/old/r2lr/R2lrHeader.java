@@ -1,4 +1,4 @@
-package com.okandroid.boot.widget.r2lr;
+package com.okandroid.boot.widget.old.r2lr;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -20,8 +20,7 @@ import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
 import com.okandroid.boot.util.ViewUtil;
-import com.okandroid.boot.widget.ptr.ArrowDrawable;
-import com.okandroid.boot.widget.ptr.PtrLayout;
+import com.okandroid.boot.widget.old.ptr.ArrowDrawable;
 
 /**
  * Created by idonans on 2017/6/25.

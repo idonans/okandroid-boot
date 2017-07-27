@@ -16,7 +16,7 @@ import com.okandroid.boot.util.AvailableUtil;
 import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
 import com.okandroid.boot.widget.PageDataAdapter;
-import com.okandroid.boot.widget.ptr.PtrLayout;
+import com.okandroid.boot.widget.old.ptr.PtrLayout;
 
 import java.util.Collection;
 import java.util.Map;

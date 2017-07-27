@@ -1,4 +1,4 @@
-package com.okandroid.boot.widget.ptr;
+package com.okandroid.boot.widget.old.r2lr;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -18,36 +18,36 @@ import android.view.ViewParent;
 import com.okandroid.boot.lang.Log;
 
 /**
- * Created by idonans on 2017/4/12.
+ * right to left refresh 从右向左拉动刷新
+ * Created by idonans on 2017/6/25.
  */
+public class R2lrLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
 
-public class PtrLayout extends ViewGroup implements NestedScrollingParent, NestedScrollingChild {
-
-    public PtrLayout(Context context) {
+    public R2lrLayout(Context context) {
         super(context);
         init();
     }
 
-    public PtrLayout(Context context, AttributeSet attrs) {
+    public R2lrLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PtrLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public R2lrLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PtrLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public R2lrLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
 
-    private static final String TAG = "PtrLayout";
+    private static final String TAG = "R2lrLayout";
 
     private int mTouchSlop;
-    private View mHeader; // 下拉头
+    private View mHeader; // 刷新头
     private View mTarget; // 主要内容
 
     private int mActivePointerId = -1; // 用于计算滑动的手指
@@ -80,9 +80,9 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
         if (!isEnabled()
                 || isHeaderStatusBusy()
-                || canChildScrollUp()
+                || canChildScrollRight()
                 || mNestedScrollInProgress) {
-            // 排除不能触发新下拉的情况
+            // 排除不能触发新左拉的情况
             return false;
         }
 
@@ -138,9 +138,9 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
         if (!isEnabled()
                 || isHeaderStatusBusy()
-                || canChildScrollUp()
+                || canChildScrollRight()
                 || mNestedScrollInProgress) {
-            // 排除不能触发新下拉的情况
+            // 排除不能触发新左拉的情况
             return false;
         }
 
@@ -173,8 +173,8 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
                 if (!mIsBeingDragged) {
                     startDragging(x, y);
                 } else {
-                    final float yDiff = y - mLastMotionY;
-                    applyOffsetYDiff(yDiff);
+                    final float xDiff = x - mLastMotionX;
+                    applyOffsetXDiff(xDiff);
                     mLastMotionX = x;
                     mLastMotionY = y;
                 }
@@ -186,7 +186,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
             case MotionEvent.ACTION_UP: {
                 if (mIsBeingDragged) {
-                    finishOffsetY(false);
+                    finishOffsetX(false);
                     mIsBeingDragged = false;
                 }
                 mActivePointerId = -1;
@@ -194,7 +194,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             }
             case MotionEvent.ACTION_CANCEL:
                 if (mIsBeingDragged) {
-                    finishOffsetY(true);
+                    finishOffsetX(true);
                     mIsBeingDragged = false;
                 }
                 mActivePointerId = -1;
@@ -212,7 +212,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         return headerView.isStatusBusy();
     }
 
-    public float applyOffsetYDiff(float yDiff) {
+    public float applyOffsetXDiff(float xDiff) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -220,13 +220,13 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         }
 
         HeaderView headerView = (HeaderView) mHeader;
-        return headerView.applyOffsetYDiff(yDiff, mTarget);
+        return headerView.applyOffsetXDiff(xDiff, mTarget);
     }
 
     /**
      * @param cancel 如果是 cancel, 则忽略计算是否触发刷新，直接滚动到初始状态
      */
-    private void finishOffsetY(boolean cancel) {
+    private void finishOffsetX(boolean cancel) {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
@@ -234,16 +234,16 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         }
 
         HeaderView headerView = (HeaderView) mHeader;
-        headerView.finishOffsetY(cancel, mTarget);
+        headerView.finishOffsetX(cancel, mTarget);
     }
 
     private void startDragging(float x, float y) {
         final float yDiff = y - mLastMotionY;
         final float xDiff = x - mLastMotionX;
         if (!mIsBeingDragged
-                && yDiff > mTouchSlop
-                && Math.abs(yDiff) > Math.abs(xDiff)) {
-            // 垂直滑动并且有一定距离时，触发下拉
+                && xDiff < -mTouchSlop
+                && Math.abs(xDiff) > Math.abs(yDiff)) {
+            // 想做滑动并且有一定距离时，触发左拉
             mLastMotionX = x;
             mLastMotionY = y;
             mIsBeingDragged = true;
@@ -268,14 +268,14 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         }
     }
 
-    public boolean canChildScrollUp() {
+    public boolean canChildScrollRight() {
         ensureTargetAndHeader();
 
         if (mTarget == null || mHeader == null) {
             return false;
         }
 
-        return ViewCompat.canScrollVertically(mTarget, -1);
+        return ViewCompat.canScrollHorizontally(mTarget, 1);
     }
 
     @Override
@@ -308,9 +308,9 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
         int headerWidth = mHeader.getMeasuredWidth();
         int headerHeight = mHeader.getMeasuredHeight();
-        int headerLeft = getPaddingLeft();
-        int headerTop = -headerHeight;
-        mHeader.layout(headerLeft, headerTop, headerLeft + headerWidth, 0);
+        int headerLeft = getWidth() - getPaddingRight();
+        int headerTop = getPaddingTop();
+        mHeader.layout(headerLeft, headerTop, headerLeft + headerWidth, headerTop + headerHeight);
     }
 
     private void ensureTargetAndHeader() {
@@ -366,13 +366,13 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return false;
         }
 
-        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_HORIZONTAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
-        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
+        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_HORIZONTAL);
         mNestedScrollInProgress = true;
     }
 
@@ -381,7 +381,7 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         mNestedScrollingParentHelper.onStopNestedScroll(target);
         mNestedScrollInProgress = false;
 
-        finishOffsetY(false);
+        finishOffsetX(false);
 
         stopNestedScroll();
     }
@@ -390,8 +390,6 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         ensureTargetAndHeader();
 
-        // 记录父滑动后, 当前控件实际产生的窗口偏移 (滑动后的位置减去滑动前的位置, 因此如果是向下滑动, 偏移值为正)
-        // dx, dy, 向上,向左是正, 向下,向右是负 (上一个位置减去当前位置)
         int[] parentOffsetInWindow = new int[2];
 
         if (mTarget == null || mHeader == null) {
@@ -401,10 +399,10 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
 
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, parentOffsetInWindow);
 
-        final int dy = dyUnconsumed + parentOffsetInWindow[1];
+        final int dx = dxUnconsumed + parentOffsetInWindow[0];
 
-        if (dy < 0 && !canChildScrollUp()) {
-            applyOffsetYDiff(-dy);
+        if (dx > 0 && !canChildScrollRight()) {
+            applyOffsetXDiff(-dx);
         }
     }
 
@@ -417,18 +415,16 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
             return;
         }
 
-        // 向上滑动 dy > 0
-
-        if (dy > 0) {
-            float usedDy = applyOffsetYDiff(-dy);
-            usedDy = -usedDy;
-            dy -= usedDy;
+        if (dx < 0) {
+            float usedDx = applyOffsetXDiff(-dx);
+            usedDx = -usedDx;
+            dx -= usedDx;
 
             final int[] parentConsumed = new int[2];
             dispatchNestedPreScroll(dx, dy, parentConsumed, null);
 
-            consumed[0] = 0;
-            consumed[1] = (int) usedDy;
+            consumed[0] = (int) usedDx;
+            consumed[1] = 0;
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
         } else {
@@ -517,18 +513,18 @@ public class PtrLayout extends ViewGroup implements NestedScrollingParent, Neste
         void setRefreshing(boolean refreshing, boolean notifyRefresh, View target);
 
         /**
-         * 是否处于忙状态(处于忙状态时不会触发新的下拉事件)
+         * 是否处于忙状态(处于忙状态时不会触发新的左拉事件)
          *
          * @return
          */
         boolean isStatusBusy();
 
         /**
-         * 处理下拉距离变更值, 返回实际消耗的变更值
+         * 处理左拉距离变更值, 返回实际消耗的变更值
          */
-        float applyOffsetYDiff(float yDiff, View target);
+        float applyOffsetXDiff(float xDiff, View target);
 
-        void finishOffsetY(boolean cancel, View target);
+        void finishOffsetX(boolean cancel, View target);
 
     }
 

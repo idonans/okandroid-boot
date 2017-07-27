@@ -38,11 +38,11 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-    <com.okandroid.boot.widget.ptr.PtrLayout android:id="@+id/ptr_layout"
+    <com.okandroid.boot.widget.old.ptr.PtrLayout android:id="@+id/ptr_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <com.okandroid.boot.widget.ptr.PtrHeader android:layout_width="match_parent"
+        <com.okandroid.boot.widget.old.ptr.PtrHeader android:layout_width="match_parent"
             android:layout_height="0dp"/>
         <android.support.v4.widget.NestedScrollView android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -111,10 +111,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="test message queue"/>
-                <com.okandroid.boot.widget.r2lr.R2lrLayout android:id="@+id/r2lr_layout"
+                <com.okandroid.boot.widget.old.r2lr.R2lrLayout android:id="@+id/r2lr_layout"
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
-                    <com.okandroid.boot.widget.r2lr.R2lrHeader android:id="@+id/r2lr_header"
+                    <com.okandroid.boot.widget.old.r2lr.R2lrHeader android:id="@+id/r2lr_header"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"/>
                     <FrameLayout android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                             android:text="right to left refresh sample"
                             android:textColor="@color/okandroid_color_md_black"/>
                     </FrameLayout>
-                </com.okandroid.boot.widget.r2lr.R2lrLayout>
+                </com.okandroid.boot.widget.old.r2lr.R2lrLayout>
                 <TextView android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:text="space"/>
@@ -146,5 +146,5 @@
                     android:text="space"/>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
-    </com.okandroid.boot.widget.ptr.PtrLayout>
+    </com.okandroid.boot.widget.old.ptr.PtrLayout>
 </android.support.design.widget.CoordinatorLayout>

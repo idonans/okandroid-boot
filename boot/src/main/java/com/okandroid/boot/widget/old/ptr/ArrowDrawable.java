@@ -1,4 +1,4 @@
-package com.okandroid.boot.widget.ptr;
+package com.okandroid.boot.widget.old.ptr;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;

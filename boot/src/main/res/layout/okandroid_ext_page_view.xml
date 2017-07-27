@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.okandroid.boot.widget.ptr.PtrLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.okandroid.boot.widget.old.ptr.PtrLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ptr_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.okandroid.boot.widget.ptr.PtrHeader android:id="@+id/ptr_header"
+    <com.okandroid.boot.widget.old.ptr.PtrHeader android:id="@+id/ptr_header"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
     <android.support.v7.widget.RecyclerView android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</com.okandroid.boot.widget.ptr.PtrLayout>
+</com.okandroid.boot.widget.old.ptr.PtrLayout>
