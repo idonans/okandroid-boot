@@ -20,7 +20,7 @@ import com.okandroid.boot.util.DimenUtil;
 
 public class ArrowDrawable extends Drawable {
 
-    private int mColor = 0xff000000;
+    private int mColor = 0xffb5b6b7;
 
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
