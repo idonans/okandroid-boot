@@ -1,9 +1,13 @@
-package com.okandroid.boot.widget.old.ptr;
+package com.okandroid.boot.widget.ptr;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.RotateDrawable;
 import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -19,7 +23,12 @@ import android.widget.ProgressBar;
 import com.okandroid.boot.R;
 import com.okandroid.boot.lang.Log;
 import com.okandroid.boot.util.DimenUtil;
+import com.okandroid.boot.util.FileUtil;
+import com.okandroid.boot.util.IOUtil;
 import com.okandroid.boot.util.ViewUtil;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by idonans on 2017/4/12.

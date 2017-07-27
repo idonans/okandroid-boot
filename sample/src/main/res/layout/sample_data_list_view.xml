@@ -13,15 +13,15 @@
             android:text="data list"
             android:textColor="@color/okandroid_color_md_white"/>
     </FrameLayout>
-    <com.okandroid.boot.widget.old.ptr.PtrLayout android:id="@+id/ptr_layout"
+    <com.okandroid.boot.widget.ptr.PtrLayout android:id="@+id/ptr_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.okandroid.boot.widget.old.ptr.PtrHeader android:id="@+id/ptr_header"
+        <com.okandroid.boot.widget.ptr.PtrHeader android:id="@+id/ptr_header"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/okandroid_color_md_red_500"/>
         <android.support.v7.widget.RecyclerView android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </com.okandroid.boot.widget.old.ptr.PtrLayout>
+    </com.okandroid.boot.widget.ptr.PtrLayout>
 </LinearLayout>
