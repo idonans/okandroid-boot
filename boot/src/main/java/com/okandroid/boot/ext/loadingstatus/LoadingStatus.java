@@ -23,6 +23,8 @@ public class LoadingStatus {
     public final View view;
 
     @Nullable
+    public View itemLoadMore;
+    @Nullable
     public TextView itemMessage;
     @Nullable
     public View itemRetry;
@@ -38,6 +40,7 @@ public class LoadingStatus {
 
         this.view = this.inflater.inflate(this.layoutResId, parent, false);
 
+        this.itemLoadMore = ViewUtil.findViewByID(this.view, R.id.item_load_more);
         this.itemMessage = ViewUtil.findViewByID(this.view, R.id.item_msg);
         this.itemRetry = ViewUtil.findViewByID(this.view, R.id.item_retry);
     }

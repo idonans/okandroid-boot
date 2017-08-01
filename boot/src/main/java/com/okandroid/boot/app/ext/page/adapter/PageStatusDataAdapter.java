@@ -224,6 +224,29 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
                 }
             }
 
+            if (mLoadingStatus.itemLoadMore != null) {
+                final int pageNo;
+
+                if (pageLoadingStatus != null && pageLoadingStatus.firstPage) {
+                    pageNo = 1;
+                } else if (extraPageMessage != null) {
+                    pageNo = extraPageMessage.pageNo + 1;
+                } else {
+                    pageNo = -1;
+                }
+
+                if (pageNo >= 0) {
+                    mLoadingStatus.itemLoadMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            reloadPageData(pageNo);
+                        }
+                    });
+                } else {
+                    mLoadingStatus.itemLoadMore.setOnClickListener(null);
+                }
+            }
+
             if (mLoadingStatus.itemRetry != null) {
                 final int pageNo;
 
@@ -242,6 +265,8 @@ public class PageStatusDataAdapter extends com.okandroid.boot.widget.PageDataAda
                             reloadPageData(pageNo);
                         }
                     });
+                } else {
+                    mLoadingStatus.itemRetry.setOnClickListener(null);
                 }
             }
 
