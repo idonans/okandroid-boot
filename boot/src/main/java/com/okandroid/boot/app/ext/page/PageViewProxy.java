@@ -159,9 +159,11 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
         replaceDefaultRequestHolder(null);
 
         boolean firstPage = pageNo == mFirstPageNo;
+        boolean lastPage = (mTotalPage >= 0) && (pageNo + 1 >= mTotalPage);
 
         view.showPageLoadingStatus(new PageDataAdapter.PageLoadingStatus.Builder()
                 .setFirstPage(firstPage)
+                .setLastPage(lastPage)
                 .setLoading(true)
                 .setLoadSuccess(false)
                 .setLoadFail(false)
@@ -279,9 +281,11 @@ public abstract class PageViewProxy<T extends PageView> extends DynamicViewProxy
         message.emptyContent = emptyContent;
 
         boolean firstPage = pageNo == mFirstPageNo;
+        boolean lastPage = (mTotalPage >= 0) && (pageNo + 1 >= mTotalPage);
 
         view.showPageLoadingStatus(new PageDataAdapter.PageLoadingStatus.Builder()
                 .setFirstPage(firstPage)
+                .setLastPage(lastPage)
                 .setExtraMessage(message)
                 .setLoading(false)
                 .setLoadSuccess(success)

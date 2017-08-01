@@ -326,6 +326,11 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
         public final boolean firstPage;
 
         /**
+         * 是否是最后一页
+         */
+        public final boolean lastPage;
+
+        /**
          * 是否加载中
          */
         public final boolean loading;
@@ -350,9 +355,10 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
          */
         public final boolean smallStyle;
 
-        private PageLoadingStatus(boolean firstPage, boolean loading, boolean loadFail,
+        private PageLoadingStatus(boolean firstPage, boolean lastPage, boolean loading, boolean loadFail,
                                   boolean loadSuccess, Object extraMessage, boolean smallStyle) {
             this.firstPage = firstPage;
+            this.lastPage = lastPage;
             this.loading = loading;
             this.loadFail = loadFail;
             this.loadSuccess = loadSuccess;
@@ -373,7 +379,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
         public static class Builder {
 
-            private boolean mFirstPage, mLoading, mLoadFail,
+            private boolean mFirstPage, mLastPage, mLoading, mLoadFail,
                     mLoadSuccess, mSmallStyle;
             private Object mExtraMessage;
 
@@ -382,6 +388,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
 
             public Builder(PageLoadingStatus pageLoadingStatus) {
                 this.mFirstPage = pageLoadingStatus.firstPage;
+                this.mLastPage = pageLoadingStatus.lastPage;
                 this.mLoading = pageLoadingStatus.loading;
                 this.mLoadFail = pageLoadingStatus.loadFail;
                 this.mLoadSuccess = pageLoadingStatus.loadSuccess;
@@ -390,12 +397,17 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
             }
 
             public PageLoadingStatus build() {
-                return new PageLoadingStatus(this.mFirstPage, this.mLoading, this.mLoadFail,
+                return new PageLoadingStatus(this.mFirstPage, this.mLastPage, this.mLoading, this.mLoadFail,
                         this.mLoadSuccess, this.mExtraMessage, this.mSmallStyle);
             }
 
             public Builder setFirstPage(boolean firstPage) {
                 mFirstPage = firstPage;
+                return this;
+            }
+
+            public Builder setLastPage(boolean lastPage) {
+                mLastPage = lastPage;
                 return this;
             }
 
@@ -531,7 +543,19 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 @NonNull PageDataAdapter pageDataAdapter,
                 @NonNull PageLoadingStatus pageLoadingStatus,
                 @NonNull ExtraPageLoadingStatusCallback callback) {
-            return pageLoadingStatus.firstPage;
+
+            // 不是第一页时不使用 group init 显示当前加载状态
+            if (!pageLoadingStatus.firstPage) {
+                return false;
+            }
+
+            // 加载成功时不使用 group init 显示当前加载状态
+            if (pageLoadingStatus.loadSuccess) {
+                return false;
+            }
+
+            // 第一页的 loading 和 load fail 使用 group init 显示当前加载状态
+            return true;
         }
 
         /**
@@ -562,6 +586,7 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
          * 是否在稍后自动关闭该显示状态
          */
         protected boolean needAutoDismissStatus(
+                boolean useGroupInit,
                 boolean hasAnyPageContent,
                 @NonNull PageDataAdapter pageDataAdapter,
                 @NonNull PageLoadingStatus pageLoadingStatus,
@@ -576,13 +601,13 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                 return false;
             }
 
-            if (pageLoadingStatus.firstPage) {
-                // 第一页的加载失败和加载完成可以自动关闭
+            if (useGroupInit && pageLoadingStatus.firstPage) {
+                // 在 group init 中显示的 第一页的加载失败和加载完成可以自动关闭
                 return true;
             }
 
-            // 其它页的加载成功可以自动关闭
-            return pageLoadingStatus.loadSuccess;
+            // 最后一页的加载成功可以自动关闭
+            return pageLoadingStatus.loadSuccess && pageLoadingStatus.lastPage;
         }
 
         public void showPageLoadingStatus(@NonNull PageDataAdapter pageDataAdapter,
@@ -647,9 +672,9 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
             );
 
             if (forceShowSwipeRefreshing) {
-                // 显示下拉刷新时，关闭其它状态的显示
+                // 显示下拉刷新时，关闭其它 init 状态的显示
                 pageDataAdapter.removeAndNotifyInit(skipAutoDismissInit);
-                pageDataAdapter.removeAndNotifyMore(skipAutoDismissMore);
+                // pageDataAdapter.removeAndNotifyMore(skipAutoDismissMore);
                 return;
             }
 
@@ -672,15 +697,15 @@ public class PageDataAdapter extends RecyclerViewGroupAdapter {
                     .build();
 
             final boolean needAutoDismiss = needAutoDismissStatus(
+                    useGroupInit,
                     hasAnyPageContent,
                     pageDataAdapter,
                     pageLoadingStatus,
                     callback
             );
 
-
             if (useGroupInit) {
-                pageDataAdapter.removeAndNotifyMore(skipAutoDismissMore);
+                // pageDataAdapter.removeAndNotifyMore(skipAutoDismissMore);
                 pageDataAdapter.replaceAndNotifyInit(pageLoadingStatus);
                 if (needAutoDismiss) {
                     pageDataAdapter.autoDismissInitDelayIfMatch(pageLoadingStatus, delay);
