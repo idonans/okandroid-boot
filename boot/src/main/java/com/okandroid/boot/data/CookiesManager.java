@@ -103,7 +103,10 @@ public class CookiesManager {
             try {
                 String[] cookies = cookieString.split(";");
                 for (String cookie : cookies) {
-                    cookieList.add(Cookie.parse(url, cookie));
+                    Cookie itemCookie = Cookie.parse(url, cookie);
+                    if (itemCookie != null) {
+                        cookieList.add(itemCookie);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
