@@ -82,10 +82,10 @@ public class FrescoManager {
     }
 
     private static class OKAndroidBitmapMemoryCacheParamsSupplier implements Supplier<MemoryCacheParams> {
-        private static final int MAX_CACHE_ENTRIES = 256;
+        private static final int MAX_CACHE_ENTRIES = 1;
         private static final int MAX_EVICTION_QUEUE_SIZE = 1;
         private static final int MAX_EVICTION_QUEUE_ENTRIES = 1;
-        private static final int MAX_CACHE_ENTRY_SIZE = Integer.MAX_VALUE;
+        private static final int MAX_CACHE_ENTRY_SIZE = 1;
 
         private final ActivityManager mActivityManager;
 
