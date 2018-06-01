@@ -15,7 +15,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * okhttp3
- * Created by idonans on 16-6-12.
  */
 public class OkHttpManager {
 
@@ -81,11 +80,13 @@ public class OkHttpManager {
                     .addInterceptor(defaultUserAgentInterceptor)
                     .addInterceptor(contentEncodingInterceptor)
                     .addInterceptor(httpLoggingInterceptor)
+                    .addInterceptor(mExtInterceptorAdapter)
                     .cookieJar(CookiesManager.getInstance().getOkHttp3CookieJar())
                     .build();
         } else {
             mOkHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(defaultUserAgentInterceptor)
+                    .addInterceptor(mExtInterceptorAdapter)
                     .cookieJar(CookiesManager.getInstance().getOkHttp3CookieJar())
                     .build();
         }
@@ -93,6 +94,26 @@ public class OkHttpManager {
 
     public OkHttpClient getOkHttpClient() {
         return mOkHttpClient;
+    }
+
+    private final Interceptor mExtInterceptorAdapter = new Interceptor() {
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            if (mExtInterceptor != null) {
+                return mExtInterceptor.intercept(chain);
+            }
+            return chain.proceed(chain.request());
+        }
+    };
+
+    private Interceptor mExtInterceptor;
+
+    public void setExtInterceptor(Interceptor mExtInterceptor) {
+        this.mExtInterceptor = mExtInterceptor;
+    }
+
+    public Interceptor getExtInterceptor() {
+        return mExtInterceptor;
     }
 
 }
