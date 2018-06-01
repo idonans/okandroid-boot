@@ -79,8 +79,8 @@ public class OkHttpManager {
             mOkHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(defaultUserAgentInterceptor)
                     .addInterceptor(contentEncodingInterceptor)
-                    .addInterceptor(httpLoggingInterceptor)
                     .addInterceptor(mExtInterceptorAdapter)
+                    .addInterceptor(httpLoggingInterceptor)
                     .cookieJar(CookiesManager.getInstance().getOkHttp3CookieJar())
                     .build();
         } else {
