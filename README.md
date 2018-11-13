@@ -1,4 +1,5 @@
-# okandroid-boot
+# *Deprecated*
+# ~~okandroid-boot~~
 android common lib
 
 # how to use
